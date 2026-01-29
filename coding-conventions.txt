@@ -1,0 +1,57 @@
+================================================================
+                    CODING CONVENTIONS 
+================================================================
+
+1. TYPESCRIPT & ALLGEMEINES
+----------------------------------------------------------------
+- Klassen & Interfaces:  PascalCase (z.B. UserProfileComponent)
+- Variablen & Funktionen: camelCase (z.B. getUserData())
+- Konstanten:           UPPER_SNAKE_CASE (z.B. API_TIMEOUT)
+- Dateinamen:           kebab-case.typ.ts (z.B. auth-form.component.ts)
+
+* Booleans: Präfix nutzen (isAvailable, hasError, canDelete).
+* Funktionen: Müssen ein Verb enthalten (calculateTotal, fetchData).
+
+
+2. ANGULAR SPEZIFIKA
+----------------------------------------------------------------
+- Komponenten:  Endung .component.ts 
+- Services:     Endung .service.ts
+- Events:       Handler-Funktionen mit 'on' (z.B. onButtonClick())
+
+
+3. HTML & CSS / SCSS (BEM METHODIK)
+----------------------------------------------------------------
+Wir nutzen BEM (Block Element Modifier) für CSS-Klassen:
+
+- Block:   Die Komponente selbst (.card)
+- Element: Teil des Blocks (.card__title, .card__image)
+- Modifier (Variante): Mit '--' (.card--highlighted, .btn--small)
+
+Zustände (Status-Klassen):
+- Präfix 'is-' oder 'has-' verwenden.
+- Beispiele: .is-active, .is-loading, .has-error, .is-disabled
+
+* Verschachtelung: Maximal 3 Ebenen tief in SCSS.
+* Keine IDs (#) für Styling nutzen, nur Klassen (.).
+* Keine festen Werte: Farben/Abstände immer über Variablen/Tokens.
+
+
+4. SCSS BEISPIEL-STRUKTUR
+----------------------------------------------------------------
+.nav-item {             // Block
+  display: block;
+
+  &__icon {             // Element
+    width: 20px;
+  }
+
+  &--primary {          // Modifier (Variante)
+    color: blue;
+  }
+
+  &.is-active {         // Status (Dynamisch)
+    font-weight: bold;
+  }
+}
+================================================================
