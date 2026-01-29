@@ -4,10 +4,10 @@
 
 1. TYPESCRIPT & ALLGEMEINES
 ----------------------------------------------------------------
-- Klassen & Interfaces:  PascalCase (z.B. UserProfileComponent)
-- Variablen & Funktionen: camelCase (z.B. getUserData())
-- Konstanten:           UPPER_SNAKE_CASE (z.B. API_TIMEOUT)
-- Dateinamen:           kebab-case.typ.ts (z.B. auth-form.component.ts)
+- Klassen & Interfaces:     PascalCase (z.B. UserProfileComponent)
+- Variablen & Funktionen:   camelCase (z.B. getUserData())
+- Konstanten:               UPPER_SNAKE_CASE (z.B. API_TIMEOUT)
+- Dateinamen:               kebab-case.typ.ts (z.B. auth-form.component.ts)
 
 * Booleans: Präfix nutzen (isAvailable, hasError, canDelete).
 * Funktionen: Müssen ein Verb enthalten (calculateTotal, fetchData).
@@ -22,7 +22,7 @@
 
 3. HTML & CSS / SCSS (BEM METHODIK)
 ----------------------------------------------------------------
-Wir nutzen BEM (Block Element Modifier) für CSS-Klassen:
+BEM (Block Element Modifier) für CSS-Klassen:
 
 - Block:   Die Komponente selbst (.card)
 - Element: Teil des Blocks (.card__title, .card__image)
@@ -33,7 +33,7 @@ Zustände (Status-Klassen):
 - Beispiele: .is-active, .is-loading, .has-error, .is-disabled
 
 * Verschachtelung: Maximal 3 Ebenen tief in SCSS.
-* Keine IDs (#) für Styling nutzen, nur Klassen (.).
+* Keine IDs (#) für Styling nutzen, nur Klassen 
 * Keine festen Werte: Farben/Abstände immer über Variablen/Tokens.
 
 
