@@ -1,1 +1,84 @@
-<p>sidebar works!</p>
+<aside class="sidebar">
+  <header class="sidebar__header">
+    <div class="workspace">
+      <div class="workspace__logo" aria-hidden="true">
+        <img class="workspace__logo-img" src="/main-page/workspace-logo.svg" alt="" />
+      </div>
+
+      <div class="workspace__name text--regular">Devspace</div>
+    </div>
+
+    <button class="icon-btn" type="button" aria-label="Neue Nachricht">
+      <img class="icon-btn__img" src="/main-page/edit_square.svg" alt="" />
+    </button>
+  </header>
+
+  <div class="sidebar__content">
+    <!-- CHANNELS -->
+    <section class="section">
+      <div class="section__title-row">
+        <div class="section__title">
+          <img class="icon-btn__img arrow-icon" src="/main-page/arrow_drop_down.svg" alt="" />
+          <img class="icon-btn__img" src="/main-page/workspaces.svg" alt="" />
+          <span class="text--small section__label">Channels</span>
+        </div>
+
+        <button class="icon-btn" type="button" aria-label="Channel hinzufügen">
+          <img class="icon-btn__img" src="/main-page/add.svg" alt="" />
+        </button>
+      </div>
+
+      <nav class="list" aria-label="Channel Liste">
+        <a class="list__item list__item--active" href="#">
+          <span class="hash" aria-hidden="true">#</span>
+          <span class="text--small">Entwicklerteam</span>
+        </a>
+
+        <button class="list__item list__item--add" type="button">
+          <button class="icon-btn icon-btn--plus" type="button" aria-label="Channel hinzufügen">
+            <img class="icon-btn__img" src="/main-page/add.svg" alt="" />
+          </button>
+
+          <span class="text--small">Channel hinzufügen</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- DIRECT MESSAGES -->
+    <section class="section">
+      <div class="section__title-row">
+        <div class="section__title">
+          <img class="icon-btn__img  arrow-icon" src="/main-page/arrow_drop_down.svg" alt="" />
+          <img class="icon-btn__img" src="/main-page/account_circle.svg" alt="" />
+          <span class="text--small section__label">Direktnachrichten</span>
+        </div>
+      </div>
+
+      <nav class="list" aria-label="Direktnachrichten Liste">
+        <a class="list__item" href="#">
+          <span class="avatar">
+            <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar__img" />
+            <span class="status status--online" aria-hidden="true"></span>
+          </span>
+          <span class="text--small">Frederik Beck</span>
+        </a>
+
+        <a class="list__item" href="#">
+          <span class="avatar">
+            <img src="/shared/profile-pics/profile-pic2.svg" alt="Profilbild" class="avatar__img" />
+            <span class="status status--offline" aria-hidden="true"></span>
+          </span>
+          <span class="text--small">Sofia Müller</span>
+        </a>
+
+        <a class="list__item" href="#">
+          <span class="avatar">
+            <img src="/shared/profile-pics/profile-pic3.svg" alt="Profilbild" class="avatar__img" />
+            <span class="status status--online" aria-hidden="true"></span>
+          </span>
+          <span class="text--small">Noah Richter</span>
+        </a>
+      </nav>
+    </section>
+  </div>
+</aside>
