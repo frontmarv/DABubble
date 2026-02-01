@@ -1,13 +1,32 @@
-<div class="layout">
-  <!-- links -->
-  <app-sidebar></app-sidebar>
+<div class="main-container">
 
-  <!-- mitte -->
-  <div class="main">
-    Chat kommt hier hin
-  </div>
+    <header>
+        <div class="header-left">
+            <img src="/shared/dabubble-logo.svg" alt="DABubble Logo" class="logo">
+            <h2 class="logo-text">DABubble</h2>
+        </div>
 
-  <!-- rechts -->
-  <app-thread-panel></app-thread-panel>
+        <div class="search-bar">
+            <input type="text" placeholder="Devspace durchsuchen">
+            <img src="/main-page/search.svg" alt="Suche">
+        </div>
+
+        <div class="user-profile">
+            <span class="user-name">Frederik Beck</span>
+            <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar">
+            <img src="/main-page/keyboard_arrow_down.svg" alt="Menu" class="dropdown-arrow">
+        </div>
+    </header>
+
+    <div class="layout">
+        
+        <app-sidebar></app-sidebar>
+
+        <div class="main-chat">
+           </div>
+
+        <app-thread-panel></app-thread-panel>
+
+    </div>
+
 </div>
-

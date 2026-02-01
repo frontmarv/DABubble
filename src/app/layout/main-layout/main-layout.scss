@@ -1,4 +1,66 @@
-.layout {
-    display: flex;
+.main-container {
     height: 100vh;
+    width: 100vw;
+    background-color: var(--color-background); 
+    display: flex;
+    flex-direction: column; 
+    overflow: hidden; 
+}
+
+header {
+    height: 90px; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    flex-shrink: 0; 
+    
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        
+        h2 { font-weight: 800; color: var(--color-black); }
+        img { width: 50px; }
+    }
+
+    .search-bar {
+        background: var(--color-white);
+        width: 40%;
+        border-radius: 30px;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        
+        input { 
+            width: 100%; 
+            outline: none; 
+            font-size: 1.1rem;
+            background: transparent;
+        }
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+        
+        img { width: 50px; height: 50px; border-radius: 50%; }
+        span { font-weight: 700; color: var(--color-black); }
+    }
+}
+
+.layout {
+    display: flex; 
+    flex: 1; 
+    gap: 20px; 
+    padding: 0 20px 20px 20px; 
+    overflow: hidden; 
+    
+    .main-chat {
+        flex: 1;
+        background-color: var(--color-white);
+        border-radius: 30px;
+    }
 }
