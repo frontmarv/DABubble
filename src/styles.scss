@@ -1,1 +1,187 @@
-/* You can add global styles to this file, and also import other style files */
+// hier font einfügen, basic font color auch gleich festlegen
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+    border: unset;
+    line-height: 120%;
+}
+
+:root {
+    scroll-behavior: smooth;
+    --transition-fast: 75ms;
+    --transition-normal: 100ms;
+    --transition-slow: 125ms;
+}
+
+:root {
+    --color-white: #FFFFFF;
+    --color-black: #000000;
+    --color-background: #ECEEFE;
+    --color-light-purple-lines: #ADB0D9;
+    --color-text-grey: #686868;
+    --color-purple1: #444DF2;
+    --color-purple2: #797EF3;
+    --color-purple3: #535AF1;
+    --color-online-green: #92C83E;
+    --color-rosa-error: #ED1E79;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-purple2)
+}
+
+.btn--primary {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    padding: 12px 25px;
+    border-radius: 25px;
+    color: var(--color-white);
+    background-color: var(--color-purple1);
+    transition: all var(--transition-fast) ease-in-out;
+    gap: 10px;
+
+    &:hover {
+        background-color: var(--color-purple2);
+        cursor: pointer;
+    }
+
+    &:active {
+        background-color: var(--color-purple1);
+    }
+
+    &:disabled {
+        background-color: var(--color-text-grey);
+        pointer-events: none;
+    }
+}
+
+.btn--secondary {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 25px;
+    font-weight: bold;
+    border-radius: 25px;
+    background-color: var(--color-white);
+    color: var(--color-purple1);
+    outline: 1px solid var(--color-purple2);
+    transition: all var(--transition-fast) ease-in-out;
+    gap: 10px;
+
+    &:hover {
+        color: var(--color-white);
+        outline: unset;
+        background-color: var(--color-purple3);
+        cursor: pointer;
+    }
+
+    &:active {
+        outline: unset;
+        color: var(--color-white);
+        background-color: var(--color-purple1);
+    }
+
+    &:disabled {
+        outline: 1px solid var(--color-text-grey);
+        color: var(--color-text-grey);
+        pointer-events: none;
+        background-color: var(--color-white);
+    }
+}
+
+// h1 nur für Anfangsanmiation
+h1 {
+    font-size: 4.5rem; // 72px
+    font-weight: bold;
+    color: var(--color-white);
+}
+
+h2 {
+    font-size: 2.875rem; // 46px
+    font-weight: bold;
+    color: var(--color-purple1);
+}
+
+h3 {
+    font-size: 2rem; // 32px
+    font-weight: bold;
+}
+
+h4 {
+    font-size: 1.5rem; // 24px
+    font-weight: bold;
+}
+
+.text--big {
+    font-size: 1.25rem; // 20px
+    font-weight: 400;
+}
+
+.text--regular {
+    font-size: 1.125rem; // 18px
+    font-weight: 400;
+}
+
+.text--small {
+    font-size: 1rem; // 16px
+    font-weight: 400;
+}
+
+.inputfield--login {
+    padding: 18px 32px;
+    border-radius: 100px;
+    color: var(--color-text-grey);
+    background-color: var(--color-background);
+    transition: all var(--transition-fast) ease-in-out;
+
+    &:hover {
+        outline: 1px solid var(--color-text-grey);
+        color: var(--color-text-grey);
+        cursor: pointer;
+    }
+
+    &:focus {
+        outline: 1px solid var(--color-purple3);
+        color: var(--color-black);
+        cursor: text;
+    }
+}
+
+.inputfield--dialogs {
+    border-radius: 40px;
+    padding: 18px 20px;
+    outline: 1px solid var(--color-light-purple-lines);
+
+    &:hover {
+        outline: 1px solid var(--color-purple2);
+        cursor: pointer;
+    }
+
+    &:focus {
+        outline: 1px solid var(--color-purple3);
+        color: var(--color-black);
+        cursor: text;
+    }
+}
+
+.inputfield--chat {
+    border-radius: 20px;
+    outline: 1px solid var(--color-light-purple-lines);
+    padding: 20px;
+
+    &:hover {
+        outline: 1px solid var(--color-purple2);
+        cursor: pointer;
+    }
+
+    &:focus {
+        outline: 1px solid var(--color-purple1);
+        cursor: text;
+    }
+}
