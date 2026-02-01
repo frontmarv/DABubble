@@ -10,5 +10,9 @@ import { ThreadPanel } from '../../components/thread-panel/thread-panel';
   styleUrl: './main-layout.scss',
 })
 export class MainLayout {
+  isSidebarOpen = true;
 
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
 }

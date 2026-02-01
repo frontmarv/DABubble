@@ -64,3 +64,63 @@ header {
         border-radius: 30px;
     }
 }
+
+.sidebar-wrapper {
+  width: 300px;           
+  flex: 0 0 auto;
+  overflow: hidden;
+  height: 100%;            
+  align-self: stretch;     
+  transition: width 250ms ease;
+}
+
+.sidebar-wrapper--closed {
+  width: 0;
+
+  app-sidebar,
+  .sidebar {
+    transform: translateX(-110%);
+  }
+}
+
+.sidebar-toggle {
+  position: absolute;
+  bottom: 250px;
+  left: 0;
+  z-index: 10;
+  border: 0;
+  background: var(--color-white);
+  cursor: pointer;
+  padding: 10px 10px 20px 10px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
+  transition: transform 150ms ease;
+}
+
+.sidebar-toggle:hover {
+  transform: translateX(-2px);
+}
+
+.sidebar-toggle__text {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--color-black);
+}
+
+.sidebar-toggle__icon {
+  width: 20px;
+  height: 20px;
+  transform: rotate(-0deg); 
+  transition: transform 200ms ease;
+}
+
+.sidebar-toggle__icon--closed {
+  transform: rotate(180deg);  
+}
