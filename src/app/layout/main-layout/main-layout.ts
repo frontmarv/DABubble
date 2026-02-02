@@ -12,6 +12,11 @@ import { MessageComposer } from '../../components/message-composer/message-compo
 })
 export class MainLayout {
   isSidebarOpen = true;
+  isProfileMenuOpen = false;
+
+  toggleProfileMenu() {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
 
   toggleSidebar(): void {
     this.isSidebarOpen = !this.isSidebarOpen;

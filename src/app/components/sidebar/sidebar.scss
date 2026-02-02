@@ -214,21 +214,3 @@
   border-radius: 100%;
   object-fit: cover;
 }
-
-.status {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 2px solid var(--color-white);
-}
-
-.status--online {
-  background-color: var(--color-online-green);
-}
-
-.status--offline {
-  background-color: var(--color-text-grey);
-}
