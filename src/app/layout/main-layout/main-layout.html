@@ -11,11 +11,11 @@
       <img src="/main-page/search.svg" alt="Suche"/>
     </div>
 
-    <div class="user-profile" [class.open]="isProfileMenuOpen">
+    <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()"> 
       <span class="user-name">Frederik Beck</span>
       <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar"/>
       <span class="status status--online" aria-hidden="true"></span>
-      <img src="/main-page/keyboard_arrow_down.svg" alt="Menu" class="dropdown-arrow" (click)="toggleProfileMenu()"/>
+      <img src="/main-page/keyboard_arrow_down.svg" alt="Menu" class="dropdown-arrow"/>
     
       <div class="profile-menu">
         <div>Profil</div>
