@@ -1,11 +1,11 @@
-@import './fonts.css';
+@import "./fonts.css";
 
 * {
     margin: 0;
     box-sizing: border-box;
     border: unset;
     line-height: 120%;
-    font-family: 'Nunito', Verdana, sans-serif;
+    font-family: "Nunito", Verdana, sans-serif;
 }
 
 :root {
@@ -16,16 +16,16 @@
 }
 
 :root {
-    --color-white: #FFFFFF;
+    --color-white: #ffffff;
     --color-black: #000000;
-    --color-background: #ECEEFE;
-    --color-light-purple-lines: #ADB0D9;
+    --color-background: #eceefe;
+    --color-light-purple-lines: #adb0d9;
     --color-text-grey: #686868;
-    --color-purple1: #444DF2;
-    --color-purple2: #797EF3;
-    --color-purple3: #535AF1;
-    --color-online-green: #92C83E;
-    --color-rosa-error: #ED1E79;
+    --color-purple1: #444df2;
+    --color-purple2: #797ef3;
+    --color-purple3: #535af1;
+    --color-online-green: #92c83e;
+    --color-rosa-error: #ed1e79;
 }
 
 a {
@@ -203,10 +203,11 @@ h4 {
     }
 
     &:hover img {
-        filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
+        filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%)
+            contrast(92%);
     }
 
-    >img {
+    > img {
         width: 100%;
         height: auto;
     }
@@ -220,12 +221,50 @@ h4 {
     height: 14px;
     border-radius: 50%;
     border: 2px solid var(--color-white);
-  }
-  
-  .status--online {
+}
+
+.status--online {
     background-color: var(--color-online-green);
-  }
-  
-  .status--offline {
+}
+
+.status--offline {
     background-color: var(--color-text-grey);
-  }
+}
+
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-fast);
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--color-background);
+        scale: 1.1;
+    }
+}
+
+.icon-btn__img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.list__item:hover .icon-btn__img,
+.icon-btn:hover .icon-btn__img,
+.section__title:hover .icon-btn__img,
+.list__item--add:hover .icon-btn__img {
+    filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%)
+        contrast(92%);
+}
+
+app-message-composer {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+}

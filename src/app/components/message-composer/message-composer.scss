@@ -4,12 +4,15 @@
     width: 100%;
     outline: 1px solid var(--color-light-purple-lines);
     border-radius: 20px;
-    padding: 20px;
+    padding: 20px 20px 60px 20px;
+    max-height: 300px;
     textarea {
-        outline: none; 
+        outline: none;
         min-width: 100%;
         max-width: 100%;
+        field-sizing: content;
         resize: none;
+        max-height: 200px;
     }
     &:hover {
         outline: 1px solid var(--color-purple2);
@@ -30,6 +33,10 @@
             transition: filter var(--transition-fast);
             &:hover {
                 filter: brightness(1.25) saturate(0.85) contrast(0.95) hue-rotate(3deg);
+                scale: 1.1;
+            }
+            &:active {
+                scale: 1.0;
             }
         }
     }
@@ -42,40 +49,11 @@
 }
 
 .icon-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color var(--transition-fast);
-    cursor: pointer;
-
-    &:hover {
-        background-color: var(--color-background);
-        scale: 1.1;
-    }
     &:active {
         background: transparent;
-        filter: unset;
         scale: 1;
+        .icon-btn__img {
+            filter: brightness(100%);
+        }
     }
 }
-
-.icon-btn__img {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
-    &:active {
-        filter: unset;
-    }
-}
-
-.list__item:hover .icon-btn__img,
-.icon-btn:hover .icon-btn__img,
-.section__title:hover .icon-btn__img,
-.list__item--add:hover .icon-btn__img {
-  filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
-}
-

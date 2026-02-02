@@ -156,6 +156,7 @@ header {
     flex: 1;
     background-color: var(--color-white);
     border-radius: 30px;
+    position: relative;
   }
 }
 
@@ -219,3 +220,4 @@ header {
 .sidebar-toggle__icon--closed {
   transform: rotate(180deg);
 }
+
