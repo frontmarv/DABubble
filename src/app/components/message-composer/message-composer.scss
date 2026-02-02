@@ -1,0 +1,81 @@
+.message-input-container {
+    min-height: 145px;
+    position: relative;
+    width: 100%;
+    outline: 1px solid var(--color-light-purple-lines);
+    border-radius: 20px;
+    padding: 20px;
+    textarea {
+        outline: none; 
+        min-width: 100%;
+        max-width: 100%;
+        resize: none;
+    }
+    &:hover {
+        outline: 1px solid var(--color-purple2);
+        cursor: pointer;
+    }
+    &:focus {
+        outline: 1px solid var(--color-purple1);
+        cursor: text;
+    }
+    .message-buttons-container {
+        display: flex;
+        justify-content: space-between;
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        left: 20px;
+        .send-btn {
+            transition: filter var(--transition-fast);
+            &:hover {
+                filter: brightness(1.25) saturate(0.85) contrast(0.95) hue-rotate(3deg);
+            }
+        }
+    }
+}
+
+.action-icons {
+    width: 85px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-fast);
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--color-background);
+        scale: 1.1;
+    }
+    &:active {
+        background: transparent;
+        filter: unset;
+        scale: 1;
+    }
+}
+
+.icon-btn__img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    &:active {
+        filter: unset;
+    }
+}
+
+.list__item:hover .icon-btn__img,
+.icon-btn:hover .icon-btn__img,
+.section__title:hover .icon-btn__img,
+.list__item--add:hover .icon-btn__img {
+  filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
+}
+
