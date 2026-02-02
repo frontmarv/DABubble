@@ -5,12 +5,17 @@ import { ThreadPanel } from '../../components/thread-panel/thread-panel';
 
 @Component({
   selector: 'app-main-layout',
-  imports: [CommonModule, Sidebar, ThreadPanel,],
+  imports: [CommonModule, Sidebar, ThreadPanel],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss',
 })
 export class MainLayout {
   isSidebarOpen = true;
+  isProfileMenuOpen = false;
+
+  toggleProfileMenu() {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
 
   toggleSidebar(): void {
     this.isSidebarOpen = !this.isSidebarOpen;

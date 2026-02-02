@@ -1,19 +1,25 @@
 <div class="main-container">
   <header>
+    <div class="backdrop" [class.show]="isProfileMenuOpen" (click)="isProfileMenuOpen=false"></div>
     <div class="header-left">
-      <img src="/shared/dabubble-logo.svg" alt="DABubble Logo" class="logo" />
+      <img src="/shared/dabubble-logo.svg" alt="DABubble Logo" class="logo"/>
       <h2 class="logo-text">DABubble</h2>
     </div>
 
     <div class="search-bar">
-      <input type="text" placeholder="Devspace durchsuchen" />
-      <img src="/main-page/search.svg" alt="Suche" />
+      <input type="text" placeholder="Devspace durchsuchen"/>
+      <img src="/main-page/search.svg" alt="Suche"/>
     </div>
 
-    <div class="user-profile">
+    <div class="user-profile" [class.open]="isProfileMenuOpen">
       <span class="user-name">Frederik Beck</span>
-      <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar" />
-      <img src="/main-page/keyboard_arrow_down.svg" alt="Menu" class="dropdown-arrow" />
+      <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar"/>
+      <img src="/main-page/keyboard_arrow_down.svg" alt="Menu" class="dropdown-arrow" (click)="toggleProfileMenu()"/>
+    
+      <div class="profile-menu">
+        <div>Profil</div>
+        <div class="hover">Log out</div>
+      </div>
     </div>
   </header>
 
@@ -23,7 +29,7 @@
         Workspace-Menü {{ isSidebarOpen ? 'schließen' : 'öffnen' }}
       </span>
 
-      <img class="sidebar-toggle__icon" [class.sidebar-toggle__icon--closed]="!isSidebarOpen" src="/main-page/Group 2.svg" alt="" /></button>
+      <img class="sidebar-toggle__icon" [class.sidebar-toggle__icon--closed]="!isSidebarOpen" src="/main-page/Group 2.svg" alt=""/></button>
 
     <div class="sidebar-wrapper" [class.sidebar-wrapper--closed]="!isSidebarOpen">
       <app-sidebar></app-sidebar>
