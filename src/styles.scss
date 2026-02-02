@@ -1,11 +1,11 @@
-// hier font einfügen, basic font color auch gleich festlegen
+@import './fonts.css';
 
 * {
     margin: 0;
     box-sizing: border-box;
     border: unset;
     line-height: 120%;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', Verdana, sans-serif;
 }
 
 :root {
@@ -30,7 +30,11 @@
 
 a {
     text-decoration: none;
-    color: var(--color-purple2)
+    color: var(--color-purple2);
+
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 .btn--primary {
@@ -184,5 +188,26 @@ h4 {
     &:focus {
         outline: 1px solid var(--color-purple1);
         cursor: text;
+    }
+}
+
+.close-btn {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    background-color: transparent;
+
+    &:hover {
+        background-color: var(--color-background);
+        cursor: pointer;
+    }
+
+    &:hover img {
+        filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
+    }
+
+    >img {
+        width: 100%;
+        height: auto;
     }
 }
