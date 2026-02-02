@@ -4,7 +4,6 @@
       <div class="workspace__logo" aria-hidden="true">
         <img class="workspace__logo-img" src="/main-page/workspace-logo.svg" alt="" />
       </div>
-
       <div class="workspace__name text--regular">Devspace</div>
     </div>
 
@@ -14,11 +13,15 @@
   </header>
 
   <div class="sidebar__content">
-    <!-- CHANNELS -->
     <section class="section">
       <div class="section__title-row">
-        <div class="section__title">
-          <img class="icon-btn__img arrow-icon" src="/main-page/arrow_drop_down.svg" alt="" />
+        <div class="section__title" (click)="toggleChannels()">
+          <img 
+            class="icon-btn__img arrow-icon" 
+            [class.rotate-icon]="!channelsOpen"
+            src="/main-page/arrow_drop_down.svg" 
+            alt="" 
+          />
           <img class="icon-btn__img" src="/main-page/workspaces.svg" alt="" />
           <span class="text--small section__label">Channels</span>
         </div>
@@ -28,7 +31,7 @@
         </button>
       </div>
 
-      <nav class="list" aria-label="Channel Liste">
+      <nav class="list" [class.collapsed]="!channelsOpen" aria-label="Channel Liste">
         <a class="list__item list__item--active" href="#">
           <span class="hash" aria-hidden="true">#</span>
           <span class="text--small">Entwicklerteam</span>
@@ -38,23 +41,26 @@
           <button class="icon-btn icon-btn--plus" type="button" aria-label="Channel hinzufügen">
             <img class="icon-btn__img" src="/main-page/add.svg" alt="" />
           </button>
-
           <span class="text--small">Channel hinzufügen</span>
         </button>
       </nav>
     </section>
 
-    <!-- DIRECT MESSAGES -->
     <section class="section">
       <div class="section__title-row">
-        <div class="section__title">
-          <img class="icon-btn__img  arrow-icon" src="/main-page/arrow_drop_down.svg" alt="" />
+        <div class="section__title" (click)="toggleDm()">
+          <img 
+            class="icon-btn__img arrow-icon" 
+            [class.rotate-icon]="!dmOpen"
+            src="/main-page/arrow_drop_down.svg" 
+            alt="" 
+          />
           <img class="icon-btn__img" src="/main-page/account_circle.svg" alt="" />
           <span class="text--small section__label">Direktnachrichten</span>
         </div>
       </div>
 
-      <nav class="list" aria-label="Direktnachrichten Liste">
+      <nav class="list" [class.collapsed]="!dmOpen" aria-label="Direktnachrichten Liste">
         <a class="list__item" href="#">
           <span class="avatar">
             <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar__img" />

@@ -15,6 +15,7 @@ header {
   padding: 0 30px;
   flex-shrink: 0;
   overflow: visible;
+  white-space: nowrap;
 
   .header-left {
     display: flex;
