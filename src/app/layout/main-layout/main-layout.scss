@@ -92,6 +92,11 @@ header {
           hue-rotate(200deg) brightness(95%) contrast(105%);
       }
     }
+    
+    .status--offline,
+    .status--online {
+      right: 45px;
+    }
 
     .profile-menu {
       display: none;
