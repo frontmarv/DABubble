@@ -15,7 +15,9 @@ header {
 
     .hover {
         cursor: pointer;
-        transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+        transition:
+            background-color var(--transition-fast) ease,
+            color var(--transition-fast) ease;
         border-radius: 99px;
 
         &:hover {
@@ -85,7 +87,8 @@ header {
             }
 
             img.dropdown-arrow {
-                filter: brightness(0) saturate(100%) invert(25%) sepia(92%) saturate(2000%) hue-rotate(200deg) brightness(95%) contrast(105%);
+                filter: brightness(0) saturate(100%) invert(25%) sepia(92%) saturate(2000%) hue-rotate(200deg)
+                    brightness(95%) contrast(105%);
             }
         }
 
@@ -111,12 +114,14 @@ header {
             gap: 10px;
             text-align: center;
 
-            >div {
+            > div {
                 font-size: 28px;
                 font-weight: 400;
                 color: var(--color-black);
                 padding: 14px 16px;
-                transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
+                transition:
+                    background-color var(--transition-fast) ease,
+                    color var(--transition-fast) ease;
             }
         }
 
@@ -152,6 +157,9 @@ header {
         background-color: var(--color-white);
         border-radius: 30px;
         position: relative;
+        padding-bottom: 200px;
+        max-height: calc(100vh - 80px);
+        overflow: auto;
     }
 }
 
