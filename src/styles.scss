@@ -41,6 +41,10 @@ a {
     }
 }
 
+.hidden {
+    display: none;
+}
+
 .btn--primary {
     display: flex;
     flex-direction: row;
@@ -183,21 +187,6 @@ h4 {
     }
 }
 
-.inputfield--chat {
-    border-radius: 20px;
-    outline: 1px solid var(--color-light-purple-lines);
-    padding: 20px;
-
-    &:hover {
-        outline: 1px solid var(--color-purple2);
-        cursor: pointer;
-    }
-
-    &:focus {
-        outline: 1px solid var(--color-purple1);
-        cursor: text;
-    }
-}
 
 .close-btn {
     height: 40px;

@@ -1,11 +1,11 @@
-<aside class="thread">
+<aside [class]="threadService.isThreadVisible() ? 'thread' : 'hidden'">
     <header>
         <div class="header__content">
             <h4>Thread</h4>
             <span>#</span>
             <span>Entwicklerteam</span>
         </div>
-        <div class="close-btn">
+        <div class="close-btn" (click)="threadService.setHidden()">
             <img src="/main-page/close-button.svg" alt="">
         </div>
     </header>
