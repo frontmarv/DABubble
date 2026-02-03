@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { ChatRoom } from './pages/chat-room/chat-room';
 import { Login } from './pages/login/login';
+import { Imprint } from './pages/imprint/imprint';
+import { PrivacyPolicy } from './pages/privacy-policy/privacy-policy';
 
 export const routes: Routes = [
     {
@@ -9,6 +11,12 @@ export const routes: Routes = [
     ,
     {
         path: '', component: ChatRoom,
+    },
+    {
+        path: 'imprint', component: Imprint,
+    },
+    {
+        path: 'privacy-policy', component: PrivacyPolicy,
     }
 
 ];
