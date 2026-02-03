@@ -8,36 +8,37 @@
     max-height: 300px;
     textarea {
         outline: none;
-        min-width: 100%;
-        max-width: 100%;
+        width: 100%;
         field-sizing: content;
         resize: none;
+        min-height: 60px;
         max-height: 200px;
     }
     &:hover {
         outline: 1px solid var(--color-purple2);
-        cursor: pointer;
     }
     &:focus {
         outline: 1px solid var(--color-purple1);
         cursor: text;
     }
-    .message-buttons-container {
-        display: flex;
-        justify-content: space-between;
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        left: 20px;
-        .send-btn {
-            transition: filter var(--transition-fast);
-            &:hover {
-                filter: brightness(1.25) saturate(0.85) contrast(0.95) hue-rotate(3deg);
-                scale: 1.1;
-            }
-            &:active {
-                scale: 1.0;
-            }
+}
+
+.message-buttons-container {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    left: 20px;
+    .send-btn {
+        cursor: pointer;
+        transition: filter var(--transition-fast);
+        &:hover {
+            filter: brightness(1.25) saturate(0.85) contrast(0.95) hue-rotate(3deg);
+            scale: 1.1;
+        }
+        &:active {
+            scale: 1;
         }
     }
 }
