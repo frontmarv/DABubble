@@ -8,6 +8,10 @@
     font-family: "Nunito", Verdana, sans-serif;
 }
 
+body {
+    background-color: var(--color-background);
+}
+
 :root {
     scroll-behavior: smooth;
     --transition-fast: 75ms;
@@ -207,11 +211,10 @@ h4 {
     }
 
     &:hover img {
-        filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%)
-            contrast(92%);
+        filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
     }
 
-    > img {
+    >img {
         width: 100%;
         height: auto;
     }
@@ -262,13 +265,12 @@ h4 {
 .icon-btn:hover .icon-btn__img,
 .section__title:hover .icon-btn__img,
 .list__item--add:hover .icon-btn__img {
-    filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%)
-        contrast(92%);
+    filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
 }
 
 app-message-composer {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
 }
