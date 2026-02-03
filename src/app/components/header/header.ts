@@ -7,10 +7,4 @@ import { Component } from '@angular/core';
   styleUrl: './header.scss',
 })
 export class Header {
-  isProfileMenuOpen = false;
-
-  toggleProfileMenu() {
-    this.isProfileMenuOpen = !this.isProfileMenuOpen;
-  }
-
 }
