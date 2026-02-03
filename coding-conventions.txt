@@ -55,3 +55,11 @@ Zustände (Status-Klassen):
   }
 }
 ================================================================
+
+Dialoge werden dort gecodet wo sie reingerendert werden
+Icons: 24px x 24px 
+Contentbergrenzung: 1920px
+Längster Name: 30 Zeichen
+Längste Email: 50 Zeichen
+Längster Channelname: 30 Zeichen
+Nachrichten: 2000 Zeichen -> User Feedback
