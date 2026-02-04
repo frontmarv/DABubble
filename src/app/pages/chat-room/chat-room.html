@@ -23,24 +23,21 @@
         </div>
     </header>
     <div class="layout" [class.layout--sidebar-closed]="!isSidebarOpen">
-        <button class="sidebar-toggle" type="button" (click)="toggleSidebar()" [attr.aria-expanded]="isSidebarOpen"
-            aria-label="Workspace-Menü öffnen/schließen">
-            <span class="sidebar-toggle__text">
-                Workspace-Menü {{ isSidebarOpen ? 'schließen' : 'öffnen' }}
-            </span>
-
-            <img class="sidebar-toggle__icon" [class.sidebar-toggle__icon--closed]="!isSidebarOpen"
-                src="/main-page/Group 2.svg" alt="" /></button>
-
         <div class="sidebar-wrapper" [class.sidebar-wrapper--closed]="!isSidebarOpen">
             <app-sidebar></app-sidebar>
+            <button class="sidebar-toggle" type="button" (click)="toggleSidebar()" [attr.aria-expanded]="isSidebarOpen"
+                aria-label="Workspace-Menü öffnen/schließen">
+                <span class="sidebar-toggle__text">
+                    Workspace-Menü {{ isSidebarOpen ? 'schließen' : 'öffnen' }}
+                </span>
+                <img class="sidebar-toggle__icon" [class.sidebar-toggle__icon--closed]="!isSidebarOpen"
+                    src="/main-page/Group 2.svg" alt="" />
+            </button>
         </div>
-
         <div class="main-chat">
             <app-message-list></app-message-list>
             <app-message-composer></app-message-composer>
         </div>
-
+    
         <app-thread-panel></app-thread-panel>
     </div>
-</div>

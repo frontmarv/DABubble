@@ -171,39 +171,31 @@ header {
 }
 
 .sidebar-wrapper {
+    position: relative;     
+    transition: width var(--transition-slow) ease;  
     width: 300px;
-    flex: 0 0 auto;
     height: 100%;
-    align-self: stretch;
-    transition: width 250ms ease;
 }
 
 .sidebar-wrapper--closed {
-    width: 0;
-
-    app-sidebar,
-    .sidebar {
-        transform: translateX(-110%);
-    }
+    width: 0;              
 }
 
 .sidebar-toggle {
     position: absolute;
-    bottom: 250px;
-    left: 0;
-    z-index: 10;
-    border: 0;
+    left: -15px;              
+    bottom: 200px;           
     background: var(--color-white);
     cursor: pointer;
-    padding: 20px 15px 20px 15px;
+    padding: 20px 15px;
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
     display: flex;
     flex-direction: column-reverse;
     align-items: center;
     gap: 8px;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
-    transition: var(--transition-slow) ease;
+    box-shadow: 4px 4px 7px 0px #00000033;
+    z-index: 5;
 }
 
 .sidebar-toggle:hover {
