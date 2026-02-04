@@ -83,7 +83,7 @@ header {
 
         &:hover {
             span {
-                color: var(--color-purple1);
+                color: var(--color-purple2);
             }
 
             img.dropdown-arrow {
@@ -116,12 +116,19 @@ header {
 
             > div {
                 font-size: 28px;
-                font-weight: 400;
+                font-weight: 600;
                 color: var(--color-black);
                 padding: 14px 16px;
                 transition:
                     background-color var(--transition-fast) ease,
                     color var(--transition-fast) ease;
+            }
+
+            > div:hover {
+                background-color: var(--color-background);
+                color: var(--color-purple1);
+                font-weight: 900;
+                border-radius: 99px;
             }
         }
 

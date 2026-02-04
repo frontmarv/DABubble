@@ -11,6 +11,26 @@ import { CommonModule } from '@angular/common';
 export class Sidebar {
   channelsOpen = true;
   dmOpen = true;
+  
+  isCreateChannelOpen = false;
+  isAddPeopleOpen = false;
+
+  openCreateChannel() {
+    this.isCreateChannelOpen = true;
+  }
+
+  closeCreateChannel() {
+    this.isCreateChannelOpen = false;
+  }
+
+  proceedToAddPeople() {
+    this.isCreateChannelOpen = false;
+    this.isAddPeopleOpen = true;
+  }
+
+  closeAddPeople() {
+    this.isAddPeopleOpen = false;
+  }
 
   toggleChannels() {
     this.channelsOpen = !this.channelsOpen;

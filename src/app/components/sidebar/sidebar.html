@@ -16,17 +16,12 @@
     <section class="section">
       <div class="section__title-row">
         <div class="section__title" (click)="toggleChannels()">
-          <img 
-            class="icon-btn__img arrow-icon" 
-            [class.rotate-icon]="!channelsOpen"
-            src="/main-page/arrow_drop_down.svg" 
-            alt="" 
-          />
+          <img  class="icon-btn__img arrow-icon" [class.rotate-icon]="!channelsOpen" src="/main-page/arrow_drop_down.svg" alt="" />
           <img class="icon-btn__img" src="/main-page/workspaces.svg" alt="" />
           <span class="text--small section__label">Channels</span>
         </div>
 
-        <button class="icon-btn" type="button" aria-label="Channel hinzufügen">
+        <button class="icon-btn" type="button" aria-label="Channel hinzufügen" (click)="openCreateChannel()">
           <img class="icon-btn__img" src="/main-page/add.svg" alt="" />
         </button>
       </div>
@@ -37,10 +32,10 @@
           <span class="text--small">Entwicklerteam</span>
         </a>
 
-        <button class="list__item list__item--add" type="button">
-          <button class="icon-btn icon-btn--plus" type="button" aria-label="Channel hinzufügen">
+        <button class="list__item list__item--add" type="button" (click)="openCreateChannel()">
+          <span class="icon-btn icon-btn--plus" aria-hidden="true">
             <img class="icon-btn__img" src="/main-page/add.svg" alt="" />
-          </button>
+          </span>
           <span class="text--small">Channel hinzufügen</span>
         </button>
       </nav>
@@ -86,5 +81,65 @@
         </a>
       </nav>
     </section>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="isCreateChannelOpen" (click)="closeCreateChannel()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2>Channel erstellen</h2>
+        <button class="icon-btn" (click)="closeCreateChannel()">
+          <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
+        </button>
+      </div>
+
+      <p class="modal__text text--regular">Channels dienen deinem Team zur Kommunikation. Am besten sollten sie themenbezogen sein. #marketing zum Beispiel</p>
+
+      <div class="modal__form">
+         <div class="input-group">
+            <label class="modal__label text--small bold">Channel-Name</label>
+            <input class="inputfield--dialogs" type="text" placeholder="# z.B. Kooperationsprojekte" />
+         </div>
+         <div class="input-group">
+            <label class="modal__label text--small bold">Beschreibung (optional)</label>
+            <input class="inputfield--dialogs" type="text" placeholder="Dein Text hier" />
+         </div>
+      </div>
+
+      <div class="modal__footer">
+        <button class="btn--primary" type="button" (click)="proceedToAddPeople()">Erstellen</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-backdrop" *ngIf="isAddPeopleOpen" (click)="closeAddPeople()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2>Leute hinzufügen</h2>
+        <button class="icon-btn" (click)="closeAddPeople()">
+          <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
+        </button>
+      </div>
+
+      <div class="modal__radio-section">
+        
+        <div class="radio-option">
+          <input type="radio" id="all-members" name="add-members" checked>
+          <label for="all-members" class="text--regular">Alle Mitglieder von 
+            <span class="text--purple">#Entwicklerteam</span> hinzufügen
+          </label>
+        </div>
+
+        <div class="radio-option">
+          <input type="radio" id="specific-members" name="add-members">
+          <label for="specific-members" class="text--regular">Bestimmte Leute hinzufügen</label>
+        </div>
+
+      </div>
+
+      <div class="modal__footer">
+        <button class="btn--primary" type="button" (click)="closeAddPeople()">Erstellen</button>
+      </div>
+    </div>
   </div>
 </aside>
