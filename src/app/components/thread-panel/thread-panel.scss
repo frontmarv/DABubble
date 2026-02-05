@@ -13,6 +13,11 @@
     transition: all var(--transition-slow) ease-in-out;
 }
 
+.thread--closed{
+    display: none;
+}
+
+
 header {
     display: flex;
     flex-direction: row;
@@ -69,11 +74,15 @@ h4 {
 // messages
 
 .message-field-other {
-    padding: 10px 40px;
+    padding: 20px 40px;
     gap: 20px;
 }
 
 .message-field-user {
-    padding: 10px 40px;
+    padding: 20px 40px;
     gap: 20px;
+}
+
+.visible {
+    opacity: 1;
 }

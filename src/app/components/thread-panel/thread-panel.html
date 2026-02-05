@@ -1,15 +1,16 @@
-<aside [class]="threadService.isThreadVisible() ? 'thread' : 'hidden'">
+<aside [class]="isThreadVisible ? 'thread' : 'thread--closed'">
     <header>
         <div class="header__content">
             <h4>Thread</h4>
             <span>#</span>
             <span>Entwicklerteam</span>
         </div>
-        <div class="close-btn" (click)="threadService.setHidden()">
+        <div class="close-btn" (click)="toggleThreadVisiblity()">
             <img src="/main-page/close-button.svg" alt="">
         </div>
     </header>
     <section class="chat-messages">
+
         <!-- chatcomponente fremd component here -->
         <div class="message-field-other">
             <span class="avatar">
@@ -26,11 +27,18 @@
                     impedit,
                     excepturi illo incidunt. Quasi, nesciunt expedita!</div>
             </div>
+            <div class="reaction-bar-other">
+                <button class="reaction-emoji icon-btn" type="button" aria-label="Sentiment">
+                    <img class="icon-btn__img" src="/chat-input/add-reaction.svg" alt="" />
+                </button>
+            </div>
         </div>
+
         <div class="chat-messages__separator">
             <span>2 Antworten</span>
             <div class="separator__line"></div>
         </div>
+
         <!-- chatcomponente fremd component here -->
         <div class="message-field-other">
             <span class="avatar">
@@ -47,7 +55,13 @@
                     impedit,
                     excepturi illo incidunt. Quasi, nesciunt expedita!</div>
             </div>
+            <div class="reaction-bar-other">
+                <button class="reaction-emoji icon-btn" type="button" aria-label="Sentiment">
+                    <img class="icon-btn__img" src="/chat-input/add-reaction.svg" alt="" />
+                </button>
+            </div>
         </div>
+
         <!-- chatcomponente selber component here -->
         <div class="message-field-user">
             <span class="avatar">
@@ -68,7 +82,16 @@
                     <p class="time">Letzte Antwort 14:56</p>
                 </div>
             </div>
+            <div class="reaction-bar">
+                <button class="reaction-emoji icon-btn" type="button" aria-label="Sentiment">
+                    <img class="icon-btn__img" src="/chat-input/add-reaction.svg" alt="" />
+                </button>
+                <button class="icon-btn" type="button" aria-label="Sentiment">
+                    <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
+                </button>
+            </div>
         </div>
+
     </section>
     <app-message-composer></app-message-composer>
 </aside>

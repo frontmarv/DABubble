@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { MessageComposer } from '../message-composer/message-composer';
 import { CommonModule } from '@angular/common';
-import { ThreadStateService } from '../../services/thread-state.service';
-import { inject } from '@angular/core';
+
 
 @Component({
   selector: 'app-thread-panel',
@@ -11,5 +10,9 @@ import { inject } from '@angular/core';
   styleUrl: './thread-panel.scss',
 })
 export class ThreadPanel {
-  public threadService = inject(ThreadStateService);
+  isThreadVisible = true;
+
+  toggleThreadVisiblity() {
+    this.isThreadVisible = !this.isThreadVisible;
+  }
 }
