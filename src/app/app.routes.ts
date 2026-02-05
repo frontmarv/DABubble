@@ -5,18 +5,9 @@ import { Imprint } from './pages/imprint/imprint';
 import { PrivacyPolicy } from './pages/privacy-policy/privacy-policy';
 
 export const routes: Routes = [
-    {
-        path: 'login', component: Login
-    }
-    ,
-    {
-        path: '', component: ChatRoom,
-    },
-    {
-        path: 'imprint', component: Imprint,
-    },
-    {
-        path: 'privacy-policy', component: PrivacyPolicy,
-    }
-
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: 'login', component: Login },
+    { path: 'main', component: ChatRoom }, 
+    { path: 'imprint', component: Imprint },
+    { path: 'privacy-policy', component: PrivacyPolicy }
 ];
