@@ -1,33 +1,43 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router'; 
+import { Router } from '@angular/router';
 import { Sidebar } from '../../components/sidebar/sidebar';
-import { ThreadPanel } from '../../components/thread-panel/thread-panel';
+import { MessageList } from '../../components/message-list/message-list';
 import { MessageComposer } from '../../components/message-composer/message-composer';
-import { MessageList } from "../../components/message-list/message-list";
+import { ThreadPanel } from '../../components/thread-panel/thread-panel';
 
 @Component({
   selector: 'app-chat-room',
-  standalone: true, 
-  imports: [CommonModule, Sidebar, ThreadPanel, MessageComposer, MessageList],
+  standalone: true,
+  imports: [
+    CommonModule, 
+    Sidebar, 
+    MessageList, 
+    MessageComposer, 
+    ThreadPanel
+  ],
   templateUrl: './chat-room.html',
   styleUrl: './chat-room.scss',
 })
 export class ChatRoom {
+  
   isSidebarOpen = true;
   isProfileMenuOpen = false;
 
-  constructor(private router: Router) {}
+  constructor(
+      private router: Router, 
+  ) {}
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
 
   toggleProfileMenu() {
     this.isProfileMenuOpen = !this.isProfileMenuOpen;
   }
 
-  toggleSidebar(): void {
-    this.isSidebarOpen = !this.isSidebarOpen;
-  }
-
   logOut() {
-    this.router.navigate(['/login']); 
+    console.log("User wird ausgeloggt...");
+    this.router.navigate(['/login']);
   }
 }
