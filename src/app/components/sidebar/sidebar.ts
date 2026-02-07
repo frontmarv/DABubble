@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // <--- WICHTIG!
+import { FormsModule } from '@angular/forms'; 
 import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
 
@@ -12,13 +12,19 @@ import { Channel } from '../../models/channel.class';
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
-  channelsOpen = true;
+  channelsOpen = false;
   dmOpen = true;
   isCreateChannelOpen = false;
-  isAddPeopleOpen = false;
-
+  isAddPeopleOpen = false; 
+  
   channelName = "";
   channelDescription = "";
+  addPeopleOption: string = 'all';
+  
+  private tempChannelName = "";
+  private tempChannelDescription = "";
+  
+  isCreating = false;
 
   constructor(public firebaseService: FirebaseService) {}
 
@@ -28,31 +34,63 @@ export class Sidebar {
 
   closeCreateChannel() {
     this.isCreateChannelOpen = false;
-  }
-
-  async addChannel() {
-    if (this.channelName.trim().length === 0) {
-        return; 
-    }
-
-    let newChannel = new Channel({
-      name: this.channelName,
-      description: this.channelDescription
-    });
-
-    const newId = await this.firebaseService.addChannel(newChannel);
-    console.log("Erstellt mit ID:", newId);
-
-    if (newId) {
-      this.firebaseService.setSelectedChannel(newId);
-    }
-
     this.channelName = "";
     this.channelDescription = "";
-    this.closeCreateChannel(); 
+    this.tempChannelName = "";
+    this.tempChannelDescription = "";
   }
 
-  closeAddPeople() { this.isAddPeopleOpen = false; }
+  proceedToAddMembers() {
+    if (!this.channelName || this.channelName.trim() === '') return;
+    
+    this.tempChannelName = this.channelName;
+    this.tempChannelDescription = this.channelDescription;
+    
+    this.isCreateChannelOpen = false;
+    this.isAddPeopleOpen = true;
+  }
+
+  closeAddPeople() { 
+    this.isAddPeopleOpen = false;
+    this.channelName = "";
+    this.channelDescription = "";
+    this.tempChannelName = "";
+    this.tempChannelDescription = "";
+    this.addPeopleOption = 'all';
+  }
+
+  async createChannel() {
+    if (!this.isAddPeopleOpen || this.isCreating) return;
+    if (!this.tempChannelName || this.tempChannelName.trim() === '') return;
+
+    this.isCreating = true;
+
+    try {
+      let newChannel = new Channel({
+        name: this.tempChannelName,
+        description: this.tempChannelDescription
+      });
+
+      const newId = await this.firebaseService.addChannel(newChannel);
+
+      if (newId) {
+        this.firebaseService.setSelectedChannel(newId);
+      }
+
+      this.isAddPeopleOpen = false;
+      this.channelName = "";
+      this.channelDescription = "";
+      this.tempChannelName = "";
+      this.tempChannelDescription = "";
+      this.addPeopleOption = 'all';
+      
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.isCreating = false;
+    }
+  }
+
   toggleChannels() { this.channelsOpen = !this.channelsOpen; }
   toggleDm() { this.dmOpen = !this.dmOpen; }
 }

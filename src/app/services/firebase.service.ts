@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Firestore, collection, doc, setDoc, addDoc, onSnapshot, query } from '@angular/fire/firestore';
+import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
+import { Firestore, collection, addDoc, onSnapshot, query, doc, setDoc } from '@angular/fire/firestore';
 import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
 
@@ -7,7 +7,9 @@ import { Channel } from '../models/channel.class';
   providedIn: 'root'
 })
 export class FirebaseService {
-
+  private firestore = inject(Firestore);
+  private injector = inject(Injector);
+  
   currentUser: User = new User();
   channels: any[] = [];
 
@@ -17,7 +19,7 @@ export class FirebaseService {
   unsubChannels: any;
   unsubUser: any;
 
-  constructor(private firestore: Firestore) {
+  constructor() {
     this.unsubChannels = this.subChannels();
   }
 
@@ -30,11 +32,17 @@ export class FirebaseService {
     const q = query(collection(this.firestore, "channels"));
     
     return onSnapshot(q, (list: any) => {
-      this.channels = [];
+      this.channels.length = 0;
+      
       list.forEach((element: any) => {
         this.channels.push({ id: element.id, ...element.data() });
       });
-      console.log("Channels update:", this.channels);
+
+      this.channels.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+
+      if (this.channels.length > 0 && !this.selectedChannelId) {
+        this.setSelectedChannel(this.channels[0].id);
+      }
     });
   }
 
@@ -43,33 +51,37 @@ export class FirebaseService {
     
     const channel = this.channels.find(c => c.id === id);
     if (channel) {
-        this.currentChannelName = channel.name;
+      this.currentChannelName = channel.name;
     }
   }
 
   subUser(uid: string) {
     return onSnapshot(doc(this.firestore, "users", uid), (docSnap: any) => {
-        if(docSnap.data()) {
-            this.currentUser = new User(docSnap.data());
-        }
+      if(docSnap.data()) {
+        this.currentUser = new User(docSnap.data());
+      }
     });
   }
 
   async addUser(user: User, uid: string) {
-    await setDoc(doc(this.firestore, "users", uid), user.toJSON())
-      .catch((err) => { console.error(err); });
+    return runInInjectionContext(this.injector, async () => {
+      await setDoc(doc(this.firestore, "users", uid), user.toJSON())
+        .catch((err) => { console.error(err); });
+    });
   }
 
-  async addChannel(channel: Channel) {
-    try {
-      const docRef = await addDoc(collection(this.firestore, "channels"), channel.toJSON());
-      
-      console.log("Document written with ID: ", docRef.id);
-      
-      return docRef.id;
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
+  async addChannel(channel: Channel): Promise<string | null> {
+    return runInInjectionContext(this.injector, async () => {
+      let data: any = channel.toJSON ? channel.toJSON() : { ...channel };
+      data.createdAt = new Date().getTime();
+
+      try {
+        const docRef = await addDoc(collection(this.firestore, "channels"), data);
+        return docRef.id;
+      } catch (err) {
+        console.error(err);
+        return null;
+      }
+    });
   }
 }

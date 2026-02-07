@@ -13,7 +13,6 @@
   </header>
 
   <div class="sidebar__content">
-    
     <section class="section">
       <div class="section__title-row">
         <div class="section__title" (click)="toggleChannels()">
@@ -38,31 +37,21 @@
       </div>
 
       <nav class="list" [class.collapsed]="!channelsOpen" aria-label="Channel Liste">
-        <div 
-           class="list__item" 
-           [class.list__item--active]="firebaseService.selectedChannelId === 'entwicklerteam'"
-           (click)="firebaseService.setSelectedChannel('entwicklerteam')"
-        >
-            <img class="input-icon" src="/main-page/tag1.svg" alt="#" />
-            <span class="text--small">Entwicklerteam</span>
-        </div>
-    
-        <div 
-          *ngFor="let channel of firebaseService.channels" 
-          class="list__item" 
+        <div
+          *ngFor="let channel of firebaseService.channels"
+          class="list__item"
           (click)="firebaseService.setSelectedChannel(channel.id)"
           [class.list__item--active]="channel.id === firebaseService.selectedChannelId"
         >
-            <img class="input-icon" src="/main-page/tag1.svg" alt="#" />
-            <span class="text--small">{{ channel.name }}</span>
+          <img class="input-icon" src="/main-page/tag1.svg" alt="#" />
+          <span class="text--small">{{ channel.name }}</span>
         </div>
-    
+
         <button class="list__item list__item--add" type="button" (click)="openCreateChannel()">
-            <img class="icon-btn__img" src="/main-page/add_circle.svg" alt="+" />
-            <span class="text--small">Channel hinzufügen</span>
+          <img class="icon-btn__img" src="/main-page/add_circle.svg" alt="+" />
+          <span class="text--small">Channel hinzufügen</span>
         </button>
-    
-    </nav>
+      </nav>
     </section>
 
     <section class="section">
@@ -126,34 +115,34 @@
           <label class="modal__label text--small bold">Channel-Name</label>
           <div class="input-wrapper">
             <img class="input-icon" src="/main-page/tag.svg" alt="#" />
-          
+
             <input
               class="inputfield--dialogs with-icon"
               type="text"
               placeholder="z.B. Kooperationsprojekte"
-              [(ngModel)]="channelName" 
+              [(ngModel)]="channelName"
             />
           </div>
         </div>
 
         <div class="input-group">
           <label class="modal__label text--small bold">Beschreibung <span>(optional)</span></label>
-          
-          <input 
-            class="inputfield--dialogs" 
-            type="text" 
-            placeholder="Dein Text hier" 
+
+          <input
+            class="inputfield--dialogs"
+            type="text"
+            placeholder="Dein Text hier"
             [(ngModel)]="channelDescription"
           />
         </div>
       </div>
       <div class="modal__footer">
-        <button class="btn--primary" type="button" (click)="addChannel()">Erstellen</button>
+        <button class="btn--primary" type="button" (click)="proceedToAddMembers()">Weiter</button>
       </div>
     </div>
   </div>
 
-  <div class="modal-backdrop" *ngIf="isAddPeopleOpen" (click)="closeAddPeople()">
+  <div class="modal-backdrop" *ngIf="isAddPeopleOpen">
     <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal__header">
         <h2>Leute hinzufügen</h2>
@@ -164,20 +153,37 @@
 
       <div class="modal__radio-section">
         <div class="radio-option">
-          <input type="radio" id="all-members" name="add-members" checked />
-          <label for="all-members" class="text--regular"
-            >Alle Mitglieder von <span class="text--purple">Entwicklerteam</span> hinzufügen
-          </label>
+          <input
+            type="radio"
+            id="all-members"
+            name="add-members"
+            value="all"
+            [(ngModel)]="addPeopleOption"
+          />
+          <label for="all-members" class="text--regular"> Alle Mitglieder hinzufügen </label>
         </div>
 
         <div class="radio-option">
-          <input type="radio" id="specific-members" name="add-members" />
-          <label for="specific-members" class="text--regular">Bestimmte Leute hinzufügen</label>
+          <input
+            type="radio"
+            id="specific-members"
+            name="add-members"
+            value="specific"
+            [(ngModel)]="addPeopleOption"
+          />
+          <label for="specific-members" class="text--regular"> Bestimmte Leute hinzufügen </label>
         </div>
       </div>
 
       <div class="modal__footer">
-        <button class="btn--primary" type="button" (click)="closeAddPeople()">Erstellen</button>
+        <button 
+          class="btn--primary" 
+          type="button" 
+          [disabled]="isCreating" 
+          (click)="createChannel(); $event.stopPropagation()"
+        >
+          Erstellen
+        </button>
       </div>
     </div>
   </div>
