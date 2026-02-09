@@ -12,7 +12,7 @@
 
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
             <span class="user-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</span>
-            <img [src]="'/shared/profile-pics/' + (currentUser?.avatar || 'profile-pics.svg')" alt="Profilbild" class="avatar" />
+            <img [src]="getAvatarUrl(currentUser?.avatar)" alt="Profilbild" class="avatar" />
             <span class="status status--online" aria-hidden="true"></span>
             <span class="dropdown-arrow" aria-hidden="true"></span>
 

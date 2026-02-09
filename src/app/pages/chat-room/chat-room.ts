@@ -1,25 +1,25 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Sidebar } from '../../components/sidebar/sidebar';
 import { MessageList } from '../../components/message-list/message-list';
 import { MessageComposer } from '../../components/message-composer/message-composer';
 import { ThreadPanel } from '../../components/thread-panel/thread-panel';
-import { ProfileView } from '../../components/profile-view/profile-view'; 
-import { User } from '../../models/user.class'; 
+import { ProfileView } from '../../components/profile-view/profile-view';
+import { User } from '../../models/user.class';
 import { AuthService } from '../../services/auth.service';
 import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-chat-room',
-  standalone: true, 
+  standalone: true,
   imports: [
-    CommonModule, 
-    Sidebar, 
-    ThreadPanel, 
-    MessageComposer, 
-    MessageList, 
+    CommonModule,
+    Sidebar,
+    ThreadPanel,
+    MessageComposer,
+    MessageList,
     FormsModule,
     ProfileView,
   ],
@@ -34,7 +34,7 @@ export class ChatRoom {
   isSidebarOpen = true;
   isProfileMenuOpen = false;
   showUserProfile = false;
-  
+
   currentUser: User | null = null;
 
   constructor() {
@@ -60,5 +60,14 @@ export class ChatRoom {
 
   closeProfile() {
     this.showUserProfile = false;
+  }
+
+  getAvatarUrl(avatar?: string | null): string {
+    const fallback = '/shared/profile-pics/profile-pic1.svg';
+    if (!avatar) return fallback;
+    if (avatar.startsWith('http')) return avatar;
+    const file = avatar.replace(/^\/?shared\/profile-pics\//, '').replace(/^profile-pics\//, '');
+
+    return `/shared/profile-pics/${file}`;
   }
 }
