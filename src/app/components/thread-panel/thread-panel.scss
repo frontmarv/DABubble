@@ -13,8 +13,10 @@
     transition: all var(--transition-slow) ease-in-out;
 }
 
-.thread--closed{
-    display: none;
+.thread--closed {
+    min-width: unset;
+    width: 0px;
+    overflow: hidden;
 }
 
 
