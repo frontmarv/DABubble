@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { User } from '../../models/user.class'; 
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-profile-view',
@@ -10,18 +12,18 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './profile-view.scss',
 })
 export class ProfileView {
-  @Input() currentUserName: string = '';
-  @Input() userEmail: string = 'fred.beck@email.com'; 
+  @Input() user: User | null = null; 
   @Output() close = new EventEmitter<void>();
-
+  
   isEditing = false;
+  fullName: string = ''; 
 
-  closeProfile() {
-    this.close.emit();
-    this.isEditing = false;
-  }
+  constructor(private userService: UserService) {}
 
   editProfile() {
+    if (this.user) {
+      this.fullName = `${this.user.firstName} ${this.user.lastName}`.trim(); 
+    }
     this.isEditing = true;
   }
 
@@ -30,6 +32,18 @@ export class ProfileView {
   }
 
   saveProfile() {
+    if (this.user && this.fullName.trim()) {
+      const parts = this.fullName.trim().split(' '); 
+      this.user.firstName = parts[0]; 
+      this.user.lastName = parts.length > 1 ? parts.slice(1).join(' ') : ''; 
+      
+      this.userService.updateUser(this.user); 
+    }
+    this.isEditing = false;
+  }
+
+  closeProfile() {
+    this.close.emit();
     this.isEditing = false;
   }
 }

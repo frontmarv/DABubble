@@ -7,6 +7,8 @@ import { MessageList } from '../../components/message-list/message-list';
 import { MessageComposer } from '../../components/message-composer/message-composer';
 import { ThreadPanel } from '../../components/thread-panel/thread-panel';
 import { ProfileView } from '../../components/profile-view/profile-view'; 
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user.class'; 
 
 @Component({
   selector: 'app-chat-room',
@@ -18,22 +20,27 @@ import { ProfileView } from '../../components/profile-view/profile-view';
     MessageComposer, 
     MessageList, 
     FormsModule,
-    ProfileView 
+    ProfileView,
   ],
   templateUrl: './chat-room.html',
   styleUrl: './chat-room.scss',
 })
 export class ChatRoom {
-  
   isSidebarOpen = true;
   isProfileMenuOpen = false;
   showUserProfile = false;
   
-  currentUserName = 'Frederik Beck';
+  currentUser: User | null = null;
 
   constructor(
-      private router: Router, 
-  ) {}
+    private router: Router,
+    private userService: UserService 
+  ) {
+
+    this.userService.currentUser$.subscribe((user: User | null) => {
+      this.currentUser = user;
+    });
+  }
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;

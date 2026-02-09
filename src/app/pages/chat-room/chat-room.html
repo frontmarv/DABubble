@@ -11,8 +11,8 @@
         </div>
 
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
-            <span class="user-name">{{ currentUserName }}</span>
-            <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar" />
+            <span class="user-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</span>
+            <img [src]="'/shared/profile-pics/' + (currentUser?.avatar || 'profile-pics.svg')" alt="Profilbild" class="avatar" />
             <span class="status status--online" aria-hidden="true"></span>
             <span class="dropdown-arrow" aria-hidden="true"></span>
 
@@ -46,7 +46,7 @@
 
     <app-profile-view 
         *ngIf="showUserProfile" 
-        [currentUserName]="currentUserName" 
+        [user]="currentUser" 
         (close)="closeProfile()">
     </app-profile-view>
 </div>
