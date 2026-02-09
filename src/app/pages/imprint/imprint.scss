@@ -11,16 +11,18 @@
     top: 25px;
     left: 16px;
     display: flex;
+    align-items: center;
     flex-direction: row;
     gap: 15px;
 
     >h2 {
+        font-size: 32px;
         font-weight: 800;
         color: var(--color-black);
     }
 
     >img {
-        width: 50px;
+        width: 70px;
         height: auto;
     }
 }
