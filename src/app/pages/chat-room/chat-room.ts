@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { Router } from '@angular/router';
@@ -7,8 +7,9 @@ import { MessageList } from '../../components/message-list/message-list';
 import { MessageComposer } from '../../components/message-composer/message-composer';
 import { ThreadPanel } from '../../components/thread-panel/thread-panel';
 import { ProfileView } from '../../components/profile-view/profile-view'; 
-import { UserService } from '../../services/user.service';
 import { User } from '../../models/user.class'; 
+import { AuthService } from '../../services/auth.service';
+import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-chat-room',
@@ -26,20 +27,18 @@ import { User } from '../../models/user.class';
   styleUrl: './chat-room.scss',
 })
 export class ChatRoom {
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  firebaseService = inject(FirebaseService);
+
   isSidebarOpen = true;
   isProfileMenuOpen = false;
   showUserProfile = false;
   
   currentUser: User | null = null;
 
-  constructor(
-    private router: Router,
-    private userService: UserService 
-  ) {
-
-    this.userService.currentUser$.subscribe((user: User | null) => {
-      this.currentUser = user;
-    });
+  constructor() {
+    this.currentUser = this.firebaseService.currentUser;
   }
 
   toggleSidebar() {
@@ -50,9 +49,8 @@ export class ChatRoom {
     this.isProfileMenuOpen = !this.isProfileMenuOpen;
   }
 
-  logOut() {
-    console.log("User wird ausgeloggt...");
-    this.router.navigate(['/login']);
+  async logOut() {
+    await this.authService.logout();
   }
 
   openProfile() {
