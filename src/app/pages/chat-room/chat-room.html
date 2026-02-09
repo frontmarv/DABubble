@@ -1,22 +1,22 @@
 <div class="main-container">
     <header>
-        <div class="backdrop" [class.show]="isProfileMenuOpen" (click)="isProfileMenuOpen=false"></div>
+        <div class="backdrop" [class.show]="isProfileMenuOpen" (click)="isProfileMenuOpen=false"></div>       
         <div class="header-left">
             <img src="/shared/dabubble-logo.svg" alt="DABubble Logo" class="logo" />
             <h2 class="logo-text">DABubble</h2>
-        </div>
+        </div>        
         <div class="search-bar">
             <input type="text" placeholder="Devspace durchsuchen" />
             <img src="/main-page/search.svg" alt="Suche" />
         </div>
 
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
-            <span class="user-name">Frederik Beck</span>
+            <span class="user-name">{{ currentUserName }}</span>
             <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar" />
             <span class="status status--online" aria-hidden="true"></span>
             <span class="dropdown-arrow" aria-hidden="true"></span>
 
-            <div class="profile-menu">
+            <div class="profile-menu" (click)="$event.stopPropagation()">
                 <div (click)="openProfile()">Profil</div>
                 <div class="hover" (click)="logOut()">Log out</div>
             </div>
@@ -25,8 +25,7 @@
     <div class="layout" [class.layout--sidebar-closed]="!isSidebarOpen">
         <div class="sidebar-wrapper" [class.sidebar-wrapper--closed]="!isSidebarOpen">
             <app-sidebar></app-sidebar>
-            <button class="sidebar-toggle" type="button" (click)="toggleSidebar()" [attr.aria-expanded]="isSidebarOpen"
-                aria-label="Workspace-Menü öffnen/schließen">
+            <button class="sidebar-toggle" type="button" (click)="toggleSidebar()" [attr.aria-expanded]="isSidebarOpen">
                 <span class="sidebar-toggle__text">
                     Workspace-Menü {{ isSidebarOpen ? 'schließen' : 'öffnen' }}
                 </span>
@@ -45,73 +44,9 @@
         <app-thread-panel></app-thread-panel>
     </div>
 
-
-
-    
-
-    <div class="profile-backdrop" *ngIf="showUserProfile" (click)="closeProfile()">
-        <div class="profile-card" (click)="$event.stopPropagation()">
-            
-            <ng-container *ngIf="!isEditing">
-                <header class="profile-header">
-                    <h3>Profil</h3>
-                    <div class="close-icon" (click)="closeProfile()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </div>
-                </header>
-        
-                <div class="profile-avatar">
-                    <img src="/shared/profile-pics/profile-pic1.svg" alt="Profile">
-                </div>
-        
-                <div class="profile-name-section">
-                    <div class="name-row">
-                        <h2>{{ currentUserName }}</h2>
-                        <span class="edit-btn" (click)="editProfile()">Bearbeiten</span>
-                    </div>
-                    
-                    <div class="status-row">
-                        <span class="status-indicator online"></span>
-                        <span class="status-text online">Aktiv</span>
-                    </div>
-                </div>
-        
-                <div class="profile-email-section">
-                    <div class="email-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
-                        <span>E-Mail-Adresse</span>
-                    </div>
-                    <a href="mailto:fred.beck@email.com" class="email-link">fred.beck@email.com</a>
-                </div>
-            </ng-container>
-    
-    
-            <ng-container *ngIf="isEditing">
-                <header class="profile-header">
-                    <h3>Dein Profil bearbeiten</h3>
-                    <div class="close-icon" (click)="closeProfile()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </div>
-                </header>
-    
-                <div class="profile-avatar">
-                    <img src="/shared/profile-pics/profile-pic1.svg" alt="Profile">
-                </div>
-    
-                <div class="edit-form">
-                    <div class="input-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
-                        <span>Vollständiger Name</span>
-                    </div>
-                    <input type="text" [(ngModel)]="currentUserName" class="profile-input" placeholder="Name eingeben">
-                </div>
-    
-                <div class="edit-actions">
-                    <button class="btn-cancel" (click)="cancelEdit()">Abbrechen</button>
-                    <button class="btn-save" (click)="saveProfile()">Speichern</button>
-                </div>
-            </ng-container>
-    
-        </div>
-    </div>
+    <app-profile-view 
+        *ngIf="showUserProfile" 
+        [currentUserName]="currentUserName" 
+        (close)="closeProfile()">
+    </app-profile-view>
 </div>
