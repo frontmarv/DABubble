@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Sidebar } from '../../components/sidebar/sidebar';
 import { MessageList } from '../../components/message-list/message-list';
 import { MessageComposer } from '../../components/message-composer/message-composer';
@@ -16,18 +15,17 @@ import { FirebaseService } from '../../services/firebase.service';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     Sidebar,
     ThreadPanel,
     MessageComposer,
     MessageList,
-    FormsModule,
     ProfileView,
   ],
   templateUrl: './chat-room.html',
-  styleUrl: './chat-room.scss',
+  styleUrls: ['./chat-room.scss'],
 })
 export class ChatRoom {
-  private router = inject(Router);
   private authService = inject(AuthService);
   firebaseService = inject(FirebaseService);
 
@@ -66,7 +64,10 @@ export class ChatRoom {
     const fallback = '/shared/profile-pics/profile-pic1.svg';
     if (!avatar) return fallback;
     if (avatar.startsWith('http')) return avatar;
-    const file = avatar.replace(/^\/?shared\/profile-pics\//, '').replace(/^profile-pics\//, '');
+
+    const file = avatar
+      .replace(/^\/?shared\/profile-pics\//, '')
+      .replace(/^profile-pics\//, '');
 
     return `/shared/profile-pics/${file}`;
   }
