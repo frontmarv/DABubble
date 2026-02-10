@@ -29,6 +29,7 @@ body {
     --color-purple1: #444df2;
     --color-purple2: #797ef3;
     --color-purple3: #535af1;
+    --color-menu-color: #42526E;
     --color-online-green: #92c83e;
     --color-rosa-error: #ed1e79;
 }
@@ -108,6 +109,15 @@ a {
         color: var(--color-text-grey);
         pointer-events: none;
         background-color: var(--color-white);
+    }
+}
+
+@media screen and (max-width: 1024px) {
+
+    .btn--primary,
+    .btn--secondary {
+        padding: 12px 25px;
+        border-radius: 25px;
     }
 }
 
