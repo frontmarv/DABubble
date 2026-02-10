@@ -29,7 +29,7 @@
     }
 }
 
-.reaction-bar-other{
+.reaction-bar-other {
     @extend .reaction-bar;
     left: unset !important;
     right: 20px;
@@ -69,7 +69,7 @@
 
 .answer-container {
     display: flex;
-    gap: 20px;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -141,7 +141,7 @@
     }
 }
 
-.reaction-bar{
+.reaction-bar {
     padding: 3px 15px 3px 20px;
     opacity: 0;
     display: flex;
@@ -169,4 +169,33 @@
         background-color: var(--color-background);
         scale: 1.1;
     }
+}
+
+.thread-answer {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.reactions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-white);
+    height: 34px;
+    padding: 5px 10px 5px 10px;
+    width: fit-content;
+    border: 1px solid var(--color-light-purple-lines);
+    border-radius: 30px;
+    gap: 10px;
+}
+
+.fast-emoji {
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
 }

@@ -122,7 +122,7 @@ header {
       gap: 10px;
       text-align: center;
 
-      > div {
+      >div {
         font-size: 28px;
         font-weight: 600;
         color: var(--color-black);
@@ -130,7 +130,7 @@ header {
         transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
       }
 
-      > div:hover {
+      >div:hover {
         background-color: var(--color-background);
         color: var(--color-purple1);
         font-weight: 700;
@@ -241,4 +241,243 @@ app-message-list {
   flex: 1;
   overflow-y: auto;
   scrollbar-width: thin;
+  padding-top: 21px;
+}
+
+
+
+
+.profile-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: block; 
+  
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.profile-card {
+  position: absolute;
+  top: 80px; 
+  right: 230px;
+  background-color: var(--color-white);
+  width: 100%;
+  max-width: 450px;
+  padding: 20px;
+  border-radius: 30px 0 30px 30px; 
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  transform-origin: top right;
+  animation: expandMenu 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-black);
+  }
+
+  .close-icon {
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.1s;
+
+      &:hover {
+          background-color: var(--color-background);
+      }
+  }
+}
+
+.profile-avatar {
+  display: flex;
+  justify-content: center;
+  
+  img {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      object-fit: cover;
+      background-color: var(--color-background); 
+  }
+}
+
+.profile-name-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  .name-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h2 {
+          margin: 0;
+          font-size: 32px;
+          font-weight: 700;
+          color: var(--color-black);
+      }
+
+      .edit-btn {
+          color: var(--color-purple1);
+          font-size: 18px;
+          font-weight: 600;
+          cursor: pointer;
+
+          &:hover {
+              text-decoration: underline;
+          }
+      }
+  }
+
+  .status-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      .status-indicator {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          border: 2px solid var(--color-white);
+
+          &.online {
+              background-color: var(--color-online-green);
+          }
+      }
+
+      .status-text {
+          font-size: 20px;
+          
+          &.online {
+              color: var(--color-online-green);
+          }
+      }
+  }
+}
+
+.profile-email-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+
+  .email-label {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--color-black);
+
+      svg {
+          stroke: var(--color-black);
+      }
+  }
+
+  .email-link {
+      margin-left: 44px; 
+      font-size: 18px;
+      color: var(--color-purple1); 
+      text-decoration: none;
+
+      &:hover {
+          text-decoration: underline;
+      }
+  }
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+
+  .input-label {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--color-black);
+  }
+
+  .profile-input {
+      margin-top: 10px;
+      width: 100%;
+      padding: 18px 20px;
+      border-radius: 100px;
+      border: 1px solid var(--color-light-purple-lines); 
+      font-size: 18px;
+      color: var(--color-black);
+      outline: none;
+      transition: border-color 0.2s;
+
+      &:focus {
+          border-color: var(--color-purple1);
+      }
+      
+      &::placeholder {
+          color: var(--color-text-grey);
+      }
+  }
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 20px;
+
+  button {
+      font-size: 18px;
+      font-weight: 700;
+      padding: 12px 32px;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: transform 0.1s, background-color 0.2s;
+
+      &:hover {
+          transform: scale(1.05);
+      }
+  }
+
+  .btn-cancel {
+      background-color: var(--color-white);
+      color: var(--color-purple1);
+      border: 1px solid var(--color-purple2);
+
+      &:hover {
+          color: var(--color-white);
+          background-color: var(--color-purple1);
+      }
+  }
+
+  .btn-save {
+      background-color: var(--color-purple1);
+      color: var(--color-white);
+      border: none;
+
+      &:hover {
+          background-color: var(--color-purple2);
+      }
+  }
 }

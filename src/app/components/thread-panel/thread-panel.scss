@@ -1,4 +1,4 @@
-@import './../message-list/message-list.scss';
+@import "./../message-list/message-list.scss";
 
 .thread {
     min-width: 400px;
@@ -13,10 +13,12 @@
     transition: all var(--transition-slow) ease-in-out;
 }
 
-.thread--closed{
-    display: none;
+.thread--closed {
+    min-width: 0px;
+    width: 0px;
+    overflow: hidden;
+    transition: all var(--transition-slow) ease-in-out;
 }
-
 
 header {
     display: flex;
@@ -34,7 +36,7 @@ header {
     align-items: center;
     gap: 5px;
 
-    >span {
+    > span {
         color: var(--color-purple2);
     }
 }
@@ -60,7 +62,7 @@ h4 {
     padding: 1rem 33px;
     color: var(--color-light-purple-lines);
 
-    >span {
+    > span {
         text-wrap-mode: nowrap;
     }
 }

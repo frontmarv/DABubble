@@ -1,42 +1,3 @@
-<div class="message-field-other">
-    <span class="avatar">
-        <img src="/shared/profile-pics/profile-pic4.svg" alt="Profilbild" class="avatar__img" />
-    </span>
-    <div class="message-info-container">
-        <div class="message-info">
-            <p class="text--regular bold message-name">Noah Braun</p>
-            <p class="time">14:25</p>
-        </div>
-        <div class="message text--regular">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi aperiam
-            porro nostrum asperiores quisquam recusandae eum doloribus facere alias ducimus! Tenetur iure atque impedit,
-            excepturi illo incidunt. Quasi, nesciunt expedita!</div>
-        <div class="answer-container">
-            <p class="answers">2 Antworten</p>
-            <p class="time">Letzte Antwort 14:56</p>
-        </div>
-    </div>
-    <div class="reaction-bar-other">
-        <div class="reaction-emoji">
-            <img src="/chat-input/check-emoji.svg" alt="">
-        </div>
-        <div class="reaction-emoji">
-            <img src="/chat-input/thumb-emoji.svg" alt="">
-        </div>
-        <button class="reaction-emoji icon-btn" type="button" aria-label="Sentiment">
-            <img class="icon-btn__img" src="/chat-input/add-reaction.svg" alt="" />
-        </button>
-        <button class="icon-btn" type="button" aria-label="Sentiment">
-            <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
-        </button>
-    </div>
-</div>
-
-<div class="time-seperator">
-    <div class="line">
-        <div class="day">Heute</div>
-    </div>
-</div>
-
 <div class="message-field-user">
     <span class="avatar">
         <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar__img" />
@@ -50,8 +11,16 @@
             porro nostrum asperiores quisquam recusandae eum doloribus facere alias ducimus! Tenetur iure atque impedit,
             excepturi illo incidunt. Quasi, nesciunt expedita!</div>
         <div class="answer-container">
-            <p class="answers">2 Antworten</p>
-            <p class="time">Letzte Antwort 14:56</p>
+            <div class="thread-answer">
+                <p (click)="openThread()" class="answers">2 Antworten</p>
+                <p class="time">Letzte Antwort 14:56</p>
+            </div>
+            <div class="reactions">
+                <div class="fast-emoji">
+                    <img src="/chat-input/check-emoji.svg" alt="">
+                    <div class="emoji-qantity">1</div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="reaction-bar">
@@ -73,27 +42,49 @@
     </div>
 </div>
 
-<!-- <div class="time-seperator">
+<div class="time-seperator">
     <div class="line">
         <div class="day">Heute</div>
     </div>
 </div>
 
-<div class="message-field-user">
+<div class="message-field-other">
     <span class="avatar">
-        <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar__img" />
+        <img src="/shared/profile-pics/profile-pic4.svg" alt="Profilbild" class="avatar__img" />
     </span>
     <div class="message-info-container">
         <div class="message-info">
-            <p class="text--regular bold message-name">Frederick Beck</p>
+            <p class="text--regular bold message-name">Noah Braun</p>
             <p class="time">14:25</p>
         </div>
         <div class="message text--regular">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi aperiam
             porro nostrum asperiores quisquam recusandae eum doloribus facere alias ducimus! Tenetur iure atque impedit,
             excepturi illo incidunt. Quasi, nesciunt expedita!</div>
         <div class="answer-container">
-            <p class="answers">2 Antworten</p>
-            <p class="time">Letzte Antwort 14:56</p>
+            <div class="thread-answer">
+                <p (click)="openThread()" class="answers">2 Antworten</p>
+                <p class="time">Letzte Antwort 14:56</p>
+            </div>
+            <div class="reactions">
+                <div class="fast-emoji">
+                    <img src="/chat-input/check-emoji.svg" alt="">
+                    <div class="emoji-qantity">1</div>
+                </div>
+            </div>
         </div>
     </div>
-</div> -->
+    <div class="reaction-bar-other">
+        <div class="reaction-emoji">
+            <img src="/chat-input/check-emoji.svg" alt="">
+        </div>
+        <div class="reaction-emoji">
+            <img src="/chat-input/thumb-emoji.svg" alt="">
+        </div>
+        <button class="reaction-emoji icon-btn" type="button" aria-label="Sentiment">
+            <img class="icon-btn__img" src="/chat-input/add-reaction.svg" alt="" />
+        </button>
+        <button class="icon-btn" type="button" aria-label="Sentiment">
+            <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
+        </button>
+    </div>
+</div>
