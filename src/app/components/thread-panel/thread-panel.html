@@ -1,11 +1,11 @@
-<aside [class]="isThreadVisible ? 'thread' : 'thread thread--closed'">
+<aside [class]="this.threadService.isThreadVisible() ? 'thread' : 'thread thread--closed'">
     <header>
         <div class="header__content">
             <h4>Thread</h4>
             <span>#</span>
             <span>Entwicklerteam</span>
         </div>
-        <div class="close-btn" (click)="toggleThreadVisiblity()">
+        <div class="close-btn" (click)="this.threadService.setHidden()">
             <img src="/main-page/close-button.svg" alt="">
         </div>
     </header>
@@ -77,10 +77,6 @@
                     porro nostrum asperiores quisquam recusandae eum doloribus facere alias ducimus! Tenetur iure atque
                     impedit,
                     excepturi illo incidunt. Quasi, nesciunt expedita!</div>
-                <div class="answer-container">
-                    <p class="answers">2 Antworten</p>
-                    <p class="time">Letzte Antwort 14:56</p>
-                </div>
             </div>
             <div class="reaction-bar">
                 <button class="reaction-emoji icon-btn" type="button" aria-label="Sentiment">

@@ -4,19 +4,19 @@ import { Injectable, signal } from '@angular/core';
     providedIn: 'root' 
 })
 export class ThreadStateService {
-    private _isThreadVisible = signal(true);
-    isThreadVisible = this._isThreadVisible.asReadonly();
+    isThreadVisible = signal(true);
+    // isThreadVisible = this._isThreadVisible.asReadonly();
 
     toggle() {
-        this._isThreadVisible.update(visible => !visible);
+        this.isThreadVisible.update(visible => !visible);
     }
 
     setHidden() {
-        this._isThreadVisible.set(false);
+        this.isThreadVisible.set(false);
     }
 
     setVisible() {
-        this._isThreadVisible.set(true);
+        this.isThreadVisible.set(true);
     }
 
     // How to use this service in other components:

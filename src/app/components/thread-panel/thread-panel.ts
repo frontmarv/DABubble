@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MessageComposer } from '../message-composer/message-composer';
 import { CommonModule } from '@angular/common';
+import { ThreadStateService } from '../../services/thread-state.service';
 
 
 @Component({
@@ -11,6 +12,8 @@ import { CommonModule } from '@angular/common';
 })
 export class ThreadPanel {
   isThreadVisible = true;
+
+  threadService = inject(ThreadStateService)
 
   toggleThreadVisiblity() {
     this.isThreadVisible = !this.isThreadVisible;
