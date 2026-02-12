@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink,],
   templateUrl: './signup.html',
   styleUrls: ['../login/login.scss', './signup.scss']
 })
@@ -34,32 +34,52 @@ export class SignupComponent {
     '/shared/profile-pics/profile-pic5.svg',
     '/shared/profile-pics/profile-pic6.svg'
   ];
+
   selectedAvatar: string = '/shared/profile-pics/profile-pic1.svg';
 
-  nextStep() {
-    this.errorMessage = '';
-
+  validateName() {
     if (!this.fullName.trim()) {
-      this.errorMessage = 'Bitte gib deinen Namen ein.';
+      this.errorMessage = 'Bitte Namen eingeben.';
       return;
     }
+    if (this.fullName.length > 30) {
+      this.errorMessage = 'Name darf max. 30 Zeichen enthalten';
+      return;
+    }
+    else { return true }
+  }
 
+  validateEmail(event: FocusEvent) {
     if (!this.email.trim() || !this.isValidEmail(this.email)) {
-      this.errorMessage = 'Bitte gib eine gültige E-Mail-Adresse ein.';
+      this.errorMessage = 'Bitte gültige E-Mail-Adresse eingeben.';
       return;
     }
+    if (this.email.length > 50) {
+      this.errorMessage = 'E-mail-Adresse darf max. 50 Zeichen enthalten';
+      return;
+    }
+    else { return true }
+  }
 
+  validatePassword() {
     if (!this.password || this.password.length < 6) {
-      this.errorMessage = 'Das Passwort muss mindestens 6 Zeichen lang sein.';
+      this.errorMessage = 'Das Passwort muss min. 6 Zeichen enthalten.';
       return;
     }
-
-    if (!this.privacyPolicy) {
-      this.errorMessage = 'Bitte akzeptiere die Datenschutzerklärung.';
-      return;
+    else {
+      return true
     }
+  }
 
-    this.signupStep = 2;
+  toggleNextButton(){}
+
+  nextStep() {
+    if (this.validateName()) {
+      this.signupStep = 2;
+      this.errorMessage = '';
+    } else {
+      this.errorMessage = 'Bitte alle Felder korrekt ausfüllen.';
+    }
   }
 
   prevStep() {
@@ -90,7 +110,7 @@ export class SignupComponent {
     this.isLoading = false;
 
     if (result.success) {
-      this.success.emit(); 
+      this.success.emit();
     } else {
       this.errorMessage = result.error || 'Registrierung fehlgeschlagen.';
     }

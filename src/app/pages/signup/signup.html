@@ -23,7 +23,7 @@
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
                 </svg>
             </div>
-            <input type="text" [(ngModel)]="fullName" name="fullName" placeholder="Name und Nachname" class="inputfield--login full-width">
+            <input type="text" [(ngModel)]="fullName" name="fullName" placeholder="Name und Nachname" class="inputfield--login full-width" (blur)="validateName()">
         </div>
 
         <div class="input-group">
@@ -32,7 +32,7 @@
                     <rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                 </svg>
             </div>
-            <input type="email" [(ngModel)]="email" name="email" placeholder="beispielname@email.com" class="inputfield--login full-width">
+            <input type="email" [(ngModel)]="email" name="email" placeholder="beispielname@email.com" class="inputfield--login full-width" (blur)="validateEmail($event)">
         </div>
 
         <div class="input-group">
@@ -41,7 +41,7 @@
                     <rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
             </div>
-            <input type="password" [(ngModel)]="password" name="password" placeholder="Passwort" class="inputfield--login full-width">
+            <input type="password" [(ngModel)]="password" name="password" placeholder="Passwort" class="inputfield--login full-width" (blur)="validatePassword()">
         </div>
 
         <div class="privacy-policy">
@@ -50,7 +50,7 @@
         </div>
 
         <div class="action-buttons right-aligned">
-            <button type="button" class="btn--primary large-btn" (click)="nextStep()">Weiter</button>
+            <button type="button" class="btn--primary large-btn" (click)="nextStep()" [disabled]=>Weiter</button>
         </div>
     </form>
 </ng-container>
