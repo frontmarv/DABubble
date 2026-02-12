@@ -357,3 +357,21 @@ app-message-composer {
     justify-content: flex-end;
     margin-top: 10px;
 }
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 0px;
+    opacity: 1;
+    transition: var(--transition-fast);
+    min-height: 30px;
+    >span {
+        color: var(--color-rosa-error);
+    }
+}
+
+.invisible {
+    opacity: 0;
+    min-height: 30px;
+}

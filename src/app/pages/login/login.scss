@@ -241,7 +241,7 @@
 @media screen and (max-width: 1024px) {
   .intro-header {
       padding: 20px 40px;
-      justify-content: center;
+      justify-content: flex-start;
   }
 
   .login-card {
@@ -280,9 +280,5 @@
 
   main {
       padding: 0px 1rem;
-  }
-
-  .login-footer {
-      display: none;
   }
 }

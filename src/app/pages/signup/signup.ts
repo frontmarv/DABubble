@@ -37,9 +37,10 @@ export class SignupComponent {
 
   selectedAvatar: string = '/shared/profile-pics/profile-pic1.svg';
 
-  validateName() {
+  validateName(event: FocusEvent) {
+    this.errorMessage = '';
     if (!this.fullName.trim()) {
-      this.errorMessage = 'Bitte Namen eingeben.';
+      this.errorMessage = 'Bitte Name eingeben';
       return;
     }
     if (this.fullName.length > 30) {
@@ -50,8 +51,9 @@ export class SignupComponent {
   }
 
   validateEmail(event: FocusEvent) {
+    this.errorMessage = '';
     if (!this.email.trim() || !this.isValidEmail(this.email)) {
-      this.errorMessage = 'Bitte gültige E-Mail-Adresse eingeben.';
+      this.errorMessage = 'Bitte gültige E-Mail-Adresse eingeben';
       return;
     }
     if (this.email.length > 50) {
@@ -61,9 +63,10 @@ export class SignupComponent {
     else { return true }
   }
 
-  validatePassword() {
+  validatePassword(event: FocusEvent) {
+    this.errorMessage = '';
     if (!this.password || this.password.length < 6) {
-      this.errorMessage = 'Das Passwort muss min. 6 Zeichen enthalten.';
+      this.errorMessage = 'Passwort muss min. 6 Zeichen enthalten';
       return;
     }
     else {
@@ -71,14 +74,16 @@ export class SignupComponent {
     }
   }
 
-  toggleNextButton(){}
+  FormIsValid() {
+    return this.validateName(null as any) && this.validateEmail(null as any) && this.validatePassword(null as any) && this.privacyPolicy;
+  }
 
   nextStep() {
-    if (this.validateName()) {
+    if (this.FormIsValid()) {
       this.signupStep = 2;
       this.errorMessage = '';
     } else {
-      this.errorMessage = 'Bitte alle Felder korrekt ausfüllen.';
+      this.errorMessage = 'Bitte alle Felder korrekt ausfüllen';
     }
   }
 
