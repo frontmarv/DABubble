@@ -2,13 +2,14 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Sidebar } from '../../components/sidebar/sidebar';
-import { MessageList } from '../../components/message-list/message-list';
-import { MessageComposer } from '../../components/message-composer/message-composer';
+import { MessageList } from '../../components/chat/message-list/message-list';
+import { MessageComposer } from '../../components/chat/message-composer/message-composer';
 import { ThreadPanel } from '../../components/thread-panel/thread-panel';
 import { ProfileView } from '../../components/profile-view/profile-view';
 import { User } from '../../models/user.class';
 import { AuthService } from '../../services/auth.service';
 import { FirebaseService } from '../../services/firebase.service';
+import { Chat } from '../../components/chat/chat';
 
 @Component({
   selector: 'app-chat-room',
@@ -18,9 +19,8 @@ import { FirebaseService } from '../../services/firebase.service';
     FormsModule,
     Sidebar,
     ThreadPanel,
-    MessageComposer,
-    MessageList,
     ProfileView,
+    Chat
   ],
   templateUrl: './chat-room.html',
   styleUrls: ['./chat-room.scss'],

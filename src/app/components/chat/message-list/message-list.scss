@@ -191,6 +191,7 @@
 }
 
 .fast-emoji {
+    position: relative;
     height: 40px;
     width: 40px;
     display: flex;
@@ -198,4 +199,28 @@
     align-items: center;
     gap: 10px;
     cursor: pointer;
+    &:hover {
+        .userReaction {
+            opacity: 1;
+        }
+    }
+}
+
+.userReaction{
+    position: absolute;
+    opacity: 0;
+    background-color: var(--color-purple1);
+    white-space: nowrap;
+    color: var(--color-white);
+    border-radius: 30px;
+    border-bottom-left-radius: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 15px 10px 15px 10px;
+    gap: 5px;
+    bottom: 37px;
+    left: 50%;
 }

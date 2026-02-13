@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
+import { Chat } from '../chat/chat';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,6 +13,7 @@ import { Channel } from '../../models/channel.class';
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
+  chat = inject(Chat)
   channelsOpen = false;
   dmOpen = true;
   isCreateChannelOpen = false;

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ThreadStateService } from '../../services/thread-state.service';
+import { ThreadStateService } from '../../../services/thread-state.service';
 
 @Component({
   selector: 'app-message-list',
@@ -15,6 +15,7 @@ export class MessageList {
     this.threadService.setVisible();
   }
 
+  
 
 }
 
