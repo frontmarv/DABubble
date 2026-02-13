@@ -7,10 +7,11 @@ import {
   query,
   doc,
   setDoc,
+  getDoc,
+  Unsubscribe
 } from '@angular/fire/firestore';
 import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
-import { Unsubscribe } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -109,4 +110,16 @@ export class FirebaseService {
       }
     });
   }
+
+  async getSingleUser(uid: string): Promise<User | null> {
+    const docRef = doc(this.firestore, 'users', uid);
+    const snap = await getDoc(docRef);
+
+    if (snap.exists()) {
+      return new User(snap.data());
+    }
+
+    return null;
+  }
+
 }
