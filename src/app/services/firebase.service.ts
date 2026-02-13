@@ -25,11 +25,18 @@ export class FirebaseService {
   currentChannelName: string = 'Allgemein';
   selectedChannelId: string = '';
 
+  chats: any[] = [];
+
+  currentChatName: string = 'Allgemein';
+  selectedChatId: string = '';
+
   unsubUser: Unsubscribe | null = null;
   unsubChannels: Unsubscribe | null = null;
+  unsubChats: Unsubscribe | null = null;
 
   constructor() {
     this.unsubChannels = this.subChannels();
+    this.unsubChats = this.subChats();
   }
 
   ngOnDestroy() {
@@ -46,6 +53,15 @@ export class FirebaseService {
     return this.unsubChannels;
   }
 
+  subChats(): Unsubscribe {
+    const q = query(collection(this.firestore, 'chats'));
+    this.unsubChats?.();
+    this.unsubChats = onSnapshot(q, snap => {
+      this.chats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    });
+    return this.unsubChats;
+  }
+
   setSelectedChannel(id: string) {
     this.selectedChannelId = id;
 
@@ -53,6 +69,14 @@ export class FirebaseService {
     if (channel) {
       this.currentChannelName = channel.name;
     }
+  }
+
+  isChatAvailable(id: string) {
+    const chat = this.chats.find((c) => c.id === id);
+    if (chat) {
+      return true
+    }
+    return false
   }
 
   subUser(uid: string): Unsubscribe {
