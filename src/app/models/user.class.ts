@@ -12,7 +12,7 @@ export class User {
         this.lastName = obj ? obj.lastName : '';
         this.email = obj ? obj.email : '';
         this.birthDate = obj ? obj.birthDate : 0;
-        this.avatar = obj && obj.avatar ? obj.avatar : 'profile-pic1.svg'; 
+        this.avatar = obj && obj.avatar ? obj.avatar : 'unkown-user.svg'; 
     }
 
     public toJSON() {

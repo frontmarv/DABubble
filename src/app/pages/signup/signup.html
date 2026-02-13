@@ -60,14 +60,15 @@
         </div>
 
         <div class="privacy-policy">
-            <input type="checkbox" id="privacy" [(ngModel)]="privacyPolicy" name="privacyPolicy"
+            <input type="checkbox" id="privacy" [(ngModel)]="isPrivacyPolicyAccepted" name="privacyPolicy"
                 class="checkbox-custom">
             <label for="privacy" class="text--small">Ich stimme der <a routerLink="/privacy-policy"
                     class="link-blue">Datenschutzerklärung</a> zu.</label>
         </div>
 
         <div class="action-buttons right-aligned">
-            <button type="sumbit" class="btn--primary large-btn" (click)="nextStep()" [disabled]="!FormIsValid()">Weiter</button>
+            <button type="sumbit" class="btn--primary large-btn" (click)="nextStep()"
+                [disabled]="!FormIsValid()">Weiter</button>
         </div>
     </form>
 </ng-container>
@@ -92,23 +93,21 @@
             </svg>
             <span>{{ errorMessage }}</span>
         </div>
+    </header>
+    <div class="avatar-selection">
+        <div class="big-avatar-wrapper">
+            <img [src]="selectedAvatar" alt="Selected Avatar" class="big-avatar">
+        </div>
+        <h2 class="user-fullname">{{ fullName || 'Dein Name' }}</h2>
+        <p class="text--regular">Aus der Liste wählen</p>
 
-        <div class="avatar-selection">
-            <div class="big-avatar-wrapper">
-                <img [src]="selectedAvatar" alt="Selected Avatar" class="big-avatar">
-            </div>
-            <h2 class="user-fullname">{{ fullName || 'Dein Name' }}</h2>
-            <p class="text--regular">Aus der Liste wählen</p>
-
-            <div class="avatar-list">
-                <div *ngFor="let avatar of avatars" class="avatar-option" (click)="selectAvatar(avatar)"
-                    [class.selected]="selectedAvatar === avatar">
-                    <img [src]="avatar" alt="Avatar Option">
-                </div>
+        <div class="avatar-list">
+            <div *ngFor="let avatar of avatars" class="avatar-option" (click)="selectAvatar(avatar)"
+                [class.selected]="selectedAvatar === avatar">
+                <img [src]="avatar" alt="Avatar Option">
             </div>
         </div>
-    </header>
-
+    </div>
     <div class="action-buttons right-aligned avatar-actions">
         <button type="button" class="btn--primary large-btn" (click)="finishSignup()" [disabled]="isLoading">
             <span *ngIf="!isLoading">Weiter</span>

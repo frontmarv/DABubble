@@ -24,18 +24,23 @@ export class SignupComponent {
   fullName: string = '';
   email: string = '';
   password: string = '';
-  privacyPolicy = false;
+  isPrivacyPolicyAccepted = false;
+
+  isNameValid: boolean = false;
+  isEmailValid: boolean = false;
+  isPasswordValid: boolean = false;
 
   avatars = [
+    '/login/unkown-user.svg',
     '/shared/profile-pics/profile-pic1.svg',
     '/shared/profile-pics/profile-pic2.svg',
     '/shared/profile-pics/profile-pic3.svg',
     '/shared/profile-pics/profile-pic4.svg',
     '/shared/profile-pics/profile-pic5.svg',
-    '/shared/profile-pics/profile-pic6.svg'
+    '/shared/profile-pics/profile-pic6.svg'    
   ];
 
-  selectedAvatar: string = '/shared/profile-pics/profile-pic1.svg';
+  selectedAvatar: string = '/login/unkown-user.svg';
 
   validateName(event: FocusEvent) {
     this.errorMessage = '';
@@ -47,7 +52,10 @@ export class SignupComponent {
       this.errorMessage = 'Name darf max. 30 Zeichen enthalten';
       return;
     }
-    else { return true }
+    else {
+      this.isNameValid = true;
+      return true
+    }
   }
 
   validateEmail(event: FocusEvent) {
@@ -60,7 +68,10 @@ export class SignupComponent {
       this.errorMessage = 'E-mail-Adresse darf max. 50 Zeichen enthalten';
       return;
     }
-    else { return true }
+    else {
+      this.isEmailValid = true;
+      return true
+    }
   }
 
   validatePassword(event: FocusEvent) {
@@ -70,12 +81,13 @@ export class SignupComponent {
       return;
     }
     else {
+      this.isPasswordValid = true;
       return true
     }
   }
 
   FormIsValid() {
-    return this.validateName(null as any) && this.validateEmail(null as any) && this.validatePassword(null as any) && this.privacyPolicy;
+    return this.isNameValid && this.isEmailValid && this.isPasswordValid && this.isPrivacyPolicyAccepted;
   }
 
   nextStep() {
@@ -122,7 +134,7 @@ export class SignupComponent {
   }
 
   private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@.]+@[^\s@.]+(\.[^\s@.]+)+$/;
     return emailRegex.test(email);
   }
 }

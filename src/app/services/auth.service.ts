@@ -30,7 +30,7 @@ export class AuthService {
     try {
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
       const uid = userCredential.user.uid;
-      const cleanAvatar = avatar && avatar.trim() ? avatar.trim() : 'profile-pic1.svg';
+      const cleanAvatar = avatar && avatar.trim() ? avatar.trim() : 'unkown-user.svg';
 
       const newUser = new User({
         uid,
@@ -68,7 +68,7 @@ export class AuthService {
         lastName: '',
         email: '',
         birthDate: 0,
-        avatar: 'profile-pic1.svg'
+        avatar: 'unkown-user.svg'
       });
 
       await this.firebaseService.addUser(guestUser, uid);
@@ -89,12 +89,12 @@ export class AuthService {
 
       const nameParts = (user.displayName || 'Google User').trim().split(/\s+/);
       const firstName = nameParts[0] || 'Google';
-      const lastName = nameParts.slice(1).join(' ') || 'User';
+      const lastName = nameParts.slice(1).join(' ') || '';
 
       const photo =
         user.photoURL ||
         user.providerData?.[0]?.photoURL ||
-        'profile-pic1.svg';
+        'unkown-user.svg';
 
       const googleUser = new User({
         uid,

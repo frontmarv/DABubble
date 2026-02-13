@@ -39,8 +39,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    margin-top: 10px;
+    padding: 2rem 0px;
 
     .big-avatar-wrapper {
         margin-bottom: 16px;
@@ -102,10 +101,20 @@
     }
 }
 
+@media screen and (max-width: 1024px) {
+    .signup-header {
+        >h1 {
+            padding: 0px 3rem;
+        }
+    }
+
+}
+
 @media screen and (max-width: 400px) {
     .signup-header {
         >h1 {
             margin-top: 3rem;
+            padding: unset;
         }
     }
 
