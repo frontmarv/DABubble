@@ -3,6 +3,7 @@ import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signI
 import { Router } from '@angular/router';
 import { FirebaseService } from './firebase.service';
 import { User } from '../models/user.class';
+import { sendPasswordResetEmail, confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class AuthService {
 
       if (user) {
         this.firebaseService.subUser(user.uid);
-      } 
+      }
     });
   }
 
@@ -37,7 +38,6 @@ export class AuthService {
         firstName,
         lastName,
         email,
-        birthDate: 0,
         avatar: cleanAvatar
       });
 
@@ -67,7 +67,6 @@ export class AuthService {
         firstName: 'Gast',
         lastName: '',
         email: '',
-        birthDate: 0,
         avatar: 'unkown-user.svg'
       });
 
@@ -101,11 +100,10 @@ export class AuthService {
         firstName,
         lastName,
         email: user.email || '',
-        birthDate: 0,
-        avatar: photo 
+        avatar: photo
       });
 
-      await this.firebaseService.addUser(googleUser, uid);
+      await this.firebaseService.addUser(googleUser, uid); //überschreibt jedesmal die Daten in "users"
       return { success: true };
     } catch (error: any) {
 
@@ -149,4 +147,22 @@ export class AuthService {
   getCurrentUserId(): string | null {
     return this.currentFirebaseUser?.uid || null;
   }
+
+
+  sendResetEmail(email: string) {
+    const actionCodeSettings = {
+      url: 'http://localhost:4200/new-pw', // route zu passwort reset
+      handleCodeInApp: true,
+    };
+    return sendPasswordResetEmail(this.auth, email, actionCodeSettings);
+  }
+
+  confirmReset(code: string, newPassword: string) {
+    return confirmPasswordReset(this.auth, code, newPassword);
+  }
+
+
+
+
+
 }

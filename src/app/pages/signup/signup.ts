@@ -45,10 +45,12 @@ export class SignupComponent {
   validateName(event: FocusEvent) {
     this.errorMessage = '';
     if (!this.fullName.trim()) {
+      this.isNameValid = false;
       this.errorMessage = 'Bitte Name eingeben';
       return;
     }
     if (this.fullName.length > 30) {
+      this.isNameValid = false;
       this.errorMessage = 'Name darf max. 30 Zeichen enthalten';
       return;
     }
@@ -61,10 +63,12 @@ export class SignupComponent {
   validateEmail(event: FocusEvent) {
     this.errorMessage = '';
     if (!this.email.trim() || !this.isValidEmail(this.email)) {
+      this.isEmailValid = false;
       this.errorMessage = 'Bitte gültige E-Mail-Adresse eingeben';
       return;
     }
     if (this.email.length > 50) {
+      this.isEmailValid = false;
       this.errorMessage = 'E-mail-Adresse darf max. 50 Zeichen enthalten';
       return;
     }
@@ -77,6 +81,7 @@ export class SignupComponent {
   validatePassword(event: FocusEvent) {
     this.errorMessage = '';
     if (!this.password || this.password.length < 6) {
+      this.isPasswordValid = false;
       this.errorMessage = 'Passwort muss min. 6 Zeichen enthalten';
       return;
     }
@@ -134,7 +139,7 @@ export class SignupComponent {
   }
 
   private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@.]+@[^\s@.]+(\.[^\s@.]+)+$/;
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return emailRegex.test(email);
   }
 }

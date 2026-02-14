@@ -5,7 +5,6 @@ import { Injectable, signal } from '@angular/core';
 })
 export class ThreadStateService {
     isThreadVisible = signal(true);
-    // isThreadVisible = this._isThreadVisible.asReadonly();
 
     toggle() {
         this.isThreadVisible.update(visible => !visible);
