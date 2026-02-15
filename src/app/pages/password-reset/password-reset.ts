@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
+import { Auth, sendPasswordResetEmail } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-password-reset',
@@ -16,18 +16,14 @@ import { AuthService } from '../../services/auth.service';
 
 
 export class PasswordReset {
-  constructor(private authService: AuthService) { }
   private router = inject(Router);
-  resetStep: number = 1;
+  private auth = inject(Auth);
+
   errorMessage: string = '';
   showSuccessMessage: boolean = false;
 
   email: string = '';
   isEmailValid: boolean = false;
-
-  newPassword: string = '';
-  confirmNewPassword: string = '';
-  doPasswordsMatch: boolean = false;
 
   validateEmail(event: FocusEvent) {
     this.errorMessage = '';
@@ -52,18 +48,22 @@ export class PasswordReset {
     return emailRegex.test(email);
   }
 
-  async redirectToLogin() {
+  async sendResetLink() {
     if (!this.isEmailValid) {
       return;
     }
     try {
       this.showSuccessMessage = true;
       this.isEmailValid = false;
-      await this.authService.sendResetEmail(this.email);
+      const actionCodeSettings = {
+        url: 'http://localhost:4200/reset-password',
+        handleCodeInApp: false
+      }
+      await sendPasswordResetEmail(this.auth, this.email, actionCodeSettings);
+      this.showSuccessMessage = false;
       setTimeout(() => {
-        this.showSuccessMessage = false;
         this.router.navigate(['/login']);
-      }, 2000);
+      }, 1500);
     } catch (error: any) {
       this.errorMessage = 'E-Mail konnte nicht gesendet werden. Bitte versuche es erneut.';
       return;
