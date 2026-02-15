@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
 import { MainChat } from '../chat/main-chat';
@@ -8,27 +8,37 @@ import { MainChat } from '../chat/main-chat';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
+
 export class Sidebar {
+
   chat = inject(MainChat)
+  firebaseService = inject(FirebaseService);
+
   channelsOpen = false;
   dmOpen = true;
   isCreateChannelOpen = false;
-  isAddPeopleOpen = false; 
-  
+  isAddPeopleOpen = false;
+
   channelName = "";
   channelDescription = "";
   addPeopleOption: string = 'all';
-  
+
   private tempChannelName = "";
   private tempChannelDescription = "";
-  
+
   isCreating = false;
 
-  constructor(public firebaseService: FirebaseService) {}
+  usersToDisplay = this.firebaseService.allUsers;
+  constructor() {
+    this.logUsers();
+  }
+  logUsers() {
+    console.log(this.usersToDisplay());
+  }
 
   openCreateChannel() {
     this.isCreateChannelOpen = true;
@@ -44,15 +54,15 @@ export class Sidebar {
 
   proceedToAddMembers() {
     if (!this.channelName || this.channelName.trim() === '') return;
-    
+
     this.tempChannelName = this.channelName;
     this.tempChannelDescription = this.channelDescription;
-    
+
     this.isCreateChannelOpen = false;
     this.isAddPeopleOpen = true;
   }
 
-  closeAddPeople() { 
+  closeAddPeople() {
     this.isAddPeopleOpen = false;
     this.channelName = "";
     this.channelDescription = "";
@@ -85,7 +95,7 @@ export class Sidebar {
       this.tempChannelName = "";
       this.tempChannelDescription = "";
       this.addPeopleOption = 'all';
-      
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -95,4 +105,7 @@ export class Sidebar {
 
   toggleChannels() { this.channelsOpen = !this.channelsOpen; }
   toggleDm() { this.dmOpen = !this.dmOpen; }
+
+
+
 }

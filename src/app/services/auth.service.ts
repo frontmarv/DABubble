@@ -67,7 +67,7 @@ export class AuthService {
         firstName: 'Gast',
         lastName: '',
         email: '',
-        avatar: 'unkown-user.svg'
+        avatar: '/shared/profile-pics/unkown-user.svg'
       });
 
       await this.firebaseService.addUser(guestUser, uid);

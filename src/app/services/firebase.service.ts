@@ -8,10 +8,13 @@ import {
   doc,
   setDoc,
   getDoc,
+  getDocs,
   Unsubscribe
 } from '@angular/fire/firestore';
 import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { from, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -121,5 +124,12 @@ export class FirebaseService {
 
     return null;
   }
+
+
+
+  private users$ = from(getDocs(query(collection(this.firestore, 'users')))).pipe(
+    map(snap => snap.docs.map(d => new User(d.data())))
+  );
+  readonly allUsers = toSignal(this.users$, { initialValue: [] as User[] });
 
 }

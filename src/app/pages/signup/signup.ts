@@ -31,7 +31,7 @@ export class SignupComponent {
   isPasswordValid: boolean = false;
 
   avatars = [
-    '/login/unkown-user.svg',
+    '/shared/profile-pics/unkown-user.svg',
     '/shared/profile-pics/profile-pic1.svg',
     '/shared/profile-pics/profile-pic2.svg',
     '/shared/profile-pics/profile-pic3.svg',
