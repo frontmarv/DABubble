@@ -88,3 +88,98 @@ h4 {
 .visible {
     opacity: 1;
 }
+
+
+
+
+
+@media (max-width: 1240px) {
+  .thread {
+    min-width: 280px;
+    width: 28vw;
+    border-radius: 20px;
+    height: calc(100vh - 94px);
+  }
+}
+
+@media (max-width: 900px) {
+  .thread {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    width: min(88vw, 400px);
+    min-width: 260px;
+    height: 100%;
+    z-index: 40;
+    border-radius: 16px;
+    box-shadow: -6px 0 24px rgba(0, 0, 0, 0.12);
+    transition: transform var(--transition-slow) cubic-bezier(0.4, 0, 0.2, 1),
+                opacity var(--transition-slow) ease;
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  .thread--closed {
+    transform: translateX(calc(100% + 20px));
+    min-width: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  header {
+    padding: 16px 18px;
+    border-radius: 16px 16px 0 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .thread {
+    position: fixed;
+    top: 68px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    height: calc(100vh - 68px);
+    border-radius: 0;
+    z-index: 60;
+    box-shadow: none;
+    transition: transform var(--transition-slow) cubic-bezier(0.4, 0, 0.2, 1),
+                opacity var(--transition-slow) ease;
+  }
+
+  .thread--closed {
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  header {
+    padding: 14px 16px;
+    border-radius: 0;
+  }
+
+  .chat-messages {
+    padding: 14px 0;
+  }
+
+  .message-field-other,
+  .message-field-user {
+    padding: 12px 18px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .thread {
+    top: 60px;
+    height: calc(100vh - 60px);
+  }
+
+  .message-field-other,
+  .message-field-user {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+}

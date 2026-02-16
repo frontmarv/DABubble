@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Sidebar } from '../../components/sidebar/sidebar';
@@ -8,6 +8,8 @@ import { User } from '../../models/user.class';
 import { AuthService } from '../../services/auth.service';
 import { FirebaseService } from '../../services/firebase.service';
 import { MainChat } from "../../components/chat/main-chat";
+
+const MOBILE_BREAKPOINT = 768;
 
 @Component({
   selector: 'app-chat-room',
@@ -19,11 +21,11 @@ import { MainChat } from "../../components/chat/main-chat";
     ThreadPanel,
     ProfileView,
     MainChat
-],
+  ],
   templateUrl: './chat-room.html',
   styleUrls: ['./chat-room.scss'],
 })
-export class ChatRoom {
+export class ChatRoom implements OnInit {
   private authService = inject(AuthService);
   firebaseService = inject(FirebaseService);
 
@@ -31,14 +33,41 @@ export class ChatRoom {
   isProfileMenuOpen = false;
   showUserProfile = false;
 
+  windowWidth = signal(window.innerWidth);
+  isMobile = computed(() => this.windowWidth() <= MOBILE_BREAKPOINT);
+
   currentUser: User | null = null;
 
   constructor() {
     this.currentUser = this.firebaseService.currentUser;
   }
 
+  ngOnInit() {
+    if (this.isMobile()) {
+      this.isSidebarOpen = true;
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.windowWidth.set(window.innerWidth);
+    if (!this.isMobile()) {
+      this.isSidebarOpen = true;
+    }
+  }
+
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  onMobileNavigation() {
+    if (this.isMobile()) {
+      this.isSidebarOpen = false;
+    }
+  }
+
+  goBackToSidebar() {
+    this.isSidebarOpen = true;
   }
 
   toggleProfileMenu() {

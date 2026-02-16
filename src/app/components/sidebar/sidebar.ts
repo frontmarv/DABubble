@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
@@ -14,6 +14,7 @@ import { MainChat } from '../chat/main-chat';
 export class Sidebar {
   chat = inject(MainChat);
   firebaseService = inject(FirebaseService);
+  @Output() mobileNavigation = new EventEmitter<void>();
 
   channelsOpen = false;
   dmOpen = true;
@@ -36,6 +37,15 @@ export class Sidebar {
 
   logUsers() {
     console.log(this.usersToDisplay());
+  }
+
+  selectChannel(channelId: string) {
+    this.firebaseService.setSelectedChannel(channelId);
+    this.mobileNavigation.emit();
+  }
+
+  selectDm() {
+    this.mobileNavigation.emit();
   }
 
   openCreateChannel() {
