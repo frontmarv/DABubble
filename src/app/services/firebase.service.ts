@@ -8,13 +8,12 @@ import {
   doc,
   setDoc,
   getDoc,
-  getDocs,
   Unsubscribe
 } from '@angular/fire/firestore';
 import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { from, map } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -125,11 +124,25 @@ export class FirebaseService {
     return null;
   }
 
+  async updateSingleUser(uid: string, userData: any) {
+    const docRef = doc(this.firestore, 'users', uid);
+    await setDoc(docRef, userData, { merge: true });
+    // userData as object like { firstName: "newFirstName", lastName: "newLastName" }
+  }
 
 
-  private users$ = from(getDocs(query(collection(this.firestore, 'users')))).pipe(
-    map(snap => snap.docs.map(d => new User(d.data())))
-  );
-  readonly allUsers = toSignal(this.users$, { initialValue: [] as User[] });
+  // get all users as Observable
+  private users = new Observable<User[]>((observer) => {
+    const q = query(collection(this.firestore, 'users'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const users = querySnapshot.docs.map(d => new User(d.data()));
+      observer.next(users);
+    }, (error) => {
+      observer.error(error);
+    });
+    return () => unsubscribe();
+  });
+  //Convert it into Signal 
+  readonly getAllUsers = toSignal(this.users, { initialValue: [] as User[] });
 
 }

@@ -30,7 +30,7 @@ export class Sidebar {
 
   isCreating = false;
 
-  usersToDisplay = this.firebaseService.allUsers;
+  usersToDisplay = this.firebaseService.getAllUsers;
   constructor() {
     this.logUsers();
   }
