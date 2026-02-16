@@ -8,12 +8,13 @@ import {
   doc,
   setDoc,
   getDoc,
-  Unsubscribe
+  Unsubscribe,
 } from '@angular/fire/firestore';
 import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
+import { signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +23,7 @@ export class FirebaseService {
   private firestore = inject(Firestore);
   private injector = inject(Injector);
 
-  currentUser: User = new User();
+  currentUser = signal<User | null>(null);
   channels: any[] = [];
 
   currentChannelName: string = 'Allgemein';
@@ -82,13 +83,18 @@ export class FirebaseService {
     return false
   }
 
-  subUser(uid: string): Unsubscribe {
+  subUser(uid: string) {
     this.unsubUser?.();
-    this.unsubUser = onSnapshot(doc(this.firestore, 'users', uid), snap => {
-      if (snap.data()) this.currentUser = new User(snap.data());
+    this.unsubUser = onSnapshot(doc(this.firestore, 'users', uid), (snap) => {
+      const data = snap.data();
+      if (data) {
+        this.currentUser.set(new User(data));
+      } else {
+        this.currentUser.set(null);
+      }
     });
-    return this.unsubUser;
   }
+
 
   async addUser(user: User, uid: string) {
     return runInInjectionContext(this.injector, async () => {
@@ -116,11 +122,9 @@ export class FirebaseService {
   async getSingleUser(uid: string): Promise<User | null> {
     const docRef = doc(this.firestore, 'users', uid);
     const snap = await getDoc(docRef);
-
     if (snap.exists()) {
       return new User(snap.data());
     }
-
     return null;
   }
 

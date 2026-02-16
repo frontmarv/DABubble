@@ -55,7 +55,7 @@
       </div>
 
       <nav class="list" [class.collapsed]="!dmOpen" aria-label="Direktnachrichten Liste">
-        @for (user of usersToDisplay(); track user.uid) {
+        @for (user of displayAllUsersSidebar(); track user.uid) {
         <a class="list__item" (click)="selectDm()">
           <span class="avatar">
             <img src="{{ user.avatar }}" alt="" class="avatar__img" />

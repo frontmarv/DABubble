@@ -30,14 +30,7 @@ export class Sidebar {
 
   isCreating = false;
 
-  usersToDisplay = this.firebaseService.getAllUsers;
-  constructor() {
-    this.logUsers();
-  }
-
-  logUsers() {
-    console.log(this.usersToDisplay());
-  }
+  displayAllUsersSidebar = this.firebaseService.getAllUsers;
 
   selectChannel(channelId: string) {
     this.firebaseService.setSelectedChannel(channelId);

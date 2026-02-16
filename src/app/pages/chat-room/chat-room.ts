@@ -36,12 +36,6 @@ export class ChatRoom implements OnInit {
   windowWidth = signal(window.innerWidth);
   isMobile = computed(() => this.windowWidth() <= MOBILE_BREAKPOINT);
 
-  currentUser: User | null = null;
-
-  constructor() {
-    this.currentUser = this.firebaseService.currentUser;
-  }
-
   ngOnInit() {
     if (this.isMobile()) {
       this.isSidebarOpen = true;

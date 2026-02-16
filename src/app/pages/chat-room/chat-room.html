@@ -18,8 +18,8 @@
         </div>
 
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
-            <span class="user-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</span>
-            <img [src]="getAvatarUrl(currentUser?.avatar)" alt="Profilbild" class="avatar" />
+            <span class="user-name">{{ firebaseService.currentUser()?.firstName }} {{ firebaseService.currentUser()?.lastName }}</span>
+            <img [src]="getAvatarUrl(firebaseService.currentUser()?.avatar)" alt="Profilbild" class="avatar" />
             <span class="status status--online" aria-hidden="true"></span>
             <span class="dropdown-arrow" aria-hidden="true"></span>
 
@@ -49,7 +49,7 @@
 
     <app-profile-view
         *ngIf="showUserProfile"
-        [user]="currentUser"
+        [user]="firebaseService.currentUser()"
         (close)="closeProfile()">
     </app-profile-view>
 </div>

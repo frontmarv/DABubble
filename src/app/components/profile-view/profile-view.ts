@@ -59,7 +59,8 @@ export class ProfileView implements OnChanges {
     this.validateFullName(this.fullName);
     if (!this.isInputValid) return;
     else {
-      this.firebaseService.updateSingleUser(this.firebaseService.currentUser.uid, {
+      const currentUser = this.firebaseService.currentUser();
+      this.firebaseService.updateSingleUser(currentUser?.uid ?? '', {
         firstName: this.splitFullName(this.fullName).firstName,
         lastName: this.splitFullName(this.fullName).lastName,
       });
