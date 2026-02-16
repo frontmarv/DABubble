@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
@@ -8,14 +7,12 @@ import { MainChat } from '../chat/main-chat';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule], 
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
-
 export class Sidebar {
-
-  chat = inject(MainChat)
+  chat = inject(MainChat);
   firebaseService = inject(FirebaseService);
 
   channelsOpen = false;
@@ -36,6 +33,7 @@ export class Sidebar {
   constructor() {
     this.logUsers();
   }
+
   logUsers() {
     console.log(this.usersToDisplay());
   }
@@ -103,9 +101,11 @@ export class Sidebar {
     }
   }
 
-  toggleChannels() { this.channelsOpen = !this.channelsOpen; }
-  toggleDm() { this.dmOpen = !this.dmOpen; }
+  toggleChannels() { 
+    this.channelsOpen = !this.channelsOpen; 
+  }
 
-
-
+  toggleDm() { 
+    this.dmOpen = !this.dmOpen; 
+  }
 }
