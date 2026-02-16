@@ -95,15 +95,6 @@ h4 {
 
 @media (max-width: 1240px) {
   .thread {
-    min-width: 280px;
-    width: 28vw;
-    border-radius: 20px;
-    height: calc(100vh - 94px);
-  }
-}
-
-@media (max-width: 900px) {
-  .thread {
     position: absolute;
     right: 10px;
     top: 0;
