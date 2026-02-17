@@ -22,14 +22,12 @@ export class Login {
   errorMessage: string = '';
   isLoading: boolean = false;
 
-  // Standardmäßig auf true, damit die Animation bei jedem Laden der Login-Seite startet
   showIntro: boolean = true;
 
   loginEmail: string = '';
   loginPassword: string = '';
 
   onIntroFinished() {
-    // Blendet die Animation aus, sobald sie fertig ist
     this.showIntro = false;
   }
 

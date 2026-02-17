@@ -42,6 +42,10 @@
 
   &.move-to-corner {
     animation: moveLogoDesktop 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+
+    @media (max-width: 1240px) {
+      animation: moveLogoMobile 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
   }
 }
 
@@ -55,7 +59,6 @@
 }
 
 .intro-text {
-  font-size: 32px;
   font-weight: 700;
   color: var(--color-white);
   padding-right: 10px;
@@ -72,7 +75,7 @@
     transform: translateX(-20px);
   }
   to {
-    width: 180px;
+    width: 250px;
     opacity: 1;
     transform: translateX(0);
   }
@@ -98,9 +101,8 @@
     transform: translate(-50%, -50%);
   }
   to {
-    top: 20px;
-    left: 50%;
-    transform: translate(-50%, 0);
+    top: 20px; 
+    left: 40px;
+    transform: translate(0, 0);
   }
 }
-
