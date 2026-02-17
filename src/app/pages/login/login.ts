@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { SignupComponent } from '../signup/signup';
+import { Intro } from '../../components/intro/intro';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, SignupComponent], 
+  imports: [CommonModule, FormsModule, RouterLink, SignupComponent, Intro], 
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -21,8 +22,16 @@ export class Login {
   errorMessage: string = '';
   isLoading: boolean = false;
 
+  // Standardmäßig auf true, damit die Animation bei jedem Laden der Login-Seite startet
+  showIntro: boolean = true;
+
   loginEmail: string = '';
   loginPassword: string = '';
+
+  onIntroFinished() {
+    // Blendet die Animation aus, sobald sie fertig ist
+    this.showIntro = false;
+  }
 
   async login() {
     this.errorMessage = '';

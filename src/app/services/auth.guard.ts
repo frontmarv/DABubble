@@ -1,15 +1,22 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth'; 
 
 export const authGuard = () => {
-  const authService = inject(AuthService);
+  const auth = inject(Auth);
   const router = inject(Router);
 
-  if (authService.isLoggedIn()) {
-    return true;
-  }
+  return new Promise<boolean>((resolve) => {
+    
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe(); 
 
-  router.navigate(['/login']);
-  return false;
+      if (user) {
+        resolve(true);
+      } else {
+        router.navigate(['/login']);
+        resolve(false);
+      }
+    });
+  });
 };
