@@ -61,7 +61,12 @@
             <img src="{{ user.avatar }}" alt="" class="avatar__img" />
             <span class="status status--online" aria-hidden="true"></span>
           </span>
-          <span class="text--small">{{ user.firstName }} {{ user.lastName }}</span>
+          <span class="text--small">
+            {{ user.firstName }} {{ user.lastName }}
+            @if (user.uid === firebaseService.currentUser()?.uid) {
+              <span> (Du)</span>
+            }
+          </span>
         </a>
         }
 
