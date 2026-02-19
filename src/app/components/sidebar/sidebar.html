@@ -55,7 +55,7 @@
 
       <nav class="list" [class.collapsed]="!dmOpen" aria-label="Direktnachrichten Liste">
         @for (user of displayAllUsersSidebar(); track user.uid) {
-        <a class="list__item" (click)="selectDm();">
+        <a class="list__item" (click)="selectDm(user); displayForeignUserService.setSelectedUser(user); displayForeignUserService.setToTrue();">
           <span class="avatar">
             <img src="{{ user.avatar }}" alt="" class="avatar__img" />
             <span class="status status--online" aria-hidden="true"></span>
@@ -69,13 +69,13 @@
         </a>
         }
         <!-- Keep this user as example for offline status-->
-        <a class="list__item" (click)="selectDm();">
+        <!-- <a class="list__item" (click)="selectDm(user);">
           <span class="avatar">
             <img src="/shared/profile-pics/profile-pic2.svg" alt="Profilbild" class="avatar__img" />
             <span class="status status--offline" aria-hidden="true"></span>
           </span>
-          <span class="text--small">Sofia Müller</span>
-        </a>
+          <span class="text--small">Peter Müller</span>
+        </a> -->
       </nav>
     </section>
   </div>
