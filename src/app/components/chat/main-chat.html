@@ -1,10 +1,10 @@
 <!-- @if (chatIsActive()) { -->
 <div class="main-chat">
     <header class="main-chat__header">
-        @if (chatIsActive()) {
+        <!-- @if (chatIsActive()) { -->
         <img src="{{otherUser?.avatar}}" alt="">
         <h4>{{otherUser?.firstName}}{{otherUser?.lastName}}</h4>
-        }
+        <!-- } -->
     </header>
     <app-message-list></app-message-list>
     <app-message-composer></app-message-composer>

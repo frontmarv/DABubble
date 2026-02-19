@@ -24,7 +24,7 @@ export class MainChat {
   currentUserId = "christianklemm";
 
   openChatRoom() {
-
+    this.getOtherUserData();
     if (this.firebaseService.isChatAvailable(this.createChatId())) {
       this.loadMessages();
     }

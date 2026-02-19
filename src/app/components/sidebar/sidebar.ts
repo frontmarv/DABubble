@@ -41,6 +41,7 @@ export class Sidebar {
 
   selectDm() {
     this.mobileNavigation.emit();
+    this.chat.openChatRoom();
   }
 
   openCreateChannel() {
