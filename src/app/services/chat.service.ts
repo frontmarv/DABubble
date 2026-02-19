@@ -17,7 +17,7 @@ export class ChatService {
 
     async openChatRoom(user: any) {
         await this.getOtherUserData(user);
-        if (this.firebaseService.isChatAvailable(this.createChatId())) {
+        if (this.isChatAvailable(this.createChatId())) {
             this.loadMessages();
         }
         else {
@@ -26,10 +26,21 @@ export class ChatService {
         this.chatIsActive.set(true);
     }
 
+    isChatAvailable(id: string) {
+        const chat = this.firebaseService.chats.find((c) => c.id === id);
+        if (chat) {
+            return true
+        }
+        return false
+    }
+
     createChatId() {
-        const other = this.otherUser();
-        if (!other) return '';
-        this.chat.id = this.firebaseService.currentUser()?.uid + other.uid
+        const otherUserRef = this.otherUser();
+        const currentUserId = this.firebaseService.currentUser()?.uid;
+        if (!otherUserRef || !currentUserId) return '';
+        const sortedIds = [currentUserId, otherUserRef.uid].sort();
+
+        this.chat.id = sortedIds.join('_')
         return this.chat.id
     }
 
@@ -38,8 +49,20 @@ export class ChatService {
 
     }
 
-    createChat() {
+    async createChat() {
+        const chatId = this.createChatId();
+        const currentUserId = this.firebaseService.currentUser()?.uid;
+        const otherUser = this.otherUser();
 
+        if (!chatId || !currentUserId || !otherUser) return;
+
+        const chat = new Chat();
+        chat.id = chatId;
+        chat.participants = [currentUserId, otherUser.uid];
+        chat.createdAt = new Date();
+        chat.lastMessage = '';
+
+        await this.firebaseService.addChat(chat);
     }
 
     async getOtherUserData(user: any) {
