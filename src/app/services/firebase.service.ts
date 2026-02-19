@@ -24,7 +24,7 @@ export class FirebaseService {
   private injector = inject(Injector);
 
   currentUser = signal<User | null>(null);
-  channels: any[] = [];
+  channels: any[] = []; 
 
   currentChannelName: string = 'Allgemein';
   selectedChannelId: string = '';

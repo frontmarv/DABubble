@@ -13,7 +13,7 @@ export class ChatService {
     chat = new Chat;
     user = new User;
     otherUser = signal<User | null>(null);
-    currentUserId = "christianklemm";
+    currentUserId = signal<User | null>(null);
 
     async openChatRoom(user: any) {
         await this.getOtherUserData(user);
@@ -29,7 +29,7 @@ export class ChatService {
     createChatId() {
         const other = this.otherUser();
         if (!other) return '';
-        this.chat.id = this.currentUserId + other.uid
+        this.chat.id = this.firebaseService.currentUser()?.uid + other.uid
         return this.chat.id
     }
 
@@ -46,6 +46,6 @@ export class ChatService {
         const otherUserInfo = await this.firebaseService.getSingleUser(user.uid);
         this.otherUser.set(otherUserInfo);
         console.log(this.otherUser);
-
     }
+
 }
