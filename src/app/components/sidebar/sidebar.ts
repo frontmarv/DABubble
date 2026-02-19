@@ -39,7 +39,7 @@ export class Sidebar {
     this.mobileNavigation.emit();
   }
 
-  selectDm() {
+  selectDm(user:any) {
     this.mobileNavigation.emit();
     this.chat.openChatRoom();
   }

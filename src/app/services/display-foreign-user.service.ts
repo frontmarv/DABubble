@@ -6,7 +6,7 @@ import { Injectable, signal } from '@angular/core';
 export class DisplayForeignUserService {
 
     selectedUser = signal<any>(null);
-    showForeignUserProfile = signal(true);
+    showForeignUserProfile = signal(false);
 
     toggle() {
         this.showForeignUserProfile.update(current => !current);
