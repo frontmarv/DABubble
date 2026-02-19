@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { MessageComposer } from '../message-composer/message-composer';
+import { MessageComposer } from '../chat/message-composer/message-composer';
 import { CommonModule } from '@angular/common';
 import { ThreadStateService } from '../../services/thread-state.service';
 

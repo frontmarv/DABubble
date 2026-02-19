@@ -3,6 +3,7 @@ import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signI
 import { Router } from '@angular/router';
 import { FirebaseService } from './firebase.service';
 import { User } from '../models/user.class';
+import { sendPasswordResetEmail, confirmPasswordReset, verifyPasswordResetCode } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class AuthService {
 
       if (user) {
         this.firebaseService.subUser(user.uid);
-      } 
+      }
     });
   }
 
@@ -30,14 +31,13 @@ export class AuthService {
     try {
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
       const uid = userCredential.user.uid;
-      const cleanAvatar = avatar && avatar.trim() ? avatar.trim() : 'profile-pic1.svg';
+      const cleanAvatar = avatar && avatar.trim() ? avatar.trim() : 'unkown-user.svg';
 
       const newUser = new User({
         uid,
         firstName,
         lastName,
         email,
-        birthDate: 0,
         avatar: cleanAvatar
       });
 
@@ -67,8 +67,7 @@ export class AuthService {
         firstName: 'Gast',
         lastName: '',
         email: '',
-        birthDate: 0,
-        avatar: 'profile-pic1.svg'
+        avatar: '/shared/profile-pics/unkown-user.svg'
       });
 
       await this.firebaseService.addUser(guestUser, uid);
@@ -89,23 +88,22 @@ export class AuthService {
 
       const nameParts = (user.displayName || 'Google User').trim().split(/\s+/);
       const firstName = nameParts[0] || 'Google';
-      const lastName = nameParts.slice(1).join(' ') || 'User';
+      const lastName = nameParts.slice(1).join(' ') || '';
 
       const photo =
         user.photoURL ||
         user.providerData?.[0]?.photoURL ||
-        'profile-pic1.svg';
+        'unkown-user.svg';
 
       const googleUser = new User({
         uid,
         firstName,
         lastName,
         email: user.email || '',
-        birthDate: 0,
-        avatar: photo 
+        avatar: photo
       });
 
-      await this.firebaseService.addUser(googleUser, uid);
+      await this.firebaseService.addUser(googleUser, uid); //überschreibt jedesmal die Daten in "users"
       return { success: true };
     } catch (error: any) {
 
@@ -149,4 +147,22 @@ export class AuthService {
   getCurrentUserId(): string | null {
     return this.currentFirebaseUser?.uid || null;
   }
+
+
+  sendResetEmail(email: string) {
+    const actionCodeSettings = {
+      url: 'http://localhost:4200/new-pw', // route zu passwort reset
+      handleCodeInApp: true,
+    };
+    return sendPasswordResetEmail(this.auth, email, actionCodeSettings);
+  }
+
+  confirmReset(code: string, newPassword: string) {
+    return confirmPasswordReset(this.auth, code, newPassword);
+  }
+
+
+
+
+
 }

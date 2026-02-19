@@ -63,3 +63,125 @@ Längster Name: 30 Zeichen
 Längste Email: 50 Zeichen
 Längster Channelname: 30 Zeichen
 Nachrichten: 2000 Zeichen -> User Feedback
+
+
+
+
+
+import { Injectable, inject, signal, computed, DestroyRef } from '@angular/core';
+import {
+  Firestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  doc,
+  setDoc,
+  Unsubscribe
+} from '@angular/fire/firestore';
+import { User } from '../models/user.class';
+import { Channel } from '../models/channel.class';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class FirebaseService {
+  private firestore = inject(Firestore);
+  private destroyRef = inject(DestroyRef); // Regelt das automatische Abo-Ende
+
+  // --- 1. DATEN-SIGNALS (Der Zustand) ---
+  currentUser = signal<User>(new User());
+  channels = signal<any[]>([]);
+  chats = signal<any[]>([]);
+
+  selectedChannelId = signal<string>('');
+  selectedChatId = signal<string>('');
+
+  // --- 2. BERECHNETE WERTE (Computed) ---
+  // Diese aktualisieren sich von selbst, sobald sich die Liste oder die ID ändert.
+  currentChannelName = computed(() => {
+    const channel = this.channels().find(c => c.id === this.selectedChannelId());
+    return channel ? channel.name : 'Allgemein';
+  });
+
+  currentChatName = computed(() => {
+    const chat = this.chats().find(c => c.id === this.selectedChatId());
+    return chat ? chat.name : 'Allgemein';
+  });
+
+  // Speichert das User-Abo separat, da es erst bei Login startet
+  private unsubUser: Unsubscribe | null = null;
+
+  constructor() {
+    // Wir starten die Listen-Abos direkt beim Start des Service
+    this.subChannels();
+    this.subChats();
+  }
+
+  // --- 3. FIREBASE LISTENERS (READ) ---
+
+  /** Abonniert alle Channels */
+  subChannels() {
+    const q = query(collection(this.firestore, 'channels'));
+    const unsub = onSnapshot(q, (snap) => {
+      this.channels.set(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+    this.destroyRef.onDestroy(unsub); // Beendet Abo, wenn Service zerstört wird
+  }
+
+  /** Abonniert alle Chats */
+  subChats() {
+    const q = query(collection(this.firestore, 'chats'));
+    const unsub = onSnapshot(q, (snap) => {
+      this.chats.set(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+    this.destroyRef.onDestroy(unsub);
+  }
+
+  /** Abonniert einen spezifischen User via UID */
+  subUser(uid: string) {
+    if (this.unsubUser) this.unsubUser(); // Altes Abo beenden, falls vorhanden
+
+    this.unsubUser = onSnapshot(doc(this.firestore, 'users', uid), (snap) => {
+      const data = snap.data();
+      if (data) {
+        this.currentUser.set(new User(data));
+      }
+    });
+  }
+
+  // --- 4. AKTIONEN & LOGIK (WRITE / HELPER) ---
+
+  /** Setzt die gewählte Channel-ID (Der Name aktualisiert sich via computed automatisch) */
+  setSelectedChannel(id: string) {
+    this.selectedChannelId.set(id);
+  }
+
+  /** Prüft, ob ein Chat existiert */
+  isChatAvailable(id: string): boolean {
+    return this.chats().some((c) => c.id === id);
+  }
+
+  /** Speichert oder aktualisiert einen User in Firestore */
+  async addUser(user: User, uid: string) {
+    try {
+      await setDoc(doc(this.firestore, 'users', uid), user.toJSON(), { merge: true });
+    } catch (err) {
+      console.error("Fehler beim addUser:", err);
+    }
+  }
+
+  /** Erstellt einen neuen Channel */
+  async addChannel(channel: Channel): Promise<string | null> {
+    const data: any = channel.toJSON ? channel.toJSON() : { ...channel };
+    data.createdAt = Date.now();
+
+    try {
+      const docRef = await addDoc(collection(this.firestore, 'channels'), data);
+      return docRef.id;
+    } catch (err) {
+      console.error("Fehler beim addChannel:", err);
+      return null;
+    }
+  }
+}

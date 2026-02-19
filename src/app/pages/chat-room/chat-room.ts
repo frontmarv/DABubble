@@ -1,14 +1,17 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Sidebar } from '../../components/sidebar/sidebar';
-import { MessageList } from '../../components/message-list/message-list';
-import { MessageComposer } from '../../components/message-composer/message-composer';
 import { ThreadPanel } from '../../components/thread-panel/thread-panel';
 import { ProfileView } from '../../components/profile-view/profile-view';
 import { User } from '../../models/user.class';
 import { AuthService } from '../../services/auth.service';
 import { FirebaseService } from '../../services/firebase.service';
+import { MainChat } from "../../components/chat/main-chat";
+import { NotLoggedIn } from '../../components/profile-view/not-logged-in/not-logged-in';
+import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
+
+const MOBILE_BREAKPOINT = 768;
 
 @Component({
   selector: 'app-chat-room',
@@ -18,29 +21,51 @@ import { FirebaseService } from '../../services/firebase.service';
     FormsModule,
     Sidebar,
     ThreadPanel,
-    MessageComposer,
-    MessageList,
     ProfileView,
+    MainChat,
+    NotLoggedIn
   ],
   templateUrl: './chat-room.html',
   styleUrls: ['./chat-room.scss'],
 })
-export class ChatRoom {
+export class ChatRoom implements OnInit {
   private authService = inject(AuthService);
+  displayForeignUserService = inject(DisplayForeignUserService);
   firebaseService = inject(FirebaseService);
 
   isSidebarOpen = true;
   isProfileMenuOpen = false;
   showUserProfile = false;
 
-  currentUser: User | null = null;
+  windowWidth = signal(window.innerWidth);
+  isMobile = computed(() => this.windowWidth() <= MOBILE_BREAKPOINT);
 
-  constructor() {
-    this.currentUser = this.firebaseService.currentUser;
+  ngOnInit() {
+    if (this.isMobile()) {
+      this.isSidebarOpen = true;
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.windowWidth.set(window.innerWidth);
+    if (!this.isMobile()) {
+      this.isSidebarOpen = true;
+    }
   }
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  onMobileNavigation() {
+    if (this.isMobile()) {
+      this.isSidebarOpen = false;
+    }
+  }
+
+  goBackToSidebar() {
+    this.isSidebarOpen = true;
   }
 
   toggleProfileMenu() {
@@ -58,6 +83,10 @@ export class ChatRoom {
 
   closeProfile() {
     this.showUserProfile = false;
+  }
+
+  closeForeignUserProfile() {
+    this.displayForeignUserService.setToFalse();
   }
 
   getAvatarUrl(avatar?: string | null): string {

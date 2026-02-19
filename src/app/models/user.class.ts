@@ -3,7 +3,6 @@ export class User {
     firstName: string;
     lastName: string;
     email: string;
-    birthDate: number;
     avatar: string;
 
     constructor(obj?: any) {
@@ -11,8 +10,7 @@ export class User {
         this.firstName = obj ? obj.firstName : '';
         this.lastName = obj ? obj.lastName : '';
         this.email = obj ? obj.email : '';
-        this.birthDate = obj ? obj.birthDate : 0;
-        this.avatar = obj && obj.avatar ? obj.avatar : 'profile-pic1.svg'; 
+        this.avatar = obj && obj.avatar ? obj.avatar : 'unkown-user.svg'; 
     }
 
     public toJSON() {
@@ -21,7 +19,6 @@ export class User {
             firstName: this.firstName,
             lastName: this.lastName,
             email: this.email,
-            birthDate: this.birthDate,
             avatar: this.avatar
         };
     }

@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../models/user.class';
+import { FirebaseService } from '../../services/firebase.service';
+import { inject } from '@angular/core';
 
 @Component({
   selector: 'app-profile-view',
@@ -12,6 +14,7 @@ import { User } from '../../models/user.class';
 })
 
 export class ProfileView implements OnChanges {
+  firebaseService = inject(FirebaseService);
   @Input() user: User | null = null;
   @Output() close = new EventEmitter<void>();
 
@@ -55,8 +58,15 @@ export class ProfileView implements OnChanges {
   saveProfile(): void {
     this.validateFullName(this.fullName);
     if (!this.isInputValid) return;
+    else {
+      const currentUser = this.firebaseService.currentUser();
+      this.firebaseService.updateSingleUser(currentUser?.uid ?? '', {
+        firstName: this.splitFullName(this.fullName).firstName,
+        lastName: this.splitFullName(this.fullName).lastName,
+      });
+      this.isEditing = false;
+    }
 
-    this.isEditing = false;
   }
 
   validateFullName(value: string): void {
@@ -64,7 +74,7 @@ export class ProfileView implements OnChanges {
 
     this.isInputValid = trimmed.length > 1 && trimmed.length <= 30;
 
-    if (trimmed.length <= 1) {
+    if (trimmed.length < 1) {
       this.errorMessage = 'Bitte Name eingeben';
     } else if (trimmed.length > 30) {
       this.errorMessage = 'Name darf maximal 30 Zeichen haben';

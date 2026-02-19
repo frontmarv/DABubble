@@ -1,32 +1,48 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { Component, inject, Output, EventEmitter } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
+import { MainChat } from '../chat/main-chat';
+import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, FormsModule], 
+  imports: [FormsModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
+  chat = inject(MainChat);
+  firebaseService = inject(FirebaseService);
+  displayForeignUserService = inject(DisplayForeignUserService);
+  @Output() mobileNavigation = new EventEmitter<void>();
+
   channelsOpen = false;
   dmOpen = true;
   isCreateChannelOpen = false;
-  isAddPeopleOpen = false; 
-  
+  isAddPeopleOpen = false;
+
   channelName = "";
   channelDescription = "";
   addPeopleOption: string = 'all';
-  
+
   private tempChannelName = "";
   private tempChannelDescription = "";
-  
+
   isCreating = false;
 
-  constructor(public firebaseService: FirebaseService) {}
+  displayAllUsersSidebar = this.firebaseService.getAllUsers;
+
+  selectChannel(channelId: string) {
+    this.firebaseService.setSelectedChannel(channelId);
+    this.mobileNavigation.emit();
+  }
+
+  selectDm() {
+    this.mobileNavigation.emit();
+    this.chat.openChatRoom();
+  }
 
   openCreateChannel() {
     this.isCreateChannelOpen = true;
@@ -42,15 +58,15 @@ export class Sidebar {
 
   proceedToAddMembers() {
     if (!this.channelName || this.channelName.trim() === '') return;
-    
+
     this.tempChannelName = this.channelName;
     this.tempChannelDescription = this.channelDescription;
-    
+
     this.isCreateChannelOpen = false;
     this.isAddPeopleOpen = true;
   }
 
-  closeAddPeople() { 
+  closeAddPeople() {
     this.isAddPeopleOpen = false;
     this.channelName = "";
     this.channelDescription = "";
@@ -83,7 +99,7 @@ export class Sidebar {
       this.tempChannelName = "";
       this.tempChannelDescription = "";
       this.addPeopleOption = 'all';
-      
+
     } catch (error) {
       console.error(error);
     } finally {
@@ -91,6 +107,11 @@ export class Sidebar {
     }
   }
 
-  toggleChannels() { this.channelsOpen = !this.channelsOpen; }
-  toggleDm() { this.dmOpen = !this.dmOpen; }
+  toggleChannels() {
+    this.channelsOpen = !this.channelsOpen;
+  }
+
+  toggleDm() {
+    this.dmOpen = !this.dmOpen;
+  }
 }

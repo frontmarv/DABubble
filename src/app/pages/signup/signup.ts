@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink,],
   templateUrl: './signup.html',
   styleUrls: ['../login/login.scss', './signup.scss']
 })
@@ -24,42 +24,84 @@ export class SignupComponent {
   fullName: string = '';
   email: string = '';
   password: string = '';
-  privacyPolicy = false;
+  isPrivacyPolicyAccepted = false;
+
+  isNameValid: boolean = false;
+  isEmailValid: boolean = false;
+  isPasswordValid: boolean = false;
 
   avatars = [
+    '/shared/profile-pics/unkown-user.svg',
     '/shared/profile-pics/profile-pic1.svg',
     '/shared/profile-pics/profile-pic2.svg',
     '/shared/profile-pics/profile-pic3.svg',
     '/shared/profile-pics/profile-pic4.svg',
     '/shared/profile-pics/profile-pic5.svg',
-    '/shared/profile-pics/profile-pic6.svg'
+    '/shared/profile-pics/profile-pic6.svg'    
   ];
-  selectedAvatar: string = '/shared/profile-pics/profile-pic1.svg';
+
+  selectedAvatar: string = '/login/unkown-user.svg';
+
+  validateName(event: FocusEvent) {
+    this.errorMessage = '';
+    if (!this.fullName.trim()) {
+      this.isNameValid = false;
+      this.errorMessage = 'Bitte Name eingeben';
+      return;
+    }
+    if (this.fullName.length > 30) {
+      this.isNameValid = false;
+      this.errorMessage = 'Name darf max. 30 Zeichen enthalten';
+      return;
+    }
+    else {
+      this.isNameValid = true;
+      return true
+    }
+  }
+
+  validateEmail(event: FocusEvent) {
+    this.errorMessage = '';
+    if (!this.email.trim() || !this.isValidEmail(this.email)) {
+      this.isEmailValid = false;
+      this.errorMessage = 'Bitte gültige E-Mail-Adresse eingeben';
+      return;
+    }
+    if (this.email.length > 50) {
+      this.isEmailValid = false;
+      this.errorMessage = 'E-mail-Adresse darf max. 50 Zeichen enthalten';
+      return;
+    }
+    else {
+      this.isEmailValid = true;
+      return true
+    }
+  }
+
+  validatePassword(event: FocusEvent) {
+    this.errorMessage = '';
+    if (!this.password || this.password.length < 6) {
+      this.isPasswordValid = false;
+      this.errorMessage = 'Passwort muss min. 6 Zeichen enthalten';
+      return;
+    }
+    else {
+      this.isPasswordValid = true;
+      return true
+    }
+  }
+
+  FormIsValid() {
+    return this.isNameValid && this.isEmailValid && this.isPasswordValid && this.isPrivacyPolicyAccepted;
+  }
 
   nextStep() {
-    this.errorMessage = '';
-
-    if (!this.fullName.trim()) {
-      this.errorMessage = 'Bitte gib deinen Namen ein.';
-      return;
+    if (this.FormIsValid()) {
+      this.signupStep = 2;
+      this.errorMessage = '';
+    } else {
+      this.errorMessage = 'Bitte alle Felder korrekt ausfüllen';
     }
-
-    if (!this.email.trim() || !this.isValidEmail(this.email)) {
-      this.errorMessage = 'Bitte gib eine gültige E-Mail-Adresse ein.';
-      return;
-    }
-
-    if (!this.password || this.password.length < 6) {
-      this.errorMessage = 'Das Passwort muss mindestens 6 Zeichen lang sein.';
-      return;
-    }
-
-    if (!this.privacyPolicy) {
-      this.errorMessage = 'Bitte akzeptiere die Datenschutzerklärung.';
-      return;
-    }
-
-    this.signupStep = 2;
   }
 
   prevStep() {
@@ -90,14 +132,14 @@ export class SignupComponent {
     this.isLoading = false;
 
     if (result.success) {
-      this.success.emit(); 
+      this.success.emit();
     } else {
       this.errorMessage = result.error || 'Registrierung fehlgeschlagen.';
     }
   }
 
   private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return emailRegex.test(email);
   }
 }

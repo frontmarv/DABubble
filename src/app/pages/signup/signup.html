@@ -1,17 +1,23 @@
 <ng-container *ngIf="signupStep === 1">
     <header class="card-header signup-header">
         <div class="arrow-back" (click)="close.emit()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#444DF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="#444DF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5" />
+                <path d="M12 19l-7-7 7-7" />
             </svg>
         </div>
         <h1>Konto erstellen</h1>
-        <p class="text--big center-text">Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues DABubble-Konto.</p>
+        <p class="text--big center-text">Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues DABubble-Konto.
+        </p>
     </header>
 
-    <div class="error-message" *ngIf="errorMessage">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+    <div [ngClass]="errorMessage ? 'error-message' : 'invisible'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
         <span>{{ errorMessage }}</span>
     </div>
@@ -19,38 +25,50 @@
     <form class="login-form">
         <div class="input-group">
             <div class="icon-wrapper">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#686868" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="#686868" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
                 </svg>
             </div>
-            <input type="text" [(ngModel)]="fullName" name="fullName" placeholder="Name und Nachname" class="inputfield--login full-width">
+            <input type="text" [(ngModel)]="fullName" name="fullName" placeholder="Name und Nachname"
+                class="inputfield--login full-width" (blur)="validateName($event)">
         </div>
 
         <div class="input-group">
             <div class="icon-wrapper">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#686868" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="#686868" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                 </svg>
             </div>
-            <input type="email" [(ngModel)]="email" name="email" placeholder="beispielname@email.com" class="inputfield--login full-width">
+            <input type="email" [(ngModel)]="email" name="email" placeholder="beispielname@email.com"
+                class="inputfield--login full-width" (blur)="validateEmail($event)">
         </div>
 
         <div class="input-group">
             <div class="icon-wrapper">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#686868" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="#686868" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
             </div>
-            <input type="password" [(ngModel)]="password" name="password" placeholder="Passwort" class="inputfield--login full-width">
+            <input type="password" [(ngModel)]="password" name="password" placeholder="Passwort"
+                class="inputfield--login full-width" (blur)="validatePassword($event)">
         </div>
 
         <div class="privacy-policy">
-            <input type="checkbox" id="privacy" [(ngModel)]="privacyPolicy" name="privacyPolicy" class="checkbox-custom">
-            <label for="privacy" class="text--small">Ich stimme der <a routerLink="/privacy-policy" class="link-blue">Datenschutzerklärung</a> zu.</label>
+            <input type="checkbox" id="privacy" [(ngModel)]="isPrivacyPolicyAccepted" name="privacyPolicy"
+                class="checkbox-custom">
+            <label for="privacy" class="text--small">Ich stimme der <a routerLink="/privacy-policy"
+                    class="link-blue">Datenschutzerklärung</a> zu.</label>
         </div>
 
         <div class="action-buttons right-aligned">
-            <button type="button" class="btn--primary large-btn" (click)="nextStep()">Weiter</button>
+            <button type="sumbit" class="btn--primary large-btn" (click)="nextStep()"
+                [disabled]="!FormIsValid()">Weiter</button>
         </div>
     </form>
 </ng-container>
@@ -58,34 +76,38 @@
 <ng-container *ngIf="signupStep === 2">
     <header class="card-header signup-header">
         <div class="arrow-back" (click)="prevStep()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#444DF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="#444DF2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5" />
+                <path d="M12 19l-7-7 7-7" />
             </svg>
         </div>
         <h1>Wähle deinen Avatar</h1>
 
         <div class="error-message" *ngIf="errorMessage" style="margin-bottom: 20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             <span>{{ errorMessage }}</span>
         </div>
+    </header>
+    <div class="avatar-selection">
+        <div class="big-avatar-wrapper">
+            <img [src]="selectedAvatar" alt="Selected Avatar" class="big-avatar">
+        </div>
+        <h2 class="user-fullname">{{ fullName || 'Dein Name' }}</h2>
+        <p class="text--regular">Aus der Liste wählen</p>
 
-        <div class="avatar-selection">
-            <div class="big-avatar-wrapper">
-                <img [src]="selectedAvatar" alt="Selected Avatar" class="big-avatar">
-            </div>
-            <h2 class="user-fullname">{{ fullName || 'Dein Name' }}</h2>
-            <p class="text--regular">Aus der Liste wählen</p>
-
-            <div class="avatar-list">
-                <div *ngFor="let avatar of avatars" class="avatar-option" (click)="selectAvatar(avatar)" [class.selected]="selectedAvatar === avatar">
-                    <img [src]="avatar" alt="Avatar Option">
-                </div>
+        <div class="avatar-list">
+            <div *ngFor="let avatar of avatars" class="avatar-option" (click)="selectAvatar(avatar)"
+                [class.selected]="selectedAvatar === avatar">
+                <img [src]="avatar" alt="Avatar Option">
             </div>
         </div>
-    </header>
-
+    </div>
     <div class="action-buttons right-aligned avatar-actions">
         <button type="button" class="btn--primary large-btn" (click)="finishSignup()" [disabled]="isLoading">
             <span *ngIf="!isLoading">Weiter</span>

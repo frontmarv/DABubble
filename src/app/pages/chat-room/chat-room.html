@@ -1,18 +1,26 @@
 <div class="main-container">
     <header>
-        <div class="backdrop" [class.show]="isProfileMenuOpen" (click)="isProfileMenuOpen=false"></div>       
+        <div class="backdrop" [class.show]="isProfileMenuOpen" (click)="isProfileMenuOpen=false"></div>
+
         <div class="header-left">
+            @if (isMobile() && !isSidebarOpen) {
+            <button class="mobile-back-btn icon-btn" type="button" aria-label="Zurück" (click)="goBackToSidebar()">
+                <img src="/login/arrow-back.svg" alt="Zurück" />
+            </button>
+            }
             <img src="/shared/dabubble-logo.svg" alt="DABubble Logo" class="logo" />
             <h2 class="logo-text">DABubble</h2>
-        </div>        
+        </div>
+
         <div class="search-bar">
             <input type="text" placeholder="Devspace durchsuchen" />
             <img src="/main-page/search.svg" alt="Suche" />
         </div>
 
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
-            <span class="user-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</span>
-            <img [src]="getAvatarUrl(currentUser?.avatar)" alt="Profilbild" class="avatar" />
+            <span class="user-name">{{ firebaseService.currentUser()?.firstName }} {{
+                firebaseService.currentUser()?.lastName }}</span>
+            <img [src]="getAvatarUrl(firebaseService.currentUser()?.avatar)" alt="Profilbild" class="avatar" />
             <span class="status status--online" aria-hidden="true"></span>
             <span class="dropdown-arrow" aria-hidden="true"></span>
 
@@ -22,9 +30,11 @@
             </div>
         </div>
     </header>
+
     <div class="layout" [class.layout--sidebar-closed]="!isSidebarOpen">
         <div class="sidebar-wrapper" [class.sidebar-wrapper--closed]="!isSidebarOpen">
-            <app-sidebar></app-sidebar>
+            <app-sidebar (mobileNavigation)="onMobileNavigation()"></app-sidebar>
+
             <button class="sidebar-toggle" type="button" (click)="toggleSidebar()" [attr.aria-expanded]="isSidebarOpen">
                 <span class="sidebar-toggle__text">
                     Workspace-Menü {{ isSidebarOpen ? 'schließen' : 'öffnen' }}
@@ -33,20 +43,15 @@
                     src="/main-page/Group 2.svg" alt="" />
             </button>
         </div>
-        <div class="main-chat">
-            <header class="main-chat__header">
-                <h4>Chat Headline</h4>
-            </header>
-            <app-message-list></app-message-list>
-            <app-message-composer></app-message-composer>
-        </div>
 
+        <app-chat></app-chat>
         <app-thread-panel></app-thread-panel>
     </div>
 
-    <app-profile-view 
-        *ngIf="showUserProfile" 
-        [user]="currentUser" 
-        (close)="closeProfile()">
+    <app-profile-view *ngIf="showUserProfile" [user]="firebaseService.currentUser()" (close)="closeProfile()">
     </app-profile-view>
+
+    @if (displayForeignUserService.showForeignUserProfile()) {
+    <app-not-logged-in (close)="closeForeignUserProfile()"></app-not-logged-in>
+    }
 </div>
