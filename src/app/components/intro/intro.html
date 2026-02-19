@@ -1,13 +1,30 @@
 <div class="intro-overlay">
-  <div class="intro-background" [class.fade-out]="introFadeOut"></div>
+  <div 
+    class="intro-background" 
+    [class.fade-out]="introFadeOut">
+  </div>
 
   <div class="animation-wrapper">
-    <div class="intro-center-container" [ngClass]="{ 'move-to-corner': introPhase2 }">
-      <img src="/shared/dabubble-logo.svg" alt="DABubble Logo" class="intro-logo" />
+    <div 
+      class="intro-center-container" 
+      [ngClass]="{ 'move-to-corner': introPhase2 }">
 
-      <div class="text-mask" [ngClass]="{ 'fly-out': introPhase1 }">
-        <h2 class="intro-text" [class.change-color]="introFadeOut">DABubble</h2>
+      <img 
+        src="/shared/dabubble-logo.svg" 
+        alt="DABubble Logo" 
+        class="intro-logo" />
+
+      <div class="text-mask">
+        <h2 
+          class="intro-text"
+          [ngClass]="{
+            'fly-out': introPhase1,
+            'change-color': introFadeOut
+          }">
+          DABubble
+        </h2>
       </div>
+
     </div>
   </div>
 </div>
