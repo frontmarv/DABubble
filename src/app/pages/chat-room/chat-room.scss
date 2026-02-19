@@ -222,6 +222,12 @@ header {
 
 
 
+.sidebar-wrapper--closed app-sidebar {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
 @media (max-width: 1240px) {
   header {
     height: 80px;
@@ -262,6 +268,10 @@ header {
 
   .sidebar-wrapper {
     width: 240px;
+  }
+
+  .sidebar-wrapper--closed {
+    width: 0;
   }
 
   .sidebar-toggle {
@@ -316,6 +326,10 @@ header {
 
   .sidebar-wrapper {
     width: 200px;
+  }
+
+  .sidebar-wrapper--closed {
+    width: 0;
   }
 
   .sidebar-toggle {
