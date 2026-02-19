@@ -4,6 +4,7 @@ import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
 import { MainChat } from '../chat/main-chat';
 import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,7 +14,7 @@ import { DisplayForeignUserService } from '../../services/display-foreign-user.s
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
-  chat = inject(MainChat);
+  chat = inject(ChatService);
   firebaseService = inject(FirebaseService);
   displayForeignUserService = inject(DisplayForeignUserService);
   @Output() mobileNavigation = new EventEmitter<void>();
@@ -41,7 +42,7 @@ export class Sidebar {
 
   selectDm(user:any) {
     this.mobileNavigation.emit();
-    this.chat.openChatRoom();
+    this.chat.openChatRoom(user);
   }
 
   openCreateChannel() {
