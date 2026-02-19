@@ -8,6 +8,8 @@ import { User } from '../../models/user.class';
 import { AuthService } from '../../services/auth.service';
 import { FirebaseService } from '../../services/firebase.service';
 import { MainChat } from "../../components/chat/main-chat";
+import { NotLoggedIn } from '../../components/profile-view/not-logged-in/not-logged-in';
+import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 
 const MOBILE_BREAKPOINT = 768;
 
@@ -20,13 +22,15 @@ const MOBILE_BREAKPOINT = 768;
     Sidebar,
     ThreadPanel,
     ProfileView,
-    MainChat
+    MainChat,
+    NotLoggedIn
   ],
   templateUrl: './chat-room.html',
   styleUrls: ['./chat-room.scss'],
 })
 export class ChatRoom implements OnInit {
   private authService = inject(AuthService);
+  displayForeignUserService = inject(DisplayForeignUserService);
   firebaseService = inject(FirebaseService);
 
   isSidebarOpen = true;
@@ -79,6 +83,10 @@ export class ChatRoom implements OnInit {
 
   closeProfile() {
     this.showUserProfile = false;
+  }
+
+  closeForeignUserProfile() {
+    this.displayForeignUserService.setToFalse();
   }
 
   getAvatarUrl(avatar?: string | null): string {

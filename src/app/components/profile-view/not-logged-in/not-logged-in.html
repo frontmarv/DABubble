@@ -1,0 +1,43 @@
+<div class="profile-backdrop" (click)="closeProfile()">
+    <div class="profile-card" (click)="$event.stopPropagation()">
+        <header class="profile-header">
+            <h3>Profil</h3>
+            <div class="close-btn" (click)="closeProfile()">
+                <img src="/main-page/close-button.svg" alt="">
+            </div>
+        </header>
+
+        <div class="profile-avatar">
+            <img [src]="displayForeignUserService.selectedUser()?.avatar" referrerpolicy="no-referrer" alt="Profile">
+        </div>
+
+        <div class="profile-name-section">
+            <div class="name-row">
+                <h2>{{ displayForeignUserService.selectedUser()?.firstName }} {{ displayForeignUserService.selectedUser()?.lastName }}</h2>
+            </div>
+            <div class="status-row">
+                <span class="statusicon online"></span>
+                <span class="status-text--online">Aktiv</span>
+
+                <span class="statusicon offline"></span>
+                <span class="status-text--offline">Abwesend</span>
+            </div>
+        </div>
+
+        <div class="profile-email-section">
+            <div class="email-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+                </svg>
+                <span>E-Mail-Adresse</span>
+            </div>
+            <a [href]="'mailto:' + displayForeignUserService.selectedUser()?.email" class="email-link">{{ displayForeignUserService.selectedUser()?.email }}</a>
+        </div>
+
+        <div class="edit-actions">
+            <button class="btn--primary"><img src="/main-page/write-msg-to-user.svg" alt="">Nachricht</button>
+        </div>
+    </div>
+</div>

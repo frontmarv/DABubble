@@ -29,12 +29,11 @@
 
       <nav class="list" [class.collapsed]="!channelsOpen" aria-label="Channel Liste">
         @for (channel of firebaseService.channels; track channel.id) {
-          <div class="list__item"
-            (click)="selectChannel(channel.id)"
-            [class.list__item--active]="channel.id === firebaseService.selectedChannelId">
-            <img class="input-icon" src="/main-page/tag1.svg" alt="#" />
-            <span class="text--small">{{ channel.name }}</span>
-          </div>
+        <div class="list__item" (click)="selectChannel(channel.id)"
+          [class.list__item--active]="channel.id === firebaseService.selectedChannelId">
+          <img class="input-icon" src="/main-page/tag1.svg" alt="#" />
+          <span class="text--small">{{ channel.name }}</span>
+        </div>
         }
 
         <button class="list__item list__item--add" type="button" (click)="openCreateChannel()">
@@ -56,7 +55,7 @@
 
       <nav class="list" [class.collapsed]="!dmOpen" aria-label="Direktnachrichten Liste">
         @for (user of displayAllUsersSidebar(); track user.uid) {
-        <a class="list__item" (click)="selectDm()">
+        <a class="list__item" (click)="selectDm(); displayForeignUserService.setSelectedUser(user); displayForeignUserService.setToTrue();">
           <span class="avatar">
             <img src="{{ user.avatar }}" alt="" class="avatar__img" />
             <span class="status status--online" aria-hidden="true"></span>
@@ -64,13 +63,13 @@
           <span class="text--small">
             {{ user.firstName }} {{ user.lastName }}
             @if (user.uid === firebaseService.currentUser()?.uid) {
-              <span> (Du)</span>
+            <span> (Du)</span>
             }
           </span>
         </a>
         }
-
-        <a class="list__item" (click)="selectDm()">
+        <!-- Keep this user as example for offline status-->
+        <a class="list__item" (click)="selectDm();">
           <span class="avatar">
             <img src="/shared/profile-pics/profile-pic2.svg" alt="Profilbild" class="avatar__img" />
             <span class="status status--offline" aria-hidden="true"></span>
@@ -82,72 +81,72 @@
   </div>
 
   @if (isCreateChannelOpen) {
-    <div class="modal-backdrop" (click)="closeCreateChannel()">
-      <div class="modal" (click)="$event.stopPropagation()">
-        <div class="modal__header">
-          <h2>Channel erstellen</h2>
-          <button class="icon-btn" (click)="closeCreateChannel()">
-            <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
-          </button>
-        </div>
+  <div class="modal-backdrop" (click)="closeCreateChannel()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2>Channel erstellen</h2>
+        <button class="icon-btn" (click)="closeCreateChannel()">
+          <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
+        </button>
+      </div>
 
-        <p class="modal__text text--regular">
-          Channels dienen deinem Team zur Kommunikation. Am besten sollten sie themenbezogen sein.
-          #marketing zum Beispiel
-        </p>
+      <p class="modal__text text--regular">
+        Channels dienen deinem Team zur Kommunikation. Am besten sollten sie themenbezogen sein.
+        #marketing zum Beispiel
+      </p>
 
-        <div class="modal__form">
-          <div class="input-group">
-            <label class="modal__label text--small bold">Channel-Name</label>
-            <div class="input-wrapper">
-              <img class="input-icon" src="/main-page/tag.svg" alt="#" />
-              <input class="inputfield--dialogs with-icon" type="text" placeholder="z.B. Kooperationsprojekte"
-                [(ngModel)]="channelName" />
-            </div>
-          </div>
-
-          <div class="input-group">
-            <label class="modal__label text--small bold">Beschreibung <span>(optional)</span></label>
-            <input class="inputfield--dialogs" type="text" placeholder="Dein Text hier"
-              [(ngModel)]="channelDescription" />
+      <div class="modal__form">
+        <div class="input-group">
+          <label class="modal__label text--small bold">Channel-Name</label>
+          <div class="input-wrapper">
+            <img class="input-icon" src="/main-page/tag.svg" alt="#" />
+            <input class="inputfield--dialogs with-icon" type="text" placeholder="z.B. Kooperationsprojekte"
+              [(ngModel)]="channelName" />
           </div>
         </div>
-        <div class="modal__footer">
-          <button class="btn--primary" type="button" (click)="proceedToAddMembers()">Weiter</button>
+
+        <div class="input-group">
+          <label class="modal__label text--small bold">Beschreibung <span>(optional)</span></label>
+          <input class="inputfield--dialogs" type="text" placeholder="Dein Text hier"
+            [(ngModel)]="channelDescription" />
         </div>
       </div>
+      <div class="modal__footer">
+        <button class="btn--primary" type="button" (click)="proceedToAddMembers()">Weiter</button>
+      </div>
     </div>
+  </div>
   }
 
   @if (isAddPeopleOpen) {
-    <div class="modal-backdrop">
-      <div class="modal" (click)="$event.stopPropagation()">
-        <div class="modal__header">
-          <h2>Leute hinzufügen</h2>
-          <button class="icon-btn" (click)="closeAddPeople()">
-            <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
-          </button>
+  <div class="modal-backdrop">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h2>Leute hinzufügen</h2>
+        <button class="icon-btn" (click)="closeAddPeople()">
+          <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
+        </button>
+      </div>
+
+      <div class="modal__radio-section">
+        <div class="radio-option">
+          <input type="radio" id="all-members" name="add-members" value="all" [(ngModel)]="addPeopleOption" />
+          <label for="all-members" class="text--regular"> Alle Mitglieder hinzufügen </label>
         </div>
 
-        <div class="modal__radio-section">
-          <div class="radio-option">
-            <input type="radio" id="all-members" name="add-members" value="all" [(ngModel)]="addPeopleOption" />
-            <label for="all-members" class="text--regular"> Alle Mitglieder hinzufügen </label>
-          </div>
-
-          <div class="radio-option">
-            <input type="radio" id="specific-members" name="add-members" value="specific" [(ngModel)]="addPeopleOption" />
-            <label for="specific-members" class="text--regular"> Bestimmte Leute hinzufügen </label>
-          </div>
-        </div>
-
-        <div class="modal__footer">
-          <button class="btn--primary" type="button" [disabled]="isCreating"
-            (click)="createChannel(); $event.stopPropagation()">
-            Erstellen
-          </button>
+        <div class="radio-option">
+          <input type="radio" id="specific-members" name="add-members" value="specific" [(ngModel)]="addPeopleOption" />
+          <label for="specific-members" class="text--regular"> Bestimmte Leute hinzufügen </label>
         </div>
       </div>
+
+      <div class="modal__footer">
+        <button class="btn--primary" type="button" [disabled]="isCreating"
+          (click)="createChannel(); $event.stopPropagation()">
+          Erstellen
+        </button>
+      </div>
     </div>
+  </div>
   }
 </aside>

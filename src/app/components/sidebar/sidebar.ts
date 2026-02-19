@@ -3,17 +3,19 @@ import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
 import { MainChat } from '../chat/main-chat';
+import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [FormsModule], 
+  imports: [FormsModule],
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
   chat = inject(MainChat);
   firebaseService = inject(FirebaseService);
+  displayForeignUserService = inject(DisplayForeignUserService);
   @Output() mobileNavigation = new EventEmitter<void>();
 
   channelsOpen = false;
@@ -104,11 +106,11 @@ export class Sidebar {
     }
   }
 
-  toggleChannels() { 
-    this.channelsOpen = !this.channelsOpen; 
+  toggleChannels() {
+    this.channelsOpen = !this.channelsOpen;
   }
 
-  toggleDm() { 
-    this.dmOpen = !this.dmOpen; 
+  toggleDm() {
+    this.dmOpen = !this.dmOpen;
   }
 }

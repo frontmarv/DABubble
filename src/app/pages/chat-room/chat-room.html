@@ -4,9 +4,9 @@
 
         <div class="header-left">
             @if (isMobile() && !isSidebarOpen) {
-                <button class="mobile-back-btn icon-btn" type="button" aria-label="Zurück" (click)="goBackToSidebar()">
-                    <img src="/login/arrow-back.svg" alt="Zurück" />
-                </button>
+            <button class="mobile-back-btn icon-btn" type="button" aria-label="Zurück" (click)="goBackToSidebar()">
+                <img src="/login/arrow-back.svg" alt="Zurück" />
+            </button>
             }
             <img src="/shared/dabubble-logo.svg" alt="DABubble Logo" class="logo" />
             <h2 class="logo-text">DABubble</h2>
@@ -18,7 +18,8 @@
         </div>
 
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
-            <span class="user-name">{{ firebaseService.currentUser()?.firstName }} {{ firebaseService.currentUser()?.lastName }}</span>
+            <span class="user-name">{{ firebaseService.currentUser()?.firstName }} {{
+                firebaseService.currentUser()?.lastName }}</span>
             <img [src]="getAvatarUrl(firebaseService.currentUser()?.avatar)" alt="Profilbild" class="avatar" />
             <span class="status status--online" aria-hidden="true"></span>
             <span class="dropdown-arrow" aria-hidden="true"></span>
@@ -47,9 +48,10 @@
         <app-thread-panel></app-thread-panel>
     </div>
 
-    <app-profile-view
-        *ngIf="showUserProfile"
-        [user]="firebaseService.currentUser()"
-        (close)="closeProfile()">
+    <app-profile-view *ngIf="showUserProfile" [user]="firebaseService.currentUser()" (close)="closeProfile()">
     </app-profile-view>
+
+    @if (displayForeignUserService.showForeignUserProfile()) {
+    <app-not-logged-in (close)="closeForeignUserProfile()"></app-not-logged-in>
+    }
 </div>
