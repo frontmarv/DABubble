@@ -11,7 +11,7 @@ import { MainChat } from "../../components/chat/main-chat";
 import { NotLoggedIn } from '../../components/profile-view/not-logged-in/not-logged-in';
 import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 
-const MOBILE_BREAKPOINT = 768;
+const MOBILE_BREAKPOINT = 1240;
 
 @Component({
   selector: 'app-chat-room',
