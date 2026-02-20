@@ -21,7 +21,7 @@ import { Chat } from '../models/chat.class';
   providedIn: 'root',
 })
 export class FirebaseService {
-  private firestore = inject(Firestore);
+  public firestore = inject(Firestore);
   private injector = inject(Injector);
 
   currentUser = signal<User | null>(null);

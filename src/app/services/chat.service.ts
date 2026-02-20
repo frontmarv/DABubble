@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from "@angular/core";
 import { Chat } from "../models/chat.class";
 import { User } from "../models/user.class";
 import { FirebaseService } from "./firebase.service";
+import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch } from "@angular/fire/firestore"
 
 @Injectable({
     providedIn: 'root'
@@ -14,6 +15,7 @@ export class ChatService {
     user = new User;
     otherUser = signal<User | null>(null);
     currentUserId = signal<User | null>(null);
+    messages = signal<any[]>([]); 
 
     async openChatRoom(user: any) {
         await this.getOtherUserData(user);
@@ -45,8 +47,17 @@ export class ChatService {
     }
 
     loadMessages() {
-        console.log("Nachrichten werden gerendert");
-
+         const chatId = this.chat.id;
+        if (!chatId) return;
+        const messagesRef = collection(this.firebaseService.firestore, 'chats', chatId, 'messages');
+        const q = query(messagesRef, orderBy('createdAt', 'asc'));
+        onSnapshot(q, (snapshot) => {
+            const msgs: any[] = [];
+            snapshot.forEach(doc => {
+                msgs.push({ id: doc.id, ...doc.data() });
+            });
+            this.messages.set(msgs);
+        });
     }
 
     async createChat() {
@@ -71,4 +82,29 @@ export class ChatService {
         console.log(this.otherUser);
     }
 
+
+    async sendMessage(text: string) {
+        const chatId = this.chat.id;
+        const currentUserId = this.firebaseService.currentUser()?.uid;
+        if (!chatId || !currentUserId || !text.trim()) return;
+        const batch = writeBatch(this.firebaseService.firestore);
+        const chatRef = doc(this.firebaseService.firestore, 'chats', chatId);
+        const messageRef = doc(
+            collection(this.firebaseService.firestore, 'chats', chatId, 'messages')
+        );
+
+        batch.set(messageRef, {
+            senderId: currentUserId,
+            text: text,
+            createdAt: serverTimestamp(),
+            reactions: {}
+        });
+
+        batch.update(chatRef, {
+            lastMessage: text,
+            lastMessageAt: serverTimestamp()
+        });
+
+        await batch.commit();
+    }
 }
