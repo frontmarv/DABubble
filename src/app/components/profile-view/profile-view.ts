@@ -5,6 +5,7 @@ import { User } from '../../models/user.class';
 import { FirebaseService } from '../../services/firebase.service';
 import { inject } from '@angular/core';
 
+
 @Component({
   selector: 'app-profile-view',
   standalone: true,
@@ -37,7 +38,6 @@ export class ProfileView implements OnChanges {
 
   editProfile(): void {
     this.isEditing = true;
-
     if (this.user && !this.fullName.trim()) {
       this.fullName = this.buildFullName(this.user);
     }
@@ -55,12 +55,12 @@ export class ProfileView implements OnChanges {
     this.isEditing = false;
   }
 
-  saveProfile(): void {
+  async saveProfile(): Promise<void> {
     this.validateFullName(this.fullName);
     if (!this.isInputValid) return;
     else {
       const currentUser = this.firebaseService.currentUser();
-      this.firebaseService.updateSingleUser(currentUser?.uid ?? '', {
+      await this.firebaseService.updateSingleUser(currentUser?.uid ?? '', {
         firstName: this.splitFullName(this.fullName).firstName,
         lastName: this.splitFullName(this.fullName).lastName,
       });

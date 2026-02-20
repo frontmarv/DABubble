@@ -20,14 +20,13 @@ export class AuthService {
     onAuthStateChanged(this.auth, (user) => {
       this.currentFirebaseUser = user;
       this.isAuthenticated = !!user;
-
       if (user) {
         this.firebaseService.subUser(user.uid);
       }
     });
   }
 
-  async signup(email: string, password: string, firstName: string, lastName: string, avatar: string) {
+  async signup(email: string, password: string, firstName: string, lastName: string, avatar: string, status: string) {
     try {
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
       const uid = userCredential.user.uid;
@@ -38,7 +37,8 @@ export class AuthService {
         firstName,
         lastName,
         email,
-        avatar: cleanAvatar
+        avatar: cleanAvatar,
+        status: status
       });
 
       await this.firebaseService.addUser(newUser, uid);
@@ -51,31 +51,33 @@ export class AuthService {
   async login(email: string, password: string) {
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+      await this.firebaseService.updateSingleUser(userCredential.user.uid, { status: 'online' });
       return { success: true };
+
     } catch (error: any) {
       console.error('Login-Fehler:', error);
       return { success: false, error: this.getErrorMessage(error.code) };
     }
   }
 
-  async guestLogin() {
-    try {
-      const userCredential = await signInAnonymously(this.auth);
-      const uid = userCredential.user.uid;
-      const guestUser = new User({
-        uid,
-        firstName: 'Gast',
-        lastName: '',
-        email: '',
-        avatar: '/shared/profile-pics/unkown-user.svg'
-      });
+  // async guestLogin() {
+  //   try {
+  //     const userCredential = await signInAnonymously(this.auth);
+  //     const uid = userCredential.user.uid;
+  //     const guestUser = new User({
+  //       uid,
+  //       firstName: 'Gast',
+  //       lastName: '',
+  //       email: '',
+  //       avatar: '/shared/profile-pics/unkown-user.svg'
+  //     });
 
-      await this.firebaseService.addUser(guestUser, uid);
-      return { success: true };
-    } catch (error: any) {
-      return { success: false, error: 'Gast-Login fehlgeschlagen. Bitte versuche es erneut.' };
-    }
-  }
+  //     await this.firebaseService.addUser(guestUser, uid);
+  //     return { success: true };
+  //   } catch (error: any) {
+  //     return { success: false, error: 'Gast-Login fehlgeschlagen. Bitte versuche es erneut.' };
+  //   }
+  // }
 
   async googleLogin() {
     try {
@@ -100,7 +102,8 @@ export class AuthService {
         firstName,
         lastName,
         email: user.email || '',
-        avatar: photo
+        avatar: photo,
+        status: 'online'
       });
 
       await this.firebaseService.addUser(googleUser, uid); //überschreibt jedesmal die Daten in "users"
@@ -117,6 +120,7 @@ export class AuthService {
 
   async logout(): Promise<void> {
     try {
+      await this.firebaseService.updateSingleUser(this.currentFirebaseUser?.uid ?? '', { status: 'offline' });
       await signOut(this.auth);
       this.router.navigate(['/login']);
     } catch (error) {

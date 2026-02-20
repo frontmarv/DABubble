@@ -31,7 +31,7 @@
         @for (channel of firebaseService.channels; track channel.id) {
         <div class="list__item" (click)="selectChannel(channel.id)"
           [class.list__item--active]="channel.id === firebaseService.selectedChannelId">
-          <img class="input-icon" src="/main-page/tag1.svg" alt="#" />
+          <img class="input-icon" src="/main-page/tag1.svg" alt="#">
           <span class="text--small">{{ channel.name }}</span>
         </div>
         }
@@ -58,12 +58,13 @@
         <a class="list__item" (click)="selectDm();">
           <span class="avatar">
             <img src="{{ user.avatar }}" alt="" class="avatar__img" />
-            <span class="status status--online" aria-hidden="true"></span>
+            @if(user.status === 'online') {<span class="status status--online" aria-hidden="true"></span>}
+            @else{<span class="status status--offline" aria-hidden="true"></span>}
           </span>
           <span class="text--small">
             {{ user.firstName }} {{ user.lastName }}
             @if (user.uid === firebaseService.currentUser()?.uid) {
-            <span> (Du)</span>
+            <span>(Du)</span>
             }
           </span>
         </a>

@@ -9,7 +9,7 @@ import { Intro } from '../../components/intro/intro';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, SignupComponent, Intro], 
+  imports: [CommonModule, FormsModule, RouterLink, SignupComponent, Intro],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -53,8 +53,8 @@ export class Login {
   async guestLogin() {
     this.errorMessage = '';
     this.isLoading = true;
-
-    const result = await this.authService.guestLogin();
+    const result = await this.authService.login("gast@dabubble.com", "gast1234");
+    // const result = await this.authService.guestLogin();
     this.isLoading = false;
 
     if (result.success) {

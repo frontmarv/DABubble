@@ -40,7 +40,7 @@ export class SignupComponent {
     '/shared/profile-pics/profile-pic6.svg'    
   ];
 
-  selectedAvatar: string = '/login/unkown-user.svg';
+  selectedAvatar: string = '/shared/profile-pics/unkown-user.svg';
 
   validateName(event: FocusEvent) {
     this.errorMessage = '';
@@ -126,7 +126,8 @@ export class SignupComponent {
       this.password,
       firstName,
       lastName,
-      this.selectedAvatar
+      this.selectedAvatar,
+      'offline'
     );
 
     this.isLoading = false;

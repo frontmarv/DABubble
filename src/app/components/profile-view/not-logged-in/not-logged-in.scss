@@ -16,6 +16,16 @@
     gap: 10px;
 }
 
+.status-text--online {
+    font-size: 20px;
+    color: var(--color-online-green);
+}
+
+.status-text--offline {
+    font-size: 20px;
+    color: var(--color-text-grey);
+}
+
 .statusicon {
     width: 14px;
     height: 14px;
@@ -29,14 +39,4 @@
 
 .statusicon.offline {
     background-color: var(--color-text-grey);
-}
-
-.status-text--online {
-    font-size: 20px;
-    color: var(--color-online-green);
-}
-
-.status-text--offline {
-    font-size: 20px;
-    color: var(--color-text-grey);
 }
