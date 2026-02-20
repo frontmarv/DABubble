@@ -9,7 +9,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30px;
+  padding: 20px;
   gap: 45px;
   white-space: nowrap;
 
@@ -79,10 +79,11 @@ header {
       width: 30px;
       height: 30px;
       background: var(--color-black);
-      -webkit-mask: url("/main-page/keyboard_arrow_down.svg") no-repeat center / contain;
-      mask: url("/main-page/keyboard_arrow_down.svg") no-repeat center / contain;
+      -webkit-mask: url('/main-page/keyboard_arrow_down.svg') no-repeat center / contain;
+      mask: url('/main-page/keyboard_arrow_down.svg') no-repeat center / contain;
       transform-origin: center;
-      transition: transform var(--transition-fast) ease, background-color var(--transition-fast) ease;
+      transition: transform var(--transition-fast) ease,
+        background-color var(--transition-fast) ease;
     }
 
     &:not(.open):hover {
@@ -122,7 +123,7 @@ header {
       gap: 10px;
       text-align: center;
 
-      >div {
+      > div {
         font-size: 28px;
         font-weight: 600;
         color: var(--color-black);
@@ -130,7 +131,7 @@ header {
         transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
       }
 
-      >div:hover {
+      > div:hover {
         background-color: var(--color-background);
         color: var(--color-purple1);
         font-weight: 700;
@@ -218,168 +219,77 @@ header {
   transform: rotate(180deg);
 }
 
-
-
-
-
 .sidebar-wrapper--closed app-sidebar {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
 }
 
+
 @media (max-width: 1240px) {
-  header {
-    height: 80px;
-    padding: 0 20px;
-    gap: 20px;
-
-    .header-left {
-      gap: 10px;
-
-      img { width: 42px; }
-
-      h2 { font-size: 1.25rem; }
-    }
-
-    .search-bar {
-      width: 55%;
-      padding: 12px 18px;
-
-      input { font-size: 1rem; }
-    }
-
-    .user-profile {
-      gap: 10px;
-
-      span { font-size: 1.125rem; }
-
-      img {
-        width: 44px;
-        height: 44px;
-      }
-    }
-  }
-
-  .layout {
-    gap: 14px;
-    padding: 0 14px 14px;
-  }
-
-  .sidebar-wrapper {
-    width: 240px;
-  }
-
-  .sidebar-wrapper--closed {
-    width: 0;
-  }
-
-  .sidebar-toggle {
-    left: -16px;
-    top: 450px;
-    padding: 16px 10px;
-  }
-}
-
-@media (max-width: 900px) {
-  header {
-    height: 72px;
-    padding: 0 16px;
-    gap: 12px;
-
-    .header-left {
-      gap: 8px;
-
-      img { width: 36px; }
-
-      h2 { display: none; }
-    }
-
-    .search-bar {
-      width: 50%;
-      padding: 10px 14px;
-
-      input { font-size: 0.95rem; }
-    }
-
-    .user-profile {
-      gap: 8px;
-
-      .user-name { display: none; }
-
-      .dropdown-arrow {
-        width: 22px;
-        height: 22px;
-      }
-
-      img {
-        width: 40px;
-        height: 40px;
-      }
-    }
-  }
-
-  .layout {
-    gap: 10px;
-    padding: 0 10px 10px;
-  }
-
-  .sidebar-wrapper {
-    width: 200px;
-  }
-
-  .sidebar-wrapper--closed {
-    width: 0;
-  }
-
-  .sidebar-toggle {
-    left: -14px;
-    top: 380px;
-    padding: 12px 8px;
-
-    .sidebar-toggle__text {
-      font-size: 13px;
-    }
-  }
-}
-
-@media (max-width: 768px) {
   .main-container {
     overflow: hidden;
     position: relative;
   }
 
+  .status--offline,
+  .status--online {
+    display: none;
+  }
+
   header {
-    height: 68px;
-    padding: 0 16px;
-    gap: 10px;
+    height: auto;
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    gap: 20px 0; 
 
     .header-left {
-      flex-shrink: 0;
-
-      img { width: 34px; }
-
-      h2 { display: none; }
-    }
-
-    .search-bar {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 14px;
-
-      input { font-size: 0.95rem; }
-    }
-
-    .user-profile {
-      flex-shrink: 0;
-      gap: 0;
-
-      .user-name { display: none; }
-      .dropdown-arrow { display: none; }
+      order: 1;
+      flex: 1; 
+      display: flex;
+      align-items: center;
+      gap: 12px;
 
       img {
         width: 40px;
-        height: 40px;
+      }
+      h2 {
+        display: block;
+        font-size: 1.5rem;
+      }
+    }
+
+    .user-profile {
+      order: 2; /* Oben rechts */
+      flex-shrink: 0;
+      gap: 0;
+      .user-name {
+        display: none;
+      }
+      .dropdown-arrow {
+        display: none;
+      }
+      img {
+        width: 44px;
+        height: 44px;
+      }
+    }
+
+    .search-bar {
+      order: 3; /* Zweite Zeile unten */
+      flex: 0 0 100%;
+      width: 100%;
+      margin: 0;
+      padding: 12px 20px;
+      border-radius: 99px;
+      
+      input {
+        font-size: 1rem;
+      }
+
+      /* NEU: Blendet die Leiste aus, wenn im Chat (Klasse kommt über HTML) */
+      &.hide-on-mobile {
+        display: none;
       }
     }
   }
@@ -390,7 +300,10 @@ header {
     padding: 0;
     position: relative;
     overflow: hidden;
-    height: calc(100vh - 68px);
+    /* Höhe ändert sich dynamisch, abhängig von der Header-Höhe: */
+    height: auto; 
+    flex: 1;
+    min-height: 0;
   }
 
   .sidebar-wrapper {
@@ -416,43 +329,19 @@ header {
 
 @media (max-width: 480px) {
   header {
-    height: 60px;
-    padding: 0 12px;
-    gap: 8px;
+    padding: 12px 16px;
+    gap: 15px 0;
 
     .search-bar {
-      padding: 8px 12px;
-      border-radius: 12px;
+      padding: 10px 16px;
+      border-radius: 99px; 
     }
   }
 
-  .layout {
-    height: calc(100vh - 60px);
-  }
 }
 
 .mobile-back-btn {
-  display: none;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
-
-  &:hover {
-    background-color: var(--color-background);
-  }
-
-  @media (max-width: 768px) {
+  @media (max-width: 1240px) {
     display: flex;
   }
 }

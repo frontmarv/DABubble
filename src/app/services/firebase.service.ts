@@ -15,16 +15,17 @@ import { Channel } from '../models/channel.class';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { signal } from '@angular/core';
+import { Chat } from '../models/chat.class';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FirebaseService {
-  private firestore = inject(Firestore);
+  public firestore = inject(Firestore);
   private injector = inject(Injector);
 
   currentUser = signal<User | null>(null);
-  channels: any[] = [];
+  channels: any[] = []; 
 
   currentChannelName: string = 'Allgemein';
   selectedChannelId: string = '';
@@ -75,13 +76,6 @@ export class FirebaseService {
     }
   }
 
-  isChatAvailable(id: string) {
-    const chat = this.chats.find((c) => c.id === id);
-    if (chat) {
-      return true
-    }
-    return false
-  }
 
   subUser(uid: string) {
     this.unsubUser?.();
@@ -102,6 +96,11 @@ export class FirebaseService {
         console.error(err)
       );
     });
+  }
+
+  async addChat(chat: Chat) {
+    const chatRef = doc(this.firestore, 'chats', chat.id);
+    await setDoc(chatRef, chat.toJSON());
   }
 
   async addChannel(channel: Channel): Promise<string | null> {

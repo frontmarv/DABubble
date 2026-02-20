@@ -1,5 +1,5 @@
 <div class="message-input-container">
-    <textarea  class="text--regular" maxlength="2000" type="textarea" placeholder="Nachricht an....."></textarea>
+    <textarea #message class="text--regular" maxlength="2000" type="textarea" placeholder="Nachricht an....."></textarea>
     <div class="message-buttons-container">
         <div class="action-icons">
             <button class="icon-btn" type="button" aria-label="Sentiment">
@@ -9,6 +9,6 @@
                 <img class="icon-btn__img" src="/chat-input/alternate-email.svg" alt="" />
             </button>
         </div>
-        <img class="send-btn" src="/chat-input/send.svg" alt="Suche" />
+        <img (click)="this.chatService.sendMessage(message.value)" class="send-btn" src="/chat-input/send.svg" alt="Suche" />
     </div>
 </div>

@@ -123,16 +123,15 @@ h4 {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1240px) {
   .thread {
-    position: fixed;
-    top: 68px;
+    position: absolute; /* NEU: absolute statt fixed löst das Scrollbalken-Problem sofort! */
+    top: 0;
     left: 0;
-    right: 0;
     width: 100%;
+    height: 100%; /* Nimmt exakt die Höhe des Layouts an */
     min-width: 0;
     max-width: 100%;
-    height: calc(100vh - 68px);
     border-radius: 0;
     z-index: 60;
     box-shadow: none;
@@ -163,11 +162,6 @@ h4 {
 }
 
 @media (max-width: 480px) {
-  .thread {
-    top: 60px;
-    height: calc(100vh - 60px);
-  }
-
   .message-field-other,
   .message-field-user {
     padding: 10px 14px;

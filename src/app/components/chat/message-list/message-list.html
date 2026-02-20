@@ -4,7 +4,7 @@
     </span>
     <div class="message-info-container">
         <div class="message-info">
-            <p class="text--regular bold message-name">Frederick Beck</p>
+            <p class="text--regular bold message-name">{{this.firebaseService.currentUser()?.firstName}} {{this.firebaseService.currentUser()?.lastName}}</p>
             <p class="time">14:25</p>
         </div>
         <div class="message text--regular">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi aperiam
@@ -92,4 +92,12 @@
             <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
         </button>
     </div>
+</div>
+
+<!-- chat.component.html -->
+<div *ngFor="let msg of chatService.messages()">
+  <div [class.own]="msg.senderId === chat.currentUserId">
+    <p>{{ msg.text }}</p>
+    <small>{{ msg.createdAt?.toDate() | date:'shortTime' }}</small>
+  </div>
 </div>

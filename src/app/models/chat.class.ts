@@ -1,18 +1,22 @@
 export class Chat {
     id: string;
-    currentUserId: string;
-    otherUserId: string;
+    participants: string[];
+    createdAt: any;
+    lastMessage: string;
 
     constructor(obj?: any) {
-        this.id = obj ? obj.id : '';
-        this.currentUserId = obj ? obj.currentUserId : '';
-        this.otherUserId = obj ? obj.otherUserId : '';
+        this.id = obj?.id || '';
+        this.participants = obj?.participants || [];
+        this.createdAt = obj?.createdAt || null;
+        this.lastMessage = obj?.lastMessage || '';
     }
 
     public toJSON() {
         return {
-            currentUserId: this.currentUserId,
-            otherUserId: this.otherUserId
+            id: this.id,
+            participants: this.participants,
+            createdAt: this.createdAt,
+            lastMessage: this.lastMessage
         };
     }
 }

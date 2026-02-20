@@ -54,6 +54,8 @@
     border-radius: 30px;
     border-top-left-radius: 0px;
     padding: 15px;
+    word-break: break-word; 
+    overflow-wrap: anywhere; 
 }
 
 .message-info-container {
@@ -224,3 +226,62 @@
     bottom: 37px;
     left: 50%;
 }
+
+   @media (max-width: 900px) {
+    .avatar {
+      width: 50px; 
+      height: 50px;
+    }
+  
+    .message-field-other {
+      padding: 15px 20px; 
+      gap: 15px; 
+    }
+  
+    .message-field-user {
+      padding: 15px 20px; 
+      gap: 15px;
+    }
+  
+    .message-info {
+      gap: 10px;
+    }
+  
+    .time-seperator .line .day {
+      right: 50%;
+      transform: translateX(50%); 
+    }
+  
+    .reaction-bar {
+      left: 20px; 
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .avatar {
+      width: 40px; 
+      height: 40px;
+    }
+  
+    .message-field-other,
+    .message-field-user {
+      padding: 10px 15px; 
+      gap: 10px;
+    }
+  
+    .message {
+      padding: 10px 15px;
+      font-size: 0.95rem; 
+    }
+  
+    .reactions {
+      padding: 3px 8px;
+      gap: 5px;
+    }
+    
+    .reaction-emoji, 
+    .fast-emoji {
+      width: 34px;
+      height: 34px;
+    }
+  }
