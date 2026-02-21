@@ -26,7 +26,7 @@ export class FirebaseService {
   private injector = inject(Injector);
 
   currentUser = signal<User | null>(null);
-  channels: any[] = [];
+  channels = signal<any[]>([]);
 
   currentChannelName: string = 'Allgemein';
   selectedChannelId = signal<string>('');
@@ -54,7 +54,7 @@ export class FirebaseService {
     const q = query(collection(this.firestore, 'channels'));
     this.unsubChannels?.();
     this.unsubChannels = onSnapshot(q, snap => {
-      this.channels = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      this.channels.set(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     });
     return this.unsubChannels;
   }
@@ -70,7 +70,7 @@ export class FirebaseService {
 
   setSelectedChannel(id: string) {
     this.selectedChannelId.set(id);
-    const channel = this.channels.find((c) => c.id === id);
+    const channel = this.channels().find((c) => c.id === id);
     if (channel) {
       this.currentChannelName = channel.name;
     }

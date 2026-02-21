@@ -28,7 +28,7 @@
       </div>
 
       <nav class="list" [class.collapsed]="!channelsOpen" aria-label="Channel Liste">
-        @for (channel of firebaseService.channels; track channel.id) {
+        @for (channel of firebaseService.channels(); track channel.id) {
         <div class="list__item" (click)="selectChannel(channel.id)"
           [class.list__item--active]="channel.id === firebaseService.selectedChannelId()">
           <img class="input-icon" src="/main-page/tag1.svg" alt="#">
@@ -132,6 +132,38 @@
           <label for="specific-members" class="text--regular"> Bestimmte Leute hinzufügen </label>
         </div>
       </div>
+
+      @if (addPeopleOption === 'specific') {
+      <div class="add-people-search">
+        <input class="inputfield--dialogs" type="text" placeholder="Name eingeben"
+          [(ngModel)]="memberSearch" (input)="filterMembers()" />
+
+        @if (filteredMembers.length > 0 && memberSearch) {
+        <div class="user-dropdown">
+          @for (user of filteredMembers; track user.uid) {
+          <div class="user-dropdown-item" (click)="selectMember(user)">
+            <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'"
+              class="user-dropdown-avatar" alt="" />
+            <span class="text--regular">{{ user.firstName }} {{ user.lastName }}</span>
+          </div>
+          }
+        </div>
+        }
+
+        @if (selectedMembers.length > 0) {
+        <div class="selected-chips">
+          @for (user of selectedMembers; track user.uid) {
+          <span class="chip">
+            <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'"
+              class="chip-avatar" alt="" />
+            {{ user.firstName }} {{ user.lastName }}
+            <button class="chip-remove" type="button" (click)="removeMember(user)">✕</button>
+          </span>
+          }
+        </div>
+        }
+      </div>
+      }
 
       <div class="modal__footer">
         <button class="btn--primary" type="button" [disabled]="isCreating"

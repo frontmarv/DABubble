@@ -20,7 +20,7 @@ export class MainChat {
   currentChannel = computed(() => {
     const id = this.firebaseService.selectedChannelId(); 
     if (!id) return null;
-    return this.firebaseService.channels.find((c: any) => c.id === id) ?? null;
+    return this.firebaseService.channels().find((c: any) => c.id === id) ?? null;
   });
 
   showMembersModal = false;
@@ -85,13 +85,16 @@ export class MainChat {
       this.filteredUsers = [];
       return;
     }
-    const alreadyMembers = this.channelMembers().map((m: any) => m.uid);
+    const channel = this.currentChannel();
+    const alreadyMemberIds: string[] = (channel?.members && channel.members.length > 0)
+      ? channel.members
+      : [];
     const alreadySelected = this.selectedUsers.map((u: any) => u.uid);
     this.filteredUsers = this.firebaseService.getAllUsers().filter((u: any) => {
       const fullName = `${u.firstName} ${u.lastName}`.toLowerCase();
       return (
         fullName.includes(search) &&
-        !alreadyMembers.includes(u.uid) &&
+        !alreadyMemberIds.includes(u.uid) &&
         !alreadySelected.includes(u.uid)
       );
     });
@@ -113,6 +116,13 @@ export class MainChat {
 
     this.isAddingMembers = true;
     try {
+      if (!channel.members || channel.members.length === 0) {
+        const allUsers = this.firebaseService.getAllUsers();
+        for (const user of allUsers) {
+          await this.firebaseService.addMemberToChannel(channel.id, (user as any).uid);
+        }
+      }
+
       for (const user of this.selectedUsers) {
         await this.firebaseService.addMemberToChannel(channel.id, user.uid);
       }

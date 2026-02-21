@@ -2,7 +2,6 @@ import { Component, inject, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
-import { MainChat } from '../chat/main-chat';
 import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 import { ChatService } from '../../services/chat.service';
 
@@ -24,12 +23,16 @@ export class Sidebar {
   isCreateChannelOpen = false;
   isAddPeopleOpen = false;
 
-  channelName = "";
-  channelDescription = "";
+  channelName = '';
+  channelDescription = '';
   addPeopleOption: string = 'all';
 
-  private tempChannelName = "";
-  private tempChannelDescription = "";
+  memberSearch = '';
+  filteredMembers: any[] = [];
+  selectedMembers: any[] = [];
+
+  private tempChannelName = '';
+  private tempChannelDescription = '';
 
   isCreating = false;
 
@@ -40,7 +43,7 @@ export class Sidebar {
     this.mobileNavigation.emit();
   }
 
-  selectDm(user:any) {
+  selectDm(user: any) {
     this.mobileNavigation.emit();
     this.chat.openChatRoom(user);
   }
@@ -51,29 +54,53 @@ export class Sidebar {
 
   closeCreateChannel() {
     this.isCreateChannelOpen = false;
-    this.channelName = "";
-    this.channelDescription = "";
-    this.tempChannelName = "";
-    this.tempChannelDescription = "";
+    this.channelName = '';
+    this.channelDescription = '';
+    this.tempChannelName = '';
+    this.tempChannelDescription = '';
   }
 
   proceedToAddMembers() {
     if (!this.channelName || this.channelName.trim() === '') return;
-
     this.tempChannelName = this.channelName;
     this.tempChannelDescription = this.channelDescription;
-
     this.isCreateChannelOpen = false;
     this.isAddPeopleOpen = true;
   }
 
   closeAddPeople() {
     this.isAddPeopleOpen = false;
-    this.channelName = "";
-    this.channelDescription = "";
-    this.tempChannelName = "";
-    this.tempChannelDescription = "";
+    this.channelName = '';
+    this.channelDescription = '';
+    this.tempChannelName = '';
+    this.tempChannelDescription = '';
     this.addPeopleOption = 'all';
+    this.memberSearch = '';
+    this.filteredMembers = [];
+    this.selectedMembers = [];
+  }
+
+  filterMembers() {
+    const search = this.memberSearch.toLowerCase().trim();
+    if (!search) {
+      this.filteredMembers = [];
+      return;
+    }
+    const alreadySelected = this.selectedMembers.map((u) => u.uid);
+    this.filteredMembers = this.firebaseService.getAllUsers().filter((u: any) => {
+      const fullName = `${u.firstName} ${u.lastName}`.toLowerCase();
+      return fullName.includes(search) && !alreadySelected.includes(u.uid);
+    });
+  }
+
+  selectMember(user: any) {
+    this.selectedMembers.push(user);
+    this.memberSearch = '';
+    this.filteredMembers = [];
+  }
+
+  removeMember(user: any) {
+    this.selectedMembers = this.selectedMembers.filter((u) => u.uid !== user.uid);
   }
 
   async createChannel() {
@@ -85,21 +112,34 @@ export class Sidebar {
     try {
       let newChannel = new Channel({
         name: this.tempChannelName,
-        description: this.tempChannelDescription
+        description: this.tempChannelDescription,
       });
 
       const newId = await this.firebaseService.addChannel(newChannel);
 
       if (newId) {
+        if (this.addPeopleOption === 'specific' && this.selectedMembers.length > 0) {
+          for (const user of this.selectedMembers) {
+            await this.firebaseService.addMemberToChannel(newId, user.uid);
+          }
+        } else if (this.addPeopleOption === 'all') {
+          const allUsers = this.firebaseService.getAllUsers();
+          for (const user of allUsers) {
+            await this.firebaseService.addMemberToChannel(newId, (user as any).uid);
+          }
+        }
         this.firebaseService.setSelectedChannel(newId);
       }
 
       this.isAddPeopleOpen = false;
-      this.channelName = "";
-      this.channelDescription = "";
-      this.tempChannelName = "";
-      this.tempChannelDescription = "";
+      this.channelName = '';
+      this.channelDescription = '';
+      this.tempChannelName = '';
+      this.tempChannelDescription = '';
       this.addPeopleOption = 'all';
+      this.memberSearch = '';
+      this.filteredMembers = [];
+      this.selectedMembers = [];
 
     } catch (error) {
       console.error(error);
