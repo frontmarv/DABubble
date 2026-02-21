@@ -1,10 +1,15 @@
-<button class="reaction-emoji icon-btn" type="button" aria-label="Sentiment" cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="toggle()">
+<button class="reaction-emoji icon-btn" type="button" aria-label="Sentiment" cdkOverlayOrigin #trigger="cdkOverlayOrigin" (click)="toggleEmojiPicker()">
     <img class="icon-btn__img" src="/chat-input/add-reaction.svg" alt="" />
 </button>
 
-<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger"
+<ng-template cdkConnectedOverlay 
+    [cdkConnectedOverlayOrigin]="trigger"
     [cdkConnectedOverlayOpen]="isOpen"
     [cdkConnectedOverlayPositions]="positions" 
-    (overlayOutsideClick)="setHidden()">
-    <emoji-mart (emojiSelect)="handleSelection($event)"></emoji-mart>
+    [cdkConnectedOverlayPush]="true" 
+    [cdkConnectedOverlayViewportMargin]="5" 
+    cdkConnectedOverlayPanelClass="responsive-emoji-overlay"
+    (overlayOutsideClick)="setHiddenEmojiPicker()">
+    <emoji-mart (emojiSelect)="handleSelection($event)"
+    [style]="{width: '310px', height: 'auto'}"></emoji-mart>
 </ng-template>

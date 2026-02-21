@@ -318,6 +318,9 @@ app-message-composer {
     flex-direction: column;
     gap: 20px;
     position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
 }
 
 .modal__header {
@@ -397,4 +400,13 @@ app-message-composer {
         width: 34px;
         height: 34px;
     }
+}
+
+.responsive-emoji-overlay {
+    max-width: 95vw !important;
+}
+
+.responsive-emoji-overlay emoji-mart {
+    width: 100% !important;
+    max-width: 320px !important;
 }

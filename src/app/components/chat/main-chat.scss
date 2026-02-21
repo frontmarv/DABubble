@@ -130,10 +130,7 @@ app-message-list {
   padding-top: 21px;
 }
 
-.members-modal {
-  width: 320px;
-  padding: 28px;
-}
+
 
 .members-list {
   display: flex;
@@ -164,12 +161,14 @@ app-message-list {
     border-radius: 50%;
     object-fit: cover;
   }
+
   width: 50px;
   height: 50px;
   flex-shrink: 0;
 }
 
 .member-name {
+  word-break: break-all;
   font-size: 1rem;
 }
 
@@ -192,6 +191,16 @@ app-message-list {
 
   &:hover {
     background-color: var(--color-background);
+
+    span {
+      color: var(--color-purple2);
+    }
+
+    .add-member-icon-circle {
+      img {
+        filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
+      }
+    }
   }
 }
 
@@ -208,6 +217,10 @@ app-message-list {
   img {
     width: 24px;
     height: 24px;
+
+    &:hover {
+      filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
+    }
   }
 }
 
@@ -227,7 +240,7 @@ app-message-list {
 }
 
 .channel-tag-name {
-  color: var(--color-purple1);
+  color: var(--color-purple2);
   font-size: 1rem;
 }
 
@@ -245,7 +258,7 @@ app-message-list {
 .user-dropdown {
   background: var(--color-white);
   border: 1px solid var(--color-light-purple-lines);
-  border-radius: 20px;
+  border-radius: 0px 20px 20px 20px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -260,6 +273,10 @@ app-message-list {
 
   &:hover {
     background-color: var(--color-background);
+  }
+
+  span {
+    word-break: break-all;
   }
 }
 
@@ -363,6 +380,11 @@ app-message-list {
 }
 
 @media (max-width: 480px) {
+  .members-modal {
+    width: 320px;
+    padding: 28px;
+  }
+
   .main-chat {
     height: calc(100vh - 60px);
   }

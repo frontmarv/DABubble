@@ -23,12 +23,12 @@ export class MainChat {
     return this.firebaseService.channels().find((c: any) => c.id === id) ?? null;
   });
 
-  showMembersModal = false;
-  showAddPeopleModal = false;
-  addPersonSearch = '';
-  filteredUsers: any[] = [];
-  selectedUsers: any[] = [];
-  isAddingMembers = false;
+  showMembersModal = signal(false);
+  showAddPeopleModal = signal(false);
+  addPersonSearch = signal('');
+  filteredUsers = signal<any[]>([]);
+  selectedUsers = signal<any[]>([]);
+  isAddingMembers = signal(false);
 
   channelMembers = computed(() => {
     const channel = this.currentChannel();
@@ -47,32 +47,32 @@ export class MainChat {
   }
 
   openMembersModal() {
-    this.showMembersModal = true;
-    this.showAddPeopleModal = false;
+    this.showMembersModal.set(true);
+    this.showAddPeopleModal.set(false);
   }
 
   closeMembersModal() {
-    this.showMembersModal = false;
+    this.showMembersModal.set(false);
   }
 
   switchToAddPeople() {
-    this.showMembersModal = false;
+    this.showMembersModal.set(false);
     this.openAddPeopleModal();
   }
 
   openAddPeopleModal() {
-    this.showAddPeopleModal = true;
-    this.showMembersModal = false;
-    this.addPersonSearch = '';
-    this.filteredUsers = [];
-    this.selectedUsers = [];
+    this.showAddPeopleModal.set(true);
+    this.showMembersModal.set(false);
+    this.addPersonSearch.set('');
+    this.filteredUsers.set([]);
+    this.selectedUsers.set([]);
   }
 
   closeAddPeopleModal() {
-    this.showAddPeopleModal = false;
-    this.addPersonSearch = '';
-    this.filteredUsers = [];
-    this.selectedUsers = [];
+    this.showAddPeopleModal.set(false);
+    this.addPersonSearch.set('');
+    this.filteredUsers.set([]);
+    this.selectedUsers.set([]);
   }
 
   openChannelInfo() {
@@ -80,17 +80,17 @@ export class MainChat {
   }
 
   filterUsers() {
-    const search = this.addPersonSearch.toLowerCase().trim();
+    const search = this.addPersonSearch().toLowerCase().trim();
     if (!search) {
-      this.filteredUsers = [];
+      this.filteredUsers.set([]);
       return;
     }
     const channel = this.currentChannel();
     const alreadyMemberIds: string[] = (channel?.members && channel.members.length > 0)
       ? channel.members
       : [];
-    const alreadySelected = this.selectedUsers.map((u: any) => u.uid);
-    this.filteredUsers = this.firebaseService.getAllUsers().filter((u: any) => {
+    const alreadySelected = this.selectedUsers().map((u: any) => u.uid);
+    const filtered = this.firebaseService.getAllUsers().filter((u: any) => {
       const fullName = `${u.firstName} ${u.lastName}`.toLowerCase();
       return (
         fullName.includes(search) &&
@@ -98,23 +98,23 @@ export class MainChat {
         !alreadySelected.includes(u.uid)
       );
     });
+    this.filteredUsers.set(filtered);
   }
 
   selectUser(user: any) {
-    this.selectedUsers.push(user);
-    this.addPersonSearch = '';
-    this.filteredUsers = [];
+    this.selectedUsers.update(users => [...users, user]);
+    this.addPersonSearch.set('');
+    this.filteredUsers.set([]);
   }
 
   removeSelectedUser(user: any) {
-    this.selectedUsers = this.selectedUsers.filter((u) => u.uid !== user.uid);
+    this.selectedUsers.update(users => users.filter((u) => u.uid !== user.uid));
   }
 
   async addMembersToChannel() {
     const channel = this.currentChannel();
-    if (!channel || this.selectedUsers.length === 0) return;
-
-    this.isAddingMembers = true;
+    if (!channel || this.selectedUsers().length === 0) return;
+    this.isAddingMembers.set(true);
     try {
       if (!channel.members || channel.members.length === 0) {
         const allUsers = this.firebaseService.getAllUsers();
@@ -122,15 +122,14 @@ export class MainChat {
           await this.firebaseService.addMemberToChannel(channel.id, (user as any).uid);
         }
       }
-
-      for (const user of this.selectedUsers) {
+      for (const user of this.selectedUsers()) {
         await this.firebaseService.addMemberToChannel(channel.id, user.uid);
       }
-      this.closeAddPeopleModal();
     } catch (e) {
       console.error(e);
     } finally {
-      this.isAddingMembers = false;
+      this.closeAddPeopleModal();
+      this.isAddingMembers.set(false);
     }
   }
 }

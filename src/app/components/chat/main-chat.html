@@ -42,7 +42,7 @@
         <app-message-composer></app-message-composer>
     </div>
     
-    @if (showMembersModal) {
+    @if (showMembersModal()) {
     <div class="modal-backdrop" (click)="closeMembersModal()">
         <div class="modal members-modal" (click)="$event.stopPropagation()">
             <div class="modal__header">
@@ -85,7 +85,7 @@
     </div>
     }
     
-    @if (showAddPeopleModal) {
+    @if (showAddPeopleModal()) {
     <div class="modal-backdrop" (click)="closeAddPeopleModal()">
         <div class="modal add-people-modal" (click)="$event.stopPropagation()">
             <div class="modal__header">
@@ -102,11 +102,11 @@
     
             <div class="add-people-search">
                 <input class="inputfield--dialogs add-people-input" type="text"
-                    placeholder="Name eingeben" [(ngModel)]="addPersonSearch"
-                    (input)="filterUsers()" />
-                @if (filteredUsers.length > 0 && addPersonSearch) {
+                    placeholder="Name eingeben" [ngModel]="addPersonSearch()"
+                    (ngModelChange)="addPersonSearch.set($event); filterUsers()" />
+                @if (filteredUsers().length > 0 && addPersonSearch()) {
                 <div class="user-dropdown">
-                    @for (user of filteredUsers; track user.uid) {
+                    @for (user of filteredUsers(); track user.uid) {
                     <div class="user-dropdown-item" (click)="selectUser(user)">
                         <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="user-dropdown-avatar"
                             alt="" />
@@ -115,9 +115,9 @@
                     }
                 </div>
                 }
-                @if (selectedUsers.length > 0) {
+                @if (selectedUsers().length > 0) {
                 <div class="selected-chips">
-                    @for (user of selectedUsers; track user.uid) {
+                    @for (user of selectedUsers(); track user.uid) {
                     <span class="chip">
                         <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="chip-avatar" alt="" />
                         {{ user.firstName }} {{ user.lastName }}
@@ -129,7 +129,7 @@
             </div>
     
             <div class="modal__footer">
-                <button class="btn--primary" type="button" [disabled]="selectedUsers.length === 0 || isAddingMembers"
+                <button class="btn--primary" type="button" [disabled]="selectedUsers().length === 0 || isAddingMembers()"
                     (click)="addMembersToChannel()">
                     Hinzufügen
                 </button>
