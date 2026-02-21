@@ -50,7 +50,6 @@
   align-items: center;
   gap: 6px;
   background: transparent;
-  border: none;
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 30px;
@@ -91,10 +90,9 @@
   display: flex;
   align-items: center;
   background: transparent;
-  border: 1px solid var(--color-light-grey, #ddd);
+  border: 1px solid var(--color-light-purple-lines);
   border-radius: 30px;
   padding: 6px 14px 6px 6px;
-  gap: 0;
   cursor: pointer;
   transition: background-color var(--transition-fast);
 
@@ -123,25 +121,7 @@
 }
 
 .add-member-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--color-light-grey, #ddd);
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color var(--transition-fast);
-
-  &:hover {
-    background-color: var(--color-background);
-  }
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
+  border: 1px solid var(--color-light-purple-lines);
 }
 
 app-message-list {
@@ -150,53 +130,15 @@ app-message-list {
   padding-top: 21px;
 }
 
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background-color: transparent;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 110px 24px 0 0;
-  z-index: 1000;
-}
-
-.modal {
-  background: var(--color-white);
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 350px;
-  max-width: 95vw;
-}
-
-.modal__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  h2 {
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-}
-
-.modal__footer {
-  display: flex;
-  justify-content: flex-end;
-}
-
 .members-modal {
   width: 320px;
+  padding: 28px;
 }
 
 .members-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .member-item {
@@ -204,7 +146,7 @@ app-message-list {
   align-items: center;
   gap: 16px;
   padding: 10px 12px;
-  border-radius: 16px;
+  border-radius: 30px;
   cursor: pointer;
   transition: background-color var(--transition-fast);
 
@@ -214,7 +156,6 @@ app-message-list {
 }
 
 .member-avatar-wrapper {
-  position: relative;
   width: 50px;
   height: 50px;
   flex-shrink: 0;
@@ -225,7 +166,7 @@ app-message-list {
 }
 
 .member-you {
-  color: var(--color-text-grey, #888);
+  color: var(--color-text-grey);
   font-weight: 400;
 }
 
@@ -234,8 +175,7 @@ app-message-list {
   align-items: center;
   gap: 16px;
   padding: 10px 12px;
-  border-radius: 16px;
-  border: none;
+  border-radius: 30px;
   background: transparent;
   cursor: pointer;
   font-family: inherit;
@@ -251,7 +191,7 @@ app-message-list {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: var(--color-background, #f0f0f0);
+  background-color: var(--color-background);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -265,13 +205,13 @@ app-message-list {
 
 .add-people-modal {
   width: 380px;
+  padding: 28px;
 }
 
 .channel-tag-label {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 0;
 }
 
 .channel-tag-icon--purple {
@@ -279,37 +219,25 @@ app-message-list {
 }
 
 .channel-tag-name {
-  color: var(--color-purple1, #5c4ee5);
+  color: var(--color-purple1);
   font-size: 1rem;
 }
 
 .add-people-search {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  position: relative;
 }
 
 .add-people-input {
   width: 100%;
-  padding: 14px 18px;
-  border: 1px solid var(--color-light-grey, #ccc);
-  border-radius: 30px;
-  font-size: 1rem;
-  font-family: inherit;
-  outline: none;
-  box-sizing: border-box;
-  transition: border-color var(--transition-fast);
-
-  &:focus {
-    border-color: var(--color-purple1, #5c4ee5);
-  }
 }
 
 .user-dropdown {
   background: var(--color-white);
-  border: 1px solid var(--color-light-grey, #ccc);
-  border-radius: 16px;
+  border: 1px solid var(--color-light-purple-lines);
+  border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -344,7 +272,7 @@ app-message-list {
   display: flex;
   align-items: center;
   gap: 6px;
-  background-color: var(--color-background, #f0f0f0);
+  background-color: var(--color-background);
   border-radius: 30px;
   padding: 4px 10px 4px 6px;
   font-size: 0.875rem;
@@ -360,10 +288,9 @@ app-message-list {
 
 .chip-remove {
   background: transparent;
-  border: none;
   cursor: pointer;
   font-size: 0.75rem;
-  color: var(--color-text-grey, #888);
+  color: var(--color-text-grey);
   padding: 0;
   line-height: 1;
   margin-left: 2px;
@@ -371,20 +298,6 @@ app-message-list {
   &:hover {
     color: var(--color-black);
   }
-}
-
-.avatar {
-  position: relative;
-  width: 50px;
-  height: 50px;
-  flex-shrink: 0;
-}
-
-.avatar__img {
-  width: 100%;
-  height: 100%;
-  border-radius: 100%;
-  object-fit: cover;
 }
 
 @media (max-width: 1240px) {
@@ -407,16 +320,12 @@ app-message-list {
   }
 
   .main-chat__header {
-    padding: 16px 16px;
+    padding: 16px;
     border-radius: 16px 16px 0 0;
   }
 
   .channel-name-text {
     font-size: 1rem;
-  }
-
-  .modal-backdrop {
-    padding: 100px 16px 0 0;
   }
 }
 
@@ -438,16 +347,10 @@ app-message-list {
     padding-top: 10px;
   }
 
-  .modal-backdrop {
-    align-items: flex-end;
-    justify-content: center;
-    padding: 0;
-  }
-
-  .modal {
-    border-radius: 24px 24px 0 0;
+  .members-modal,
+  .add-people-modal {
     width: 100%;
-    max-width: 100%;
+    border-radius: 24px 24px 0 0;
   }
 }
 
