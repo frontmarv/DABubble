@@ -6,16 +6,16 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-message-list',
-  imports: [DatePipe],
+  imports: [],
   templateUrl: './message-list.html',
   styleUrl: './message-list.scss',
 })
 export class MessageList {
 
   threadService = inject(ThreadStateService);
-  chat = inject(ChatService)
-  firebaseService = inject(FirebaseService)
-
+  chat = inject(ChatService);
+  firebaseService = inject(FirebaseService);
+  
 
   openThread() {
     this.threadService.setVisible();

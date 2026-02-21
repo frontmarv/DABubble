@@ -13,14 +13,15 @@
 
         <div class="profile-name-section">
             <div class="name-row">
-                <h2>{{ displayForeignUserService.selectedUser()?.firstName }} {{ displayForeignUserService.selectedUser()?.lastName }}</h2>
+                <h2>{{ displayForeignUserService.selectedUser()?.firstName }} {{
+                    displayForeignUserService.selectedUser()?.lastName }}</h2>
             </div>
             <div class="status-row">
+                @if(displayForeignUserService.selectedUser()?.status === 'online') {
                 <span class="statusicon online"></span>
-                <span class="status-text--online">Aktiv</span>
-
-                <span class="statusicon offline"></span>
-                <span class="status-text--offline">Abwesend</span>
+                <span class="status-text--online">Aktiv</span>}
+                @else{<span class="statusicon offline"></span>
+                <span class="status-text--offline">Abwesend</span>}
             </div>
         </div>
 
@@ -33,7 +34,8 @@
                 </svg>
                 <span>E-Mail-Adresse</span>
             </div>
-            <a [href]="'mailto:' + displayForeignUserService.selectedUser()?.email" class="email-link">{{ displayForeignUserService.selectedUser()?.email }}</a>
+            <a [href]="'mailto:' + displayForeignUserService.selectedUser()?.email" class="email-link">{{
+                displayForeignUserService.selectedUser()?.email }}</a>
         </div>
 
         <div class="edit-actions">

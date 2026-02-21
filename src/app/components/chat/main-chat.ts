@@ -2,6 +2,7 @@ import { Component, inject, Injectable, signal } from '@angular/core';
 import { MessageList } from "./message-list/message-list";
 import { MessageComposer } from "./message-composer/message-composer";
 import { ChatService } from '../../services/chat.service';
+import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 
 
 
@@ -12,6 +13,7 @@ import { ChatService } from '../../services/chat.service';
   styleUrl: './main-chat.scss',
 })
 export class MainChat {
-  chat = inject(ChatService)
+  chat = inject(ChatService);
+  displayForeignUserService = inject(DisplayForeignUserService);
 }
 

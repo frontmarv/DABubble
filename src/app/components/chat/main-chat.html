@@ -2,8 +2,10 @@
 <div class="main-chat">
     <header class="main-chat__header">
         @if (this.chat.otherUser()) {
-        <img [src]="this.chat.otherUser()?.avatar" alt="">
-        <h4>{{ this.chat.otherUser()?.firstName }}{{ this.chat.otherUser()?.lastName }}</h4>
+        <div class="header__content" (click)="displayForeignUserService.setSelectedUser(this.chat.otherUser()); displayForeignUserService.toggle()">
+            <img [src]="this.chat.otherUser()?.avatar" alt="">
+            <h4>{{ this.chat.otherUser()?.firstName }}{{ this.chat.otherUser()?.lastName }}</h4>
+        </div>
         }
     </header>
     <app-message-list></app-message-list>

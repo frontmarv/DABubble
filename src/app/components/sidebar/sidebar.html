@@ -55,7 +55,7 @@
 
       <nav class="list" [class.collapsed]="!dmOpen" aria-label="Direktnachrichten Liste">
         @for (user of displayAllUsersSidebar(); track user.uid) {
-        <a class="list__item" (click)="selectDm(user); displayForeignUserService.setSelectedUser(user); displayForeignUserService.setToTrue();">
+        <a class="list__item" (click)="selectDm(user)">
           <span class="avatar">
             <img src="{{ user.avatar }}" alt="" class="avatar__img" />
             @if(user.status === 'online') {<span class="status status--online" aria-hidden="true"></span>}

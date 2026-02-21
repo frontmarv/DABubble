@@ -1,95 +1,100 @@
 @import "./../chat/message-list/message-list.scss";
 
 .thread {
-    min-width: 400px;
-    width: 26vw;
-    max-width: 600px;
-    height: calc(100vh - 110px);
-    background-color: var(--color-white);
-    border-radius: 30px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    transition: all var(--transition-slow) ease-in-out;
+  min-width: 400px;
+  width: 26vw;
+  max-width: 600px;
+  height: calc(100vh - 110px);
+  background-color: var(--color-white);
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all var(--transition-slow) ease-in-out;
 }
 
 .thread--closed {
-    min-width: 0px;
-    width: 0px;
-    overflow: hidden;
-    transition: all var(--transition-slow) ease-in-out;
+  min-width: 0px;
+  width: 0px;
+  overflow: hidden;
+  transition: all var(--transition-slow) ease-in-out;
 }
 
 header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: 30px 30px 0px 0px;
-    padding: 32px 24px;
-    box-shadow: 0px 2px 10px 0px color-mix(in srgb, var(--color-black), transparent 92%);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 30px 30px 0px 0px;
+  padding: 32px 24px;
+  box-shadow: 0px 2px 10px 0px color-mix(in srgb, var(--color-black), transparent 92%);
 }
 
 .header__content {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
 
-    > span {
-        color: var(--color-purple2);
-    }
+  >span {
+    color: var(--color-purple2);
+  }
 }
 
 h4 {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .chat-messages {
-    display: flex;
-    flex-direction: column;
-    padding: 24px 0px;
-    flex: 1;
-    overflow-y: auto;
-    scrollbar-width: thin;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0px;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .chat-messages__separator {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 20px;
-    padding: 1rem 33px;
-    color: var(--color-light-purple-lines);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  padding: 1rem 33px;
+  color: var(--color-light-purple-lines);
 
-    > span {
-        text-wrap-mode: nowrap;
-    }
+  >span {
+    text-wrap-mode: nowrap;
+  }
 }
 
 .separator__line {
-    width: 100%;
-    height: 1px;
-    border: 1px solid var(--color-light-purple-lines);
+  width: 100%;
+  height: 1px;
+  border: 1px solid var(--color-light-purple-lines);
 }
 
 // messages
 
 .message-field-other {
-    padding: 20px 40px;
-    gap: 20px;
+  padding: 20px 40px;
+  gap: 20px;
 }
 
 .message-field-user {
-    padding: 20px 40px;
-    gap: 20px;
+  padding: 20px 40px;
+  gap: 20px;
 }
 
 .visible {
-    opacity: 1;
+  opacity: 1;
 }
 
-
+.emoji-picker {
+  position: absolute;
+  bottom: -250px;
+  left: -250px;
+  z-index: 9999;
+}
 
 
 
@@ -105,7 +110,7 @@ h4 {
     border-radius: 16px;
     box-shadow: -6px 0 24px rgba(0, 0, 0, 0.12);
     transition: transform var(--transition-slow) cubic-bezier(0.4, 0, 0.2, 1),
-                opacity var(--transition-slow) ease;
+      opacity var(--transition-slow) ease;
     transform: translateX(0);
     opacity: 1;
   }
@@ -125,18 +130,20 @@ h4 {
 
 @media (max-width: 1240px) {
   .thread {
-    position: absolute; /* NEU: absolute statt fixed löst das Scrollbalken-Problem sofort! */
+    position: absolute;
+    /* NEU: absolute statt fixed löst das Scrollbalken-Problem sofort! */
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%; /* Nimmt exakt die Höhe des Layouts an */
+    height: 100%;
+    /* Nimmt exakt die Höhe des Layouts an */
     min-width: 0;
     max-width: 100%;
     border-radius: 0;
     z-index: 60;
     box-shadow: none;
     transition: transform var(--transition-slow) cubic-bezier(0.4, 0, 0.2, 1),
-                opacity var(--transition-slow) ease;
+      opacity var(--transition-slow) ease;
   }
 
   .thread--closed {
@@ -151,7 +158,7 @@ h4 {
   }
 
   .chat-messages {
-    padding: 14px 0;
+    padding: 20px 0;
   }
 
   .message-field-other,
@@ -162,6 +169,7 @@ h4 {
 }
 
 @media (max-width: 480px) {
+
   .message-field-other,
   .message-field-user {
     padding: 10px 14px;
