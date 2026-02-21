@@ -30,7 +30,7 @@
       <nav class="list" [class.collapsed]="!channelsOpen" aria-label="Channel Liste">
         @for (channel of firebaseService.channels; track channel.id) {
         <div class="list__item" (click)="selectChannel(channel.id)"
-          [class.list__item--active]="channel.id === firebaseService.selectedChannelId">
+          [class.list__item--active]="channel.id === firebaseService.selectedChannelId()">
           <img class="input-icon" src="/main-page/tag1.svg" alt="#">
           <span class="text--small">{{ channel.name }}</span>
         </div>
@@ -57,7 +57,7 @@
         @for (user of displayAllUsersSidebar(); track user.uid) {
         <a class="list__item" (click)="selectDm(user)">
           <span class="avatar">
-            <img src="{{ user.avatar }}" alt="" class="avatar__img" />
+            <img [src]="user.avatar" alt="" class="avatar__img" />
             @if(user.status === 'online') {<span class="status status--online" aria-hidden="true"></span>}
             @else{<span class="status status--offline" aria-hidden="true"></span>}
           </span>
