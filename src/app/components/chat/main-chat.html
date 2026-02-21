@@ -1,14 +1,140 @@
-@if (this.chat.chatIsActive()) {
-<div class="main-chat">
-    <header class="main-chat__header">
-        @if (this.chat.otherUser()) {
-        <div class="header__content" (click)="displayForeignUserService.setSelectedUser(this.chat.otherUser()); displayForeignUserService.toggle()">
-            <img [src]="this.chat.otherUser()?.avatar" alt="">
-            <h4>{{ this.chat.otherUser()?.firstName }}{{ this.chat.otherUser()?.lastName }}</h4>
+@if (this.chat.chatIsActive() || currentChannel()) {
+    <div class="main-chat">
+        <header class="main-chat__header">
+    
+            @if (this.chat.otherUser()) {
+            <div class="header__content"
+                (click)="displayForeignUserService.setSelectedUser(this.chat.otherUser()); displayForeignUserService.toggle()">
+                <img [src]="this.chat.otherUser()?.avatar" alt="">
+                <h4>{{ this.chat.otherUser()?.firstName }} {{ this.chat.otherUser()?.lastName }}</h4>
+            </div>
+            }
+    
+            @if (currentChannel()) {
+            <div class="channel-header">
+                <div class="channel-header__left">
+                    <button class="channel-name-btn" type="button" (click)="openChannelInfo()">
+                        <img class="channel-tag-icon" src="/main-page/tag1.svg" alt="#" />
+                        <span class="channel-name-text">{{ currentChannel()?.name }}</span>
+                        <img class="channel-dropdown-arrow" src="/main-page/arrow_drop_down.svg" alt="" />
+                    </button>
+                </div>
+    
+                <div class="channel-header__right">
+                    <button class="member-avatars-btn" type="button" (click)="openMembersModal()">
+                        @for (member of getVisibleMembers(); track member.uid) {
+                        <img class="member-avatar-small" [src]="member.avatar || '/shared/profile-pics/profile-pic1.svg'"
+                            [alt]="member.firstName" />
+                        }
+                        <span class="member-count text--small bold">{{ getMemberCount() }}</span>
+                    </button>
+    
+                    <button class="add-member-btn icon-btn" type="button" aria-label="Mitglied hinzufügen"
+                        (click)="openAddPeopleModal()">
+                        <img class="icon-btn__img" src="/main-page/person_add.svg" alt="Mitglied hinzufügen" />
+                    </button>
+                </div>
+            </div>
+            }
+        </header>
+    
+        <app-message-list></app-message-list>
+        <app-message-composer></app-message-composer>
+    </div>
+    
+    @if (showMembersModal) {
+    <div class="modal-backdrop" (click)="closeMembersModal()">
+        <div class="modal members-modal" (click)="$event.stopPropagation()">
+            <div class="modal__header">
+                <h2>Mitglieder</h2>
+                <button class="icon-btn" type="button" (click)="closeMembersModal()">
+                    <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
+                </button>
+            </div>
+    
+            <div class="members-list">
+                @for (member of channelMembers(); track member.uid) {
+                <div class="member-item"
+                    (click)="displayForeignUserService.setSelectedUser(member); displayForeignUserService.toggle(); closeMembersModal()">
+                    <span class="avatar member-avatar-wrapper">
+                        <img [src]="member.avatar || '/shared/profile-pics/profile-pic1.svg'"
+                            [alt]="member.firstName" class="avatar__img" />
+                        @if (member.status === 'online') {
+                        <span class="status status--online" aria-hidden="true"></span>
+                        } @else {
+                        <span class="status status--offline" aria-hidden="true"></span>
+                        }
+                    </span>
+                    <span class="text--regular member-name">
+                        {{ member.firstName }} {{ member.lastName }}
+                        @if (member.uid === firebaseService.currentUser()?.uid) {
+                        <span class="member-you">(Du)</span>
+                        }
+                    </span>
+                </div>
+                }
+            </div>
+    
+            <button class="add-member-row" type="button" (click)="switchToAddPeople()">
+                <span class="add-member-icon-circle">
+                    <img src="/main-page/person_add.svg" alt="+" />
+                </span>
+                <span class="text--regular">Mitglieder hinzufügen</span>
+            </button>
         </div>
-        }
-    </header>
-    <app-message-list></app-message-list>
-    <app-message-composer></app-message-composer>
-</div>
-}
+    </div>
+    }
+    
+    @if (showAddPeopleModal) {
+    <div class="modal-backdrop" (click)="closeAddPeopleModal()">
+        <div class="modal add-people-modal" (click)="$event.stopPropagation()">
+            <div class="modal__header">
+                <h2>Leute hinzufügen</h2>
+                <button class="icon-btn" type="button" (click)="closeAddPeopleModal()">
+                    <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
+                </button>
+            </div>
+    
+            <div class="channel-tag-label">
+                <img class="channel-tag-icon channel-tag-icon--purple" src="/main-page/tag1.svg" alt="#" />
+                <span class="text--small bold channel-tag-name">{{ currentChannel()?.name }}</span>
+            </div>
+    
+            <div class="add-people-search">
+                <input class="inputfield--dialogs add-people-input" type="text"
+                    placeholder="Name eingeben" [(ngModel)]="addPersonSearch"
+                    (input)="filterUsers()" />
+                @if (filteredUsers.length > 0 && addPersonSearch) {
+                <div class="user-dropdown">
+                    @for (user of filteredUsers; track user.uid) {
+                    <div class="user-dropdown-item" (click)="selectUser(user)">
+                        <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="user-dropdown-avatar"
+                            alt="" />
+                        <span class="text--regular">{{ user.firstName }} {{ user.lastName }}</span>
+                    </div>
+                    }
+                </div>
+                }
+                @if (selectedUsers.length > 0) {
+                <div class="selected-chips">
+                    @for (user of selectedUsers; track user.uid) {
+                    <span class="chip">
+                        <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="chip-avatar" alt="" />
+                        {{ user.firstName }} {{ user.lastName }}
+                        <button class="chip-remove" type="button" (click)="removeSelectedUser(user)">✕</button>
+                    </span>
+                    }
+                </div>
+                }
+            </div>
+    
+            <div class="modal__footer">
+                <button class="btn--primary" type="button" [disabled]="selectedUsers.length === 0 || isAddingMembers"
+                    (click)="addMembersToChannel()">
+                    Hinzufügen
+                </button>
+            </div>
+        </div>
+    </div>
+    }
+    }

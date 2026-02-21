@@ -1,4 +1,4 @@
-import { Injectable, inject, Injector, runInInjectionContext } from '@angular/core';
+import { Injectable, inject, Injector, runInInjectionContext, signal } from '@angular/core';
 import {
   Firestore,
   collection,
@@ -8,13 +8,14 @@ import {
   doc,
   setDoc,
   getDoc,
+  updateDoc,
+  arrayUnion,
   Unsubscribe,
 } from '@angular/fire/firestore';
 import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
-import { signal } from '@angular/core';
 import { Chat } from '../models/chat.class';
 
 @Injectable({
@@ -25,10 +26,10 @@ export class FirebaseService {
   private injector = inject(Injector);
 
   currentUser = signal<User | null>(null);
-  channels: any[] = []; 
+  channels: any[] = [];
 
   currentChannelName: string = 'Allgemein';
-  selectedChannelId: string = '';
+  selectedChannelId = signal<string>('');
 
   chats: any[] = [];
 
@@ -68,14 +69,12 @@ export class FirebaseService {
   }
 
   setSelectedChannel(id: string) {
-    this.selectedChannelId = id;
-
+    this.selectedChannelId.set(id);
     const channel = this.channels.find((c) => c.id === id);
     if (channel) {
       this.currentChannelName = channel.name;
     }
   }
-
 
   subUser(uid: string) {
     this.unsubUser?.();
@@ -88,7 +87,6 @@ export class FirebaseService {
       }
     });
   }
-
 
   async addUser(user: User, uid: string) {
     return runInInjectionContext(this.injector, async () => {
@@ -130,11 +128,15 @@ export class FirebaseService {
   async updateSingleUser(uid: string, userData: any) {
     const docRef = doc(this.firestore, 'users', uid);
     await setDoc(docRef, userData, { merge: true });
-    // userData as object like { firstName: "newFirstName", lastName: "newLastName" }
   }
 
+  async addMemberToChannel(channelId: string, uid: string) {
+    const channelRef = doc(this.firestore, 'channels', channelId);
+    await updateDoc(channelRef, {
+      members: arrayUnion(uid)
+    });
+  }
 
-  // get all users as Observable
   private users = new Observable<User[]>((observer) => {
     const q = query(collection(this.firestore, 'users'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -145,7 +147,6 @@ export class FirebaseService {
     });
     return () => unsubscribe();
   });
-  //Convert it into Signal 
-  readonly getAllUsers = toSignal(this.users, { initialValue: [] as User[] });
 
+  readonly getAllUsers = toSignal(this.users, { initialValue: [] as User[] });
 }
