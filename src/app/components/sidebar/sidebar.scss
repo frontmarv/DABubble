@@ -95,7 +95,8 @@
     width: 24px;
     height: 24px;
     object-fit: contain;
-    transition: filter 0.2s ease-in-out;
+    /* Transition für Masken-Hintergrundfarbe statt Filter */
+    transition: background-color 0.2s ease-in-out;
     flex-shrink: 0;
   }
 
@@ -103,10 +104,6 @@
     background-color: var(--color-background);
     color: var(--color-black);
     font-weight: 700;
-
-    .input-icon {
-      filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
-    }
   }
 }
 
@@ -114,10 +111,6 @@
   background-color: var(--color-background);
   color: var(--color-purple3) !important;
   font-weight: 700;
-
-  .input-icon {
-    filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
-  }
 }
 
 .list__item--add {
@@ -127,10 +120,6 @@
   &:hover {
     background-color: transparent !important;
     color: var(--color-purple1);
-
-    .input-icon {
-      filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
-    }
   }
 }
 
@@ -163,10 +152,6 @@
 
   &:hover {
     color: var(--color-purple1);
-
-    .icon-btn__img {
-      filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
-    }
   }
 }
 
@@ -271,7 +256,6 @@
     gap: 28px;
   }
 
-  /* NEU: Mobile Suchleiste anzeigen */
   .mobile-search-bar {
     display: flex;
     align-items: center;
