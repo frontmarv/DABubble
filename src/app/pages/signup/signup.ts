@@ -130,11 +130,10 @@ export class SignupComponent {
       'offline'
     );
 
-    this.isLoading = false;
-
     if (result.success) {
       this.success.emit();
     } else {
+      this.isLoading = false; 
       this.errorMessage = result.error || 'Registrierung fehlgeschlagen.';
     }
   }

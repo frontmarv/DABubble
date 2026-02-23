@@ -95,11 +95,13 @@ export class Login implements OnInit {
   }
 
   onSignupSuccess() {
-    this.showSignup = false;
+    
     this.showSuccessMessage = true;
     setTimeout(() => {
       this.showSuccessMessage = false;
-      this.router.navigate(['/main']);
+      this.router.navigate(['/main']).then(() => {
+        this.showSignup = false; 
+      });
     }, 2500);
   }
 }
