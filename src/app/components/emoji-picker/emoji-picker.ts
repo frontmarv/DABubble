@@ -4,6 +4,7 @@ import { ConnectedPosition } from '@angular/cdk/overlay';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-emoji-picker',
@@ -13,39 +14,38 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class EmojiPicker {
 
+  firebaseService = inject(FirebaseService);
   @Output() emojiSelected = new EventEmitter<string>();
   isOpen = false;
   positions: ConnectedPosition[] = [];
 
-  // Deine bisherigen Desktop-Positionen
-  private desktopPositions: ConnectedPosition[] = [
+  desktopPositions: ConnectedPosition[] = [
     { originX: 'start', originY: 'top', overlayX: 'end', overlayY: 'bottom', offsetY: -5, offsetX: 70 },
     { originX: 'start', originY: 'bottom', overlayX: 'end', overlayY: 'top', offsetY: 5, offsetX: 70 }
   ];
 
-  // Mobile Positionen (schlichter, direkt unter/über dem Button, zentriert)
-  private mobilePositions: ConnectedPosition[] = [
+
+  mobilePositions: ConnectedPosition[] = [
     { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top', offsetY: 5 },
     { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetY: -5 }
   ];
 
-  private breakpointObserver = inject(BreakpointObserver);
+  breakpointObserver = inject(BreakpointObserver);
 
   constructor() {
-    // Überwacht die Bildschirmgröße und tauscht die Positionen dynamisch aus
     this.breakpointObserver
       .observe(['(max-width: 767px)'])
-      .pipe(takeUntilDestroyed()) // Modernes Angular Cleanup (ab v16)
+      .pipe(takeUntilDestroyed())
       .subscribe(result => {
         if (result.matches) {
-          this.positions = this.mobilePositions; // Wir sind auf Mobile
+          this.positions = this.mobilePositions;
         } else {
-          this.positions = this.desktopPositions; // Wir sind auf Desktop
+          this.positions = this.desktopPositions;
         }
       });
   }
 
-    toggleEmojiPicker() {
+  toggleEmojiPicker() {
     this.isOpen = !this.isOpen;
   }
 
@@ -55,7 +55,7 @@ export class EmojiPicker {
 
   handleSelection(event: any) {
     this.emojiSelected.emit(event.emoji.native);
-    console.log('Selected emoji:', event.emoji.native);
+    console.log('Selected emoji:', event.emoji.native, 'Who reacted:', this.firebaseService.currentUser()?.uid);
     this.setHiddenEmojiPicker();
   }
 

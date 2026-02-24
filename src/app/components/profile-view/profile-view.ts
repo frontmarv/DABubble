@@ -64,7 +64,7 @@ export class ProfileView implements OnChanges {
         firstName: this.splitFullName(this.fullName).firstName,
         lastName: this.splitFullName(this.fullName).lastName,
       });
-      this.isEditing = false;
+      this.closeProfile();
     }
 
   }
