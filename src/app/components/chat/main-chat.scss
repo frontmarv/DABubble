@@ -76,8 +76,8 @@
 }
 
 .channel-dropdown-arrow {
-  width: 20px;
-  height: 20px;
+  width: 12px;
+  height: 12px;
 }
 
 .channel-header__right {
@@ -129,8 +129,6 @@ app-message-list {
   scrollbar-width: thin;
   padding-top: 21px;
 }
-
-
 
 .members-list {
   display: flex;
@@ -195,12 +193,6 @@ app-message-list {
     span {
       color: var(--color-purple2);
     }
-
-    .add-member-icon-circle {
-      img {
-        filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
-      }
-    }
   }
 }
 
@@ -214,13 +206,9 @@ app-message-list {
   justify-content: center;
   flex-shrink: 0;
 
-  img {
+  img, span {
     width: 24px;
     height: 24px;
-
-    &:hover {
-      filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
-    }
   }
 }
 
@@ -235,8 +223,9 @@ app-message-list {
   gap: 6px;
 }
 
+/* Einfache Background-Color statt Filter! */
 .channel-tag-icon--purple {
-  filter: brightness(0) saturate(100%) invert(26%) sepia(61%) saturate(5427%) hue-rotate(236deg) brightness(98%) contrast(92%);
+  background-color: var(--color-purple2); 
 }
 
 .channel-tag-name {

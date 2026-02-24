@@ -8,7 +8,7 @@
     </div>
 
     <button class="icon-btn" type="button" aria-label="Neue Nachricht">
-      <img class="icon-btn__img" src="/main-page/edit_square.svg" alt="" />
+      <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/edit_square.svg'); mask-image: url('/main-page/edit_square.svg');"></span>
     </button>
   </header>
 
@@ -16,14 +16,13 @@
     <section class="section">
       <div class="section__title-row">
         <div class="section__title" (click)="toggleChannels()">
-          <img class="icon-btn__img arrow-icon" [class.rotate-icon]="!channelsOpen" src="/main-page/arrow_drop_down.svg"
-            alt="" />
-          <img class="icon-btn__img" src="/main-page/workspaces.svg" alt="" />
+          <span class="icon-btn__img arrow-icon icon-mask" [class.rotate-icon]="!channelsOpen" style="-webkit-mask-image: url('/main-page/arrow_drop_down.svg'); mask-image: url('/main-page/arrow_drop_down.svg');"></span>
+          <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/workspaces.svg'); mask-image: url('/main-page/workspaces.svg');"></span>
           <span class="text--small section__label">Channels</span>
         </div>
 
         <button class="icon-btn" type="button" aria-label="Channel hinzufügen" (click)="openCreateChannel()">
-          <img class="icon-btn__img" src="/main-page/add.svg" alt="" />
+          <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/add.svg'); mask-image: url('/main-page/add.svg');"></span>
         </button>
       </div>
 
@@ -31,13 +30,13 @@
         @for (channel of firebaseService.channels(); track channel.id) {
         <div class="list__item" (click)="selectChannel(channel.id)"
           [class.list__item--active]="channel.id === firebaseService.selectedChannelId()">
-          <img class="input-icon" src="/main-page/tag1.svg" alt="#">
+          <span class="input-icon icon-mask hashtag-icon" style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg');" aria-label="#"></span>
           <span class="text--small">{{ channel.name }}</span>
         </div>
         }
 
         <button class="list__item list__item--add" type="button" (click)="openCreateChannel()">
-          <img class="icon-btn__img" src="/main-page/add_circle.svg" alt="+" />
+          <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/add_circle.svg'); mask-image: url('/main-page/add_circle.svg');" aria-label="+"></span>
           <span class="text--small">Channel hinzufügen</span>
         </button>
       </nav>
@@ -46,9 +45,8 @@
     <section class="section">
       <div class="section__title-row">
         <div class="section__title" (click)="toggleDm()">
-          <img class="icon-btn__img arrow-icon" [class.rotate-icon]="!dmOpen" src="/main-page/arrow_drop_down.svg"
-            alt="" />
-          <img class="input-icon" src="/main-page/account_circle.svg" alt="" />
+          <span class="icon-btn__img arrow-icon icon-mask" [class.rotate-icon]="!dmOpen" style="-webkit-mask-image: url('/main-page/arrow_drop_down.svg'); mask-image: url('/main-page/arrow_drop_down.svg');"></span>
+          <span class="input-icon icon-mask" style="-webkit-mask-image: url('/main-page/account_circle.svg'); mask-image: url('/main-page/account_circle.svg');"></span>
           <span class="text--small section__label">Direktnachrichten</span>
         </div>
       </div>
@@ -79,7 +77,7 @@
       <div class="modal__header">
         <h2>Channel erstellen</h2>
         <button class="icon-btn" (click)="closeCreateChannel()">
-          <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
+          <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/close-button.svg'); mask-image: url('/main-page/close-button.svg');" aria-label="Schließen"></span>
         </button>
       </div>
 
@@ -92,7 +90,7 @@
         <div class="input-group">
           <label class="modal__label text--small bold">Channel-Name</label>
           <div class="input-wrapper">
-            <img class="input-icon" src="/main-page/tag.svg" alt="#" />
+            <span class="input-icon icon-mask hashtag-icon" style="-webkit-mask-image: url('/main-page/tag.svg'); mask-image: url('/main-page/tag.svg');" aria-label="#"></span>
             <input class="inputfield--dialogs with-icon" type="text" placeholder="z.B. Kooperationsprojekte"
               [(ngModel)]="channelName" />
           </div>
@@ -117,7 +115,7 @@
       <div class="modal__header">
         <h2>Leute hinzufügen</h2>
         <button class="icon-btn" (click)="closeAddPeople()">
-          <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
+          <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/close-button.svg'); mask-image: url('/main-page/close-button.svg');" aria-label="Schließen"></span>
         </button>
       </div>
 

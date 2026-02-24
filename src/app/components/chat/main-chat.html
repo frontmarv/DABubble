@@ -14,9 +14,9 @@
             <div class="channel-header">
                 <div class="channel-header__left">
                     <button class="channel-name-btn" type="button" (click)="openChannelInfo()">
-                        <img class="channel-tag-icon" src="/main-page/tag1.svg" alt="#" />
+                        <span class="channel-tag-icon icon-mask" style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg');" aria-label="#"></span>
                         <span class="channel-name-text">{{ currentChannel()?.name }}</span>
-                        <img class="channel-dropdown-arrow" src="/main-page/arrow_drop_down.svg" alt="" />
+                        <span class="channel-dropdown-arrow icon-mask" style="-webkit-mask-image: url('/main-page/arrow_drop_down.svg'); mask-image: url('/main-page/arrow_drop_down.svg');"></span>
                     </button>
                 </div>
     
@@ -31,7 +31,7 @@
     
                     <button class="add-member-btn icon-btn" type="button" aria-label="Mitglied hinzufügen"
                         (click)="openAddPeopleModal()">
-                        <img class="icon-btn__img" src="/main-page/person_add.svg" alt="Mitglied hinzufügen" />
+                        <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/person_add.svg'); mask-image: url('/main-page/person_add.svg');"></span>
                     </button>
                 </div>
             </div>
@@ -48,7 +48,7 @@
             <div class="modal__header">
                 <h2>Mitglieder</h2>
                 <button class="icon-btn" type="button" (click)="closeMembersModal()">
-                    <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
+                    <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/close-button.svg'); mask-image: url('/main-page/close-button.svg');" aria-label="Schließen"></span>
                 </button>
             </div>
     
@@ -77,7 +77,7 @@
     
             <button class="add-member-row" type="button" (click)="switchToAddPeople()">
                 <span class="add-member-icon-circle">
-                    <img src="/main-page/person_add.svg" alt="+" />
+                    <span class="icon-mask" style="-webkit-mask-image: url('/main-page/person_add.svg'); mask-image: url('/main-page/person_add.svg');" aria-label="+"></span>
                 </span>
                 <span class="text--regular">Mitglieder hinzufügen</span>
             </button>
@@ -91,12 +91,12 @@
             <div class="modal__header">
                 <h2>Leute hinzufügen</h2>
                 <button class="icon-btn" type="button" (click)="closeAddPeopleModal()">
-                    <img class="icon-btn__img" src="/main-page/close-button.svg" alt="Schließen" />
+                    <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/close-button.svg'); mask-image: url('/main-page/close-button.svg');" aria-label="Schließen"></span>
                 </button>
             </div>
     
             <div class="channel-tag-label">
-                <img class="channel-tag-icon channel-tag-icon--purple" src="/main-page/tag1.svg" alt="#" />
+                <span class="channel-tag-icon icon-mask hashtag-icon" style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg');" aria-label="#"></span>
                 <span class="text--small bold channel-tag-name">{{ currentChannel()?.name }}</span>
             </div>
     
@@ -137,4 +137,4 @@
         </div>
     </div>
     }
-    }
+}
