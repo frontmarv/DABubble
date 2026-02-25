@@ -245,6 +245,10 @@
   }
 }
 
+.mobile-search-bar {
+  display: none;
+}
+
 @media (max-width: 1240px) {
   .sidebar {
     width: 100%;
@@ -283,6 +287,7 @@
   .sidebar__header {
     padding-bottom: 12px;
     border-bottom: 1px solid var(--color-background);
+    display: none;
   }
 
   .workspace__logo-img {
