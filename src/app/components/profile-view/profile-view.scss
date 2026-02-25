@@ -24,6 +24,19 @@
     gap: 30px;
     transform-origin: top right;
     animation: expandMenu 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    @media (max-width: 1240px) {
+        position: relative; 
+        top: auto;         
+        right: auto;       
+        margin: 0 20px;    
+        border-radius: 30px; 
+        transform-origin: center; 
+    }
+
+    @media (max-width: 480px) {
+        padding: 30px 20px; 
+    }
 }
 
 .profile-header {
