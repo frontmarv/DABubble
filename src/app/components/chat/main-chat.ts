@@ -5,10 +5,11 @@ import { MessageComposer } from "./message-composer/message-composer";
 import { ChatService } from '../../services/chat.service';
 import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 import { FirebaseService } from '../../services/firebase.service';
+import { ChannelInfo } from '../channel-info/channel-info'; 
 
 @Component({
   selector: 'app-chat',
-  imports: [MessageList, MessageComposer, FormsModule],
+  imports: [MessageList, MessageComposer, FormsModule, ChannelInfo],
   templateUrl: './main-chat.html',
   styleUrl: './main-chat.scss',
 })
@@ -29,6 +30,8 @@ export class MainChat {
   filteredUsers = signal<any[]>([]);
   selectedUsers = signal<any[]>([]);
   isAddingMembers = signal(false);
+  
+  showChannelInfoModal = signal(false);
 
   channelMembers = computed(() => {
     const channel = this.currentChannel();
@@ -76,7 +79,11 @@ export class MainChat {
   }
 
   openChannelInfo() {
-    // Placeholder: open channel details / edit modal
+    this.showChannelInfoModal.set(true);
+  }
+
+  closeChannelInfo() {
+    this.showChannelInfoModal.set(false);
   }
 
   filterUsers() {

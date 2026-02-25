@@ -137,4 +137,11 @@
         </div>
     </div>
     }
+
+    @if (showChannelInfoModal()) {
+        <app-channel-info 
+            [channel]="currentChannel()" 
+            (close)="closeChannelInfo()">
+        </app-channel-info>
+    }
 }

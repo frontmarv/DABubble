@@ -223,7 +223,6 @@ app-message-list {
   gap: 6px;
 }
 
-/* Einfache Background-Color statt Filter! */
 .channel-tag-icon--purple {
   background-color: var(--color-purple2); 
 }
@@ -359,11 +358,6 @@ app-message-list {
 
   app-message-list {
     padding-top: 10px;
-  }
-
-  .members-modal,
-  .add-people-modal {
-    width: 100%;
   }
 }
 

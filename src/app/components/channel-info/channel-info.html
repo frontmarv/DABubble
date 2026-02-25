@@ -1,0 +1,61 @@
+<div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal channel-info-modal" (click)="$event.stopPropagation()">
+        <div class="modal__header">
+            <div class="channel-title">
+                <span class="icon-mask" style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg'); width: 24px; height: 24px; background-color: var(--color-black);"></span>
+                <h2>{{ channel?.name }}</h2>
+            </div>
+            <button class="icon-btn" type="button" (click)="closeModal()">
+                <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/close-button.svg'); mask-image: url('/main-page/close-button.svg');" aria-label="Schließen"></span>
+            </button>
+        </div>
+
+        <div class="channel-info-content">
+            <div class="info-card">
+                <div class="info-card__header">
+                    <span class="text--regular bold">Channel-Name</span>
+                    <button class="edit-btn text--regular" type="button" (click)="toggleEditChannelName()">
+                        {{ editChannelNameMode() ? 'Speichern' : 'Bearbeiten' }}
+                    </button>
+                </div>
+                <div class="info-card__body channel-name-display">
+                    @if (!editChannelNameMode()) {
+                        <span class="icon-mask hashtag-icon" style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg'); width: 20px; height: 20px; background-color: var(--color-black);"></span>
+                        <span class="text--regular">{{ channel?.name }}</span>
+                    } @else {
+                        <input class="inputfield--dialogs edit-input" type="text" placeholder="z.B. Entwicklerteam" 
+                            [ngModel]="editChannelNameInput()" (ngModelChange)="editChannelNameInput.set($event)" />
+                    }
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card__header">
+                    <span class="text--regular bold">Beschreibung</span>
+                    <button class="edit-btn text--regular" type="button" (click)="toggleEditChannelDesc()">
+                        {{ editChannelDescMode() ? 'Speichern' : 'Bearbeiten' }}
+                    </button>
+                </div>
+                <div class="info-card__body">
+                    @if (!editChannelDescMode()) {
+                        <p class="text--regular">
+                            {{ channel?.description || 'Dieser Channel ist für alles rund um dieses Thema. Hier kannst du zusammen mit deinem Team Meetings abhalten, Dokumente teilen und Entscheidungen treffen.' }}
+                        </p>
+                    } @else {
+                        <textarea class="inputfield--dialogs edit-textarea text--regular" rows="4" placeholder="Dein Text hier..."
+                            [ngModel]="editChannelDescInput()" (ngModelChange)="editChannelDescInput.set($event)"></textarea>
+                    }
+                </div>
+                <hr class="info-card__divider" />
+                <div class="info-card__footer">
+                    <span class="text--regular bold">Erstellt von</span>
+                    <span class="creator-name text--regular">{{ channel?.creatorName || 'Noah Braun' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal__footer">
+            <button class="btn--primary leave-btn" type="button" (click)="leaveChannel()">Channel verlassen</button>
+        </div>
+    </div>
+</div>

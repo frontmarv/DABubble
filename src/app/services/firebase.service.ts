@@ -137,6 +137,15 @@ export class FirebaseService {
     });
   }
 
+  async updateChannel(channelId: string, data: any) {
+    try {
+      const channelRef = doc(this.firestore, 'channels', channelId);
+      await updateDoc(channelRef, data);
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren des Channels: ', error);
+    }
+  }
+
   private users = new Observable<User[]>((observer) => {
     const q = query(collection(this.firestore, 'users'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
