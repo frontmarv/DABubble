@@ -25,8 +25,14 @@
             <span class="dropdown-arrow" aria-hidden="true"></span>
 
             <div class="profile-menu" (click)="$event.stopPropagation()">
-                <div (click)="openProfile()">Profil</div>
-                <div class="hover" (click)="logOut()">Log out</div>
+                <div class="menu-item hover" (click)="openProfile()">
+                    <img src="/main-page/account_circle.svg" alt="Profil" />
+                    <span>Profil</span>
+                </div>
+                <div class="menu-item hover" (click)="logOut()">
+                    <img src="/main-page/logout.svg" alt="Log out" />
+                    <span>Log out</span>
+                </div>
             </div>
         </div>
     </header>
