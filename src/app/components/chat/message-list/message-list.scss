@@ -54,8 +54,8 @@
     border-radius: 30px;
     border-top-left-radius: 0px;
     padding: 15px;
-    word-break: break-word; 
-    overflow-wrap: anywhere; 
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .message-info-container {
@@ -88,6 +88,7 @@
     position: relative;
     display: flex;
     gap: 30px;
+    justify-content: flex-end;
     &:hover {
         background-color: var(--color-background);
         .message {
@@ -159,8 +160,6 @@
     transition: all var(--transition-slow) ease-in-out;
 }
 
-
-
 .thread-answer {
     display: flex;
     gap: 20px;
@@ -178,6 +177,12 @@
     border: 1px solid var(--color-light-purple-lines);
     border-radius: 30px;
     gap: 10px;
+    cursor: pointer;
+    &:hover {
+        .userReaction {
+            opacity: 1;
+        }
+    }
 }
 
 .fast-emoji {
@@ -188,15 +193,9 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
-    cursor: pointer;
-    &:hover {
-        .userReaction {
-            opacity: 1;
-        }
-    }
 }
 
-.userReaction{
+.userReaction {
     position: absolute;
     opacity: 0;
     background-color: var(--color-purple1);
@@ -213,62 +212,66 @@
     gap: 5px;
     bottom: 37px;
     left: 50%;
+    &:hover {
+        display: none;
+    }
 }
 
-   @media (max-width: 900px) {
+@media (max-width: 900px) {
     .avatar {
-      width: 50px; 
-      height: 50px;
+        width: 50px;
+        height: 50px;
     }
-  
+
     .message-field-other {
-      padding: 15px 20px; 
-      gap: 15px; 
+        padding: 15px 20px;
+        gap: 15px;
     }
-  
+
     .message-field-user {
-      padding: 15px 20px; 
-      gap: 15px;
+        padding: 15px 20px;
+        gap: 15px;
+        justify-content: flex-end;
     }
-  
+
     .message-info {
-      gap: 10px;
+        gap: 10px;
     }
-  
+
     .time-seperator .line .day {
-      right: 50%;
-      transform: translateX(50%); 
+        right: 50%;
+        transform: translateX(50%);
     }
-  
+
     .reaction-bar {
-      left: 20px; 
+        left: 20px;
     }
-  }
-  
-  @media (max-width: 480px) {
+}
+
+@media (max-width: 480px) {
     .avatar {
-      width: 40px; 
-      height: 40px;
+        width: 40px;
+        height: 40px;
     }
-  
+
     .message-field-other,
     .message-field-user {
-      padding: 10px 15px; 
-      gap: 10px;
+        padding: 10px 15px;
+        gap: 10px;
     }
-  
+
     .message {
-      padding: 10px 15px;
-      font-size: 0.95rem; 
+        padding: 10px 15px;
+        font-size: 0.95rem;
     }
-  
+
     .reactions {
-      padding: 3px 8px;
-      gap: 5px;
+        padding: 3px 8px;
+        gap: 5px;
     }
-    
+
     .fast-emoji {
-      width: 34px;
-      height: 34px;
+        width: 34px;
+        height: 34px;
     }
-  }
+}

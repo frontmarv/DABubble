@@ -1,8 +1,10 @@
+import { Timestamp } from "firebase/firestore";
+
 export class Message {
     id?: string;
     senderId: string;
     text: string;
-    createdAt: any;
+    createdAt: Timestamp;
     reactions: { [emoji: string]: string[] };
 
     constructor(obj?: any) {

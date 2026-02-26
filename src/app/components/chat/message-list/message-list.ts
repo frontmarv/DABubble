@@ -6,7 +6,7 @@ import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-message-list',
-  imports: [],
+  imports: [DatePipe],
   templateUrl: './message-list.html',
   styleUrl: './message-list.scss',
 })

@@ -3,6 +3,7 @@ import { Chat } from "../models/chat.class";
 import { User } from "../models/user.class";
 import { FirebaseService } from "./firebase.service";
 import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch } from "@angular/fire/firestore"
+import { Message } from "../models/message.class";
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +16,8 @@ export class ChatService {
     user = new User;
     otherUser = signal<User | null>(null);
     currentUserId = signal<User | null>(null);
-    messages = signal<any[]>([]); 
+    messages = signal<any[]>([]);
+    users = signal<Record<string, any>>({});
 
     async openChatRoom(user: any) {
         await this.getOtherUserData(user);
@@ -47,17 +49,41 @@ export class ChatService {
     }
 
     loadMessages() {
-         const chatId = this.chat.id;
+        const chatId = this.chat.id;
         if (!chatId) return;
-        const messagesRef = collection(this.firebaseService.firestore, 'chats', chatId, 'messages');
+        const messagesRef = collection(
+            this.firebaseService.firestore, 'chats', chatId, 'messages'
+        );
         const q = query(messagesRef, orderBy('createdAt', 'asc'));
-        onSnapshot(q, (snapshot) => {
-            const msgs: any[] = [];
-            snapshot.forEach(doc => {
-                msgs.push({ id: doc.id, ...doc.data() });
+        onSnapshot(q, async (snapshot) => {
+            const msgs: Message[] = [];
+            const userIdsToLoad = new Set<string>();
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                const message = new Message({
+                    id: docSnap.id,
+                    ...data
+                });
+                msgs.push(message);
+                if (!this.users()[message.senderId]) {
+                    userIdsToLoad.add(message.senderId);
+                }
             });
+            this.loadMissingUsers(userIdsToLoad);
             this.messages.set(msgs);
         });
+    }
+
+    async loadMissingUsers(userIdsToLoad: Set<string>) {
+        for (const uid of userIdsToLoad) {
+            const user = await this.firebaseService.getSingleUser(uid);
+            if (user) {
+                this.users.update(users => ({
+                    ...users,
+                    [uid]: user
+                }));
+            }
+        }
     }
 
     async createChat() {
