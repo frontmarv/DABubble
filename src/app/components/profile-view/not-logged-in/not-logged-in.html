@@ -39,7 +39,8 @@
         </div>
 
         <div class="edit-actions">
-            <button class="btn--primary"><img src="/main-page/write-msg-to-user.svg" alt="">Nachricht</button>
+            <button class="btn--primary" (click)="selectDm(displayForeignUserService.selectedUser())">
+                <img src="/main-page/write-msg-to-user.svg" alt="">Nachricht</button>
         </div>
     </div>
 </div>

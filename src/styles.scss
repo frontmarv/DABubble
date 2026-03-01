@@ -50,7 +50,7 @@ a {
 
 .icon-mask {
     display: inline-block;
-    background-color: var(--color-black); 
+    background-color: var(--color-black);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
@@ -130,6 +130,7 @@ a {
 }
 
 @media screen and (max-width: 1024px) {
+
     .btn--primary,
     .btn--secondary {
         padding: 12px 25px;
@@ -160,10 +161,21 @@ h4 {
 }
 
 @media screen and (max-width: 1024px) {
-    h1 { font-size: 3.5rem; }
-    h2 { font-size: 2rem; }
-    h3 { font-size: 1.625rem; }
-    h4 { font-size: 1.25rem; }
+    h1 {
+        font-size: 3.5rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    h3 {
+        font-size: 1.625rem;
+    }
+
+    h4 {
+        font-size: 1.25rem;
+    }
 }
 
 .text--big {
@@ -233,8 +245,8 @@ h4 {
         cursor: pointer;
     }
 
-    > img,
-    > span {
+    >img,
+    >span {
         width: 100%;
         height: auto;
     }
@@ -283,6 +295,10 @@ h4 {
 
 app-message-composer {
     padding: 40px;
+
+    @media screen and (max-width: 1024px) {
+        padding: 20px 10px;
+    }
 }
 
 .modal-backdrop {
