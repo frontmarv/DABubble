@@ -211,6 +211,9 @@
 }
 
 .success-message {
+  display: flex;
+  align-items: center;
+  gap: 20px;
   position: fixed;
   bottom: -100px;
   right: 50px;
@@ -249,6 +252,7 @@
 
   .card-header {
     margin-bottom: 16px;
+
     >h1 {
       font-size: 32px;
     }

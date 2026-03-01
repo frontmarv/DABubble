@@ -105,7 +105,6 @@ export class ChatService {
     async getOtherUserData(user: any) {
         const otherUserInfo = await this.firebaseService.getSingleUser(user.uid);
         this.otherUser.set(otherUserInfo);
-        console.log(this.otherUser);
     }
 
 

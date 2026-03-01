@@ -8,7 +8,6 @@ export class EmojiPickerStateService {
 
     toggle() {
         this.isEmojiPickerVisible.set(!this.isEmojiPickerVisible());
-        console.log("Emoji Picker visibility toggled. Now:", this.isEmojiPickerVisible());
     }
 
     setHidden() {

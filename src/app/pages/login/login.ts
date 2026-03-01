@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -16,6 +16,7 @@ import { Intro } from '../../components/intro/intro';
 export class Login implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private changeDetectorRef = inject(ChangeDetectorRef);
 
   showSignup: boolean = false;
   showSuccessMessage: boolean = false;
@@ -44,20 +45,18 @@ export class Login implements OnInit {
 
   async login() {
     this.errorMessage = '';
-
     if (!this.loginEmail || !this.loginPassword) {
       this.errorMessage = 'Bitte E-Mail und Passwort eingeben.';
       return;
     }
-
     this.isLoading = true;
     const result = await this.authService.login(this.loginEmail, this.loginPassword);
-    this.isLoading = false;
-
     if (result.success) {
       this.router.navigate(['/main']);
     } else {
       this.errorMessage = result.error || 'Login fehlgeschlagen.';
+      this.changeDetectorRef.markForCheck();
+      this.isLoading = false;
     }
   }
 
@@ -95,12 +94,11 @@ export class Login implements OnInit {
   }
 
   onSignupSuccess() {
-    
     this.showSuccessMessage = true;
     setTimeout(() => {
       this.showSuccessMessage = false;
       this.router.navigate(['/main']).then(() => {
-        this.showSignup = false; 
+        this.showSignup = false;
       });
     }, 2500);
   }

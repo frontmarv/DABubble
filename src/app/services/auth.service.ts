@@ -125,10 +125,15 @@ export class AuthService {
 
   async logout(): Promise<void> {
     try {
-      await this.firebaseService.updateSingleUser(this.currentFirebaseUser?.uid ?? '', { status: 'offline' });
+      const uid = this.currentFirebaseUser?.uid;
+      if (uid) {
+        await this.firebaseService.updateSingleUser(uid, { status: 'offline' });
+      }
       await signOut(this.auth);
       this.router.navigate(['/login']);
     } catch (error) {
+      console.error('Logout error:', error);
+      this.router.navigate(['/login']);
     }
   }
 

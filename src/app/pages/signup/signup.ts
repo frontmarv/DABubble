@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Output, inject, ChangeDetectorRef } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -13,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class SignupComponent {
   private authService = inject(AuthService);
+  private changeDetectorRef = inject(ChangeDetectorRef);
 
   @Output() close = new EventEmitter<void>();
   @Output() success = new EventEmitter<void>();
@@ -37,7 +38,7 @@ export class SignupComponent {
     '/shared/profile-pics/profile-pic3.svg',
     '/shared/profile-pics/profile-pic4.svg',
     '/shared/profile-pics/profile-pic5.svg',
-    '/shared/profile-pics/profile-pic6.svg'    
+    '/shared/profile-pics/profile-pic6.svg'
   ];
 
   selectedAvatar: string = '/shared/profile-pics/unkown-user.svg';
@@ -133,8 +134,8 @@ export class SignupComponent {
     if (result.success) {
       this.success.emit();
     } else {
-      this.isLoading = false; 
       this.errorMessage = result.error || 'Registrierung fehlgeschlagen.';
+      this.changeDetectorRef.markForCheck();
     }
   }
 
