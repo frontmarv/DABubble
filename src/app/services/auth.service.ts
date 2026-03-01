@@ -88,32 +88,37 @@ export class AuthService {
       const user = userCredential.user;
       const uid = user.uid;
 
-      const nameParts = (user.displayName || 'Google User').trim().split(/\s+/);
-      const firstName = nameParts[0] || 'Google';
-      const lastName = nameParts.slice(1).join(' ') || '';
+      const userExists = await this.firebaseService.checkUserExists(uid);
 
-      const photo =
-        user.photoURL ||
-        user.providerData?.[0]?.photoURL ||
-        'unkown-user.svg';
+      if (!userExists) {
+        const nameParts = (user.displayName || 'Google User').trim().split(/\s+/);
+        const firstName = nameParts[0] || 'Google';
+        const lastName = nameParts.slice(1).join(' ') || '';
 
-      const googleUser = new User({
-        uid,
-        firstName,
-        lastName,
-        email: user.email || '',
-        avatar: photo,
-        status: 'online'
-      });
+        const photo =
+          user.photoURL ||
+          user.providerData?.[0]?.photoURL ||
+          'unkown-user.svg';
 
-      await this.firebaseService.addUser(googleUser, uid); //überschreibt jedesmal die Daten in "users"
+        const googleUser = new User({
+          uid,
+          firstName,
+          lastName,
+          email: user.email || '',
+          avatar: photo,
+          status: 'online'
+        });
+
+        await this.firebaseService.addUser(googleUser, uid);
+      } else {
+        await this.firebaseService.updateSingleUser(uid, { status: 'online' });
+      }
+
       return { success: true };
     } catch (error: any) {
-
       if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
         return { success: false, error: '' };
       }
-
       return { success: false, error: 'Google-Login fehlgeschlagen. Bitte versuche es erneut.' };
     }
   }
@@ -164,9 +169,4 @@ export class AuthService {
   confirmReset(code: string, newPassword: string) {
     return confirmPasswordReset(this.auth, code, newPassword);
   }
-
-
-
-
-
 }

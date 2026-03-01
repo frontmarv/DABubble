@@ -27,12 +27,10 @@ export class FirebaseService {
 
   currentUser = signal<User | null>(null);
   channels = signal<any[]>([]);
-
-  currentChannelName: string = 'Allgemein';
   selectedChannelId = signal<string>('');
 
   chats: any[] = [];
-
+  currentChannelName: string = 'Allgemein';
   currentChatName: string = 'Allgemein';
   selectedChatId: string = '';
 
@@ -48,6 +46,13 @@ export class FirebaseService {
   ngOnDestroy() {
     if (this.unsubChannels) this.unsubChannels();
     if (this.unsubUser) this.unsubUser();
+    if (this.unsubChats) this.unsubChats();
+  }
+
+  async checkUserExists(uid: string): Promise<boolean> {
+    const docRef = doc(this.firestore, 'users', uid);
+    const snap = await getDoc(docRef);
+    return snap.exists();
   }
 
   subChannels(): Unsubscribe {
@@ -90,9 +95,8 @@ export class FirebaseService {
 
   async addUser(user: User, uid: string) {
     return runInInjectionContext(this.injector, async () => {
-      await setDoc(doc(this.firestore, 'users', uid), user.toJSON(), { merge: true }).catch((err) =>
-        console.error(err)
-      );
+      await setDoc(doc(this.firestore, 'users', uid), user.toJSON(), { merge: true })
+        .catch((err) => console.error(err));
     });
   }
 
