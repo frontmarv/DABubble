@@ -5,10 +5,10 @@
         <div class="mention-item" (click)="selectItem(item)">
             <div class="avatar-wrapper">
                 @if (item.type === 'user') {
-                    <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar" />
-                    <span class="status status--online"></span>
+                <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar" />
+                <span class="status status--online"></span>
                 } @else {
-                    <span class="hash-icon">#</span>
+                <span class="hash-icon">#</span>
                 }
             </div>
             <span class="mention-name">{{ item.name }}</span>
@@ -17,18 +17,14 @@
     </div>
     }
 
-    <textarea 
-        #message 
-        class="text--regular" 
-        maxlength="2000" 
-        placeholder="Nachricht an....."
-        (input)="onInput($event)"
-    ></textarea>
+    <textarea #message class="text--regular" maxlength="2000" placeholder="Nachricht an....." (input)="onInput($event)"
+        (keydown)="sendMessageOnEnter($event, message)"></textarea>
 
     <div class="message-buttons-container">
         <div class="action-icons">
-            <app-emoji-picker></app-emoji-picker>
-            <button class="icon-btn" type="button" aria-label="Mention" (click)="searchType.set('user'); showDropdown.set(true)">
+            <app-emoji-picker (emojiSelected)="insertEmoji($event)"></app-emoji-picker>
+            <button class="icon-btn" type="button" aria-label="Mention"
+                (click)="searchType.set('user'); showDropdown.set(true)">
                 <img class="icon-btn__img" src="/chat-input/alternate-email.svg" alt="Mention" />
             </button>
         </div>

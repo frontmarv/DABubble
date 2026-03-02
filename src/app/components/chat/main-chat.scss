@@ -128,6 +128,7 @@ app-message-list {
   flex: 1;
   scrollbar-width: thin;
   padding-top: 21px;
+  overflow-y: auto;
 }
 
 .members-list {

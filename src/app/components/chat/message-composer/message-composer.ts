@@ -38,18 +38,18 @@ export class MessageComposer {
     if (type === 'channel') {
       return this.firebaseService.channels()
         .filter(c => c.name.toLowerCase().includes(query))
-        .map(c => ({ 
-          type: 'channel' as const, 
-          name: c.name, 
-          id: c.id, 
-          avatar: null 
+        .map(c => ({
+          type: 'channel' as const,
+          name: c.name,
+          id: c.id,
+          avatar: null
         }));
     }
 
     if (type === 'user') {
       return this.firebaseService.getAllUsers()
-        .filter(u => 
-          u.firstName.toLowerCase().includes(query) || 
+        .filter(u =>
+          u.firstName.toLowerCase().includes(query) ||
           u.lastName.toLowerCase().includes(query)
         )
         .map(u => {
@@ -95,10 +95,10 @@ export class MessageComposer {
 
     const cleanName = item.name.replace(' (Du)', '');
 
-    const newValue = 
-      value.substring(0, lastIndex) + 
-      `${lastSymbol}${cleanName}` + 
-      " " + 
+    const newValue =
+      value.substring(0, lastIndex) +
+      `${lastSymbol}${cleanName}` +
+      " " +
       value.substring(cursorPos);
 
     textarea.value = newValue;
@@ -111,11 +111,11 @@ export class MessageComposer {
   sendMessage(textarea: HTMLTextAreaElement) {
     const value = textarea.value.trim();
     if (!value) return;
-
     this.chatService.sendMessage(value);
     textarea.value = '';
     this.showDropdown.set(false);
     this.searchType.set(null);
+    textarea.selectionStart = textarea.selectionEnd = 0;
     textarea.focus();
   }
 
@@ -125,5 +125,22 @@ export class MessageComposer {
     if (avatar.startsWith('http')) return avatar;
     const file = avatar.replace(/^\/?shared\/profile-pics\//, '').replace(/^profile-pics\//, '');
     return `/shared/profile-pics/${file}`;
+  }
+
+  insertEmoji(emoji: string) {
+    const textarea = this.textarea.nativeElement;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    textarea.value = text.slice(0, start) + emoji + text.slice(end);
+    textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+    textarea.focus();
+  }
+
+  sendMessageOnEnter(event: any, message: HTMLTextAreaElement) {
+    if (event.key === 'Enter' && message.value.length > 1) {
+      event.preventDefault();
+      this.sendMessage(message);
+    }
   }
 }
