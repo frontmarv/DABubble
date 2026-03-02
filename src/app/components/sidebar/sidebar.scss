@@ -96,11 +96,24 @@
   word-break: break-all;
   text-wrap-mode: wrap;
 
+  .hashtag-icon {
+    background-color: var(--color-black);
+  }
+
+  &--active {
+    background-color: var(--color-background);
+    color: var(--color-purple3) !important;
+    font-weight: 700;
+
+    .hashtag-icon {
+      background-color: var(--color-purple3); 
+    }
+  }
+
   .input-icon {
     width: 24px;
     height: 24px;
     object-fit: contain;
-    /* Transition für Masken-Hintergrundfarbe statt Filter */
     transition: background-color 0.2s ease-in-out;
     flex-shrink: 0;
   }
