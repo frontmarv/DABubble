@@ -13,8 +13,33 @@
         </div>
 
         <div class="search-bar hide-on-mobile">
-            <input type="text" placeholder="Devspace durchsuchen" />
+            <input 
+                type="text" 
+                placeholder="Devspace durchsuchen" 
+                [value]="searchQuery()"
+                (input)="onSearchInput($event)"
+            />
             <img src="/main-page/search.svg" alt="Suche" />
+
+            @if (showSearchDropdown() && filteredResults().length > 0) {
+            <div class="search-dropdown">
+                @for (item of filteredResults(); track item.id) {
+                <div class="search-item" (click)="selectResult(item)">
+                    <div class="search-item-left">
+                        @if (item.type === 'channel') {
+                            <span class="prefix">#</span>
+                        } @else {
+                            <div class="search-avatar-container">
+                                <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar" />
+                                <span class="status status--online"></span>
+                            </div>
+                        }
+                    </div>
+                    <span class="name">{{ item.name }}</span>
+                </div>
+                }
+            </div>
+            }
         </div>
 
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">

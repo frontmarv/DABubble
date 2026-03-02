@@ -1,14 +1,37 @@
 <div class="message-input-container">
-    <textarea #message class="text--regular" maxlength="2000" type="textarea"
-        placeholder="Nachricht an....."></textarea>
+    @if (showDropdown() && filteredResults().length > 0) {
+    <div class="mention-dropdown">
+        @for (item of filteredResults(); track item.id) {
+        <div class="mention-item" (click)="selectItem(item)">
+            <div class="avatar-wrapper">
+                @if (item.type === 'user') {
+                    <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar" />
+                    <span class="status status--online"></span>
+                } @else {
+                    <span class="hash-icon">#</span>
+                }
+            </div>
+            <span class="mention-name">{{ item.name }}</span>
+        </div>
+        }
+    </div>
+    }
+
+    <textarea 
+        #message 
+        class="text--regular" 
+        maxlength="2000" 
+        placeholder="Nachricht an....."
+        (input)="onInput($event)"
+    ></textarea>
+
     <div class="message-buttons-container">
         <div class="action-icons">
             <app-emoji-picker></app-emoji-picker>
-            <button class="icon-btn" type="button" aria-label="Sentiment">
-                <img class="icon-btn__img" src="/chat-input/alternate-email.svg" alt="" />
+            <button class="icon-btn" type="button" aria-label="Mention" (click)="searchType.set('user'); showDropdown.set(true)">
+                <img class="icon-btn__img" src="/chat-input/alternate-email.svg" alt="Mention" />
             </button>
         </div>
-        <img (click)="sendMessage(message)" class="send-btn" src="/chat-input/send.svg"
-            alt="Senden" />
+        <img (click)="sendMessage(message)" class="send-btn" src="/chat-input/send.svg" alt="Senden" />
     </div>
 </div>

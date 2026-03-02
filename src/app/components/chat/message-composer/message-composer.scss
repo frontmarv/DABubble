@@ -6,6 +6,8 @@
     border-radius: 20px;
     padding: 20px 20px 60px 20px;
     max-height: 300px;
+    background-color: var(--color-white);
+
     textarea {
         outline: none;
         width: 100%;
@@ -13,13 +15,63 @@
         resize: none;
         min-height: 60px;
         max-height: 200px;
+        border: none;
     }
+
     &:hover {
         outline: 1px solid var(--color-purple2);
     }
-    &:focus {
+    &:focus-within {
         outline: 1px solid var(--color-purple1);
-        cursor: text;
+    }
+}
+
+.mention-dropdown {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    background: var(--color-white);
+    border-radius: 20px 20px 0 20px;
+    box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 10px 0;
+
+    .mention-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 20px;
+        cursor: pointer;
+        transition: background 0.1s;
+
+        &:hover {
+            background-color: var(--color-background);
+            .mention-name { color: var(--color-purple1); }
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            display: flex;
+            img {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+            .status {
+                width: 10px;
+                height: 10px;
+                border: 1.5px solid var(--color-white);
+                position: absolute;
+                bottom: 0;
+                right: 0;
+            }
+        }
+
+        .mention-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
     }
 }
 
@@ -30,31 +82,17 @@
     bottom: 20px;
     right: 20px;
     left: 20px;
+
+    .action-icons {
+        display: flex;
+        gap: 8px;
+    }
+
     .send-btn {
         cursor: pointer;
-        transition: filter var(--transition-fast);
+        transition: transform var(--transition-fast);
         &:hover {
-            filter: brightness(1.25) saturate(0.85) contrast(0.95) hue-rotate(3deg);
-            scale: 1.1;
-        }
-        &:active {
-            scale: 1;
-        }
-    }
-}
-
-.action-icons {
-    width: 85px;
-    display: flex;
-    justify-content: space-around;
-}
-
-.icon-btn {
-    &:active {
-        background: transparent;
-        scale: 1;
-        .icon-btn__img {
-            filter: brightness(100%);
+            transform: scale(1.1);
         }
     }
 }
