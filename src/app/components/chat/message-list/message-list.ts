@@ -3,10 +3,11 @@ import { ThreadStateService } from '../../../services/thread-state.service';
 import { ChatService } from '../../../services/chat.service';
 import { FirebaseService } from '../../../services/firebase.service';
 import { DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-message-list',
-  imports: [DatePipe],
+  imports: [DatePipe, CommonModule],
   templateUrl: './message-list.html',
   styleUrl: './message-list.scss',
 })

@@ -4,6 +4,7 @@ import { User } from "../models/user.class";
 import { FirebaseService } from "./firebase.service";
 import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch } from "@angular/fire/firestore"
 import { Message } from "../models/message.class";
+import { runTransaction } from '@angular/fire/firestore';
 
 @Injectable({
     providedIn: 'root'
@@ -127,5 +128,41 @@ export class ChatService {
             lastMessageAt: serverTimestamp()
         });
         await batch.commit();
+    }
+
+
+    async toggleReaction(messageId: string, emoji: string) {
+        const chatId = this.chat.id;
+        const userId = this.firebaseService.currentUser()?.uid;
+
+        if (!chatId || !userId || !messageId || !emoji) return;
+
+        const msgRef = doc(this.firebaseService.firestore, 'chats', chatId, 'messages', messageId);
+
+        await runTransaction(this.firebaseService.firestore, async (tx) => {
+            const snap = await tx.get(msgRef);
+            if (!snap.exists()) return;
+
+            const data = snap.data() as any;
+            const reactions: Record<string, string[]> = data.reactions ?? {};
+            const users = reactions[emoji] ?? [];
+
+            const hasReacted = users.includes(userId);
+
+            if (hasReacted) {
+                const nextUsers = users.filter((id) => id !== userId);
+
+                if (nextUsers.length === 0) {
+                    const { [emoji]: _, ...rest } = reactions;
+                    tx.update(msgRef, { reactions: rest });
+                } else {
+                    reactions[emoji] = nextUsers;
+                    tx.update(msgRef, { reactions });
+                }
+            } else {
+                reactions[emoji] = [...users, userId];
+                tx.update(msgRef, { reactions });
+            }
+        });
     }
 }
