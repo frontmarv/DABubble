@@ -90,15 +90,12 @@ export class ChatService {
         const chatId = this.createChatId();
         const currentUserId = this.firebaseService.currentUser()?.uid;
         const otherUser = this.otherUser();
-
         if (!chatId || !currentUserId || !otherUser) return;
-
         const chat = new Chat();
         chat.id = chatId;
         chat.participants = [currentUserId, otherUser.uid];
         chat.createdAt = new Date();
         chat.lastMessage = '';
-
         await this.firebaseService.addChat(chat);
     }
 
@@ -108,10 +105,10 @@ export class ChatService {
     }
 
 
-    async sendMessage(text: string) {
+    async sendMessage(message: string) {
         const chatId = this.chat.id;
         const currentUserId = this.firebaseService.currentUser()?.uid;
-        if (!chatId || !currentUserId || !text.trim()) return;
+        if (!chatId || !currentUserId || !message.trim()) return;
         const batch = writeBatch(this.firebaseService.firestore);
         const chatRef = doc(this.firebaseService.firestore, 'chats', chatId);
         const messageRef = doc(
@@ -120,16 +117,15 @@ export class ChatService {
 
         batch.set(messageRef, {
             senderId: currentUserId,
-            text: text,
+            text: message,
             createdAt: serverTimestamp(),
             reactions: {}
         });
 
         batch.update(chatRef, {
-            lastMessage: text,
+            lastMessage: message,
             lastMessageAt: serverTimestamp()
         });
-
         await batch.commit();
     }
 }

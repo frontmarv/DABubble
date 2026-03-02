@@ -12,5 +12,16 @@ import { EmojiPicker } from '../../emoji-picker/emoji-picker';
 export class MessageComposer {
 
   chatService = inject(ChatService)
-emojiPickerService = inject(EmojiPickerStateService);
+  emojiPickerService = inject(EmojiPickerStateService);
+
+  sendMessage(textarea: HTMLTextAreaElement) {
+    const value = textarea.value.trim();
+    if (!value) return;
+
+    this.chatService.sendMessage(value);
+
+    textarea.value = '';
+    textarea.focus();
+  }
+
 }
