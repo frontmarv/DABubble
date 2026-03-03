@@ -108,6 +108,7 @@
             justify-content: flex-end;
             .message-name {
                 order: 2;
+                z-index: 200;
             }
         }
         .message {

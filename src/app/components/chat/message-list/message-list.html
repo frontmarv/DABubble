@@ -1,119 +1,119 @@
 @for (item of chat.messages(); track item.id) {
 
-  @if (item.senderId === firebaseService.currentUser()?.uid) {
+@if (item.senderId === firebaseService.currentUser()?.uid) {
 
-  <div class="message-field-user">
-    <span class="avatar">
-      <img [src]="chat.users()[item.senderId]?.avatar" alt="Profilbild" class="avatar__img" />
-    </span>
+<div class="message-field-user">
+  <span class="avatar">
+    <img [src]="chat.users()[item.senderId]?.avatar" alt="Profilbild" class="avatar__img" />
+  </span>
 
-    <div class="message-info-container">
-      <div class="message-info">
-        <p class="text--regular bold message-name">
-          {{ chat.users()[item.senderId]?.firstName }}
-          {{ chat.users()[item.senderId]?.lastName }}
-        </p>
-        <p class="time">{{ item.createdAt ? (item.createdAt.toDate() | date:'HH:mm') : '' }} Uhr</p>
-      </div>
+  <div class="message-info-container">
+    <div class="message-info">
+      <p class="text--regular bold message-name" (click)="showUserProfileService.setToTrue()">
+        {{ chat.users()[item.senderId]?.firstName }}
+        {{ chat.users()[item.senderId]?.lastName }}
+      </p>
+      <p class="time">{{ item.createdAt ? (item.createdAt.toDate() | date:'HH:mm') : '' }} Uhr</p>
+    </div>
 
-      <div class="message text--regular">{{ item.text }}</div>
+    <div class="message text--regular">{{ item.text }}</div>
 
-      <div class="answer-container">
-        @let reactions = item.reactions;
+    <div class="answer-container">
+      @let reactions = item.reactions;
 
-        @for (reaction of (reactions | keyvalue); track reaction.key) {
-        <div class="reactions">
-          <div class="fast-emoji">
+      @for (reaction of (reactions | keyvalue); track reaction.key) {
+      <div class="reactions">
+        <div class="fast-emoji">
+          <span class="emoji-symbol">{{ reaction.key }}</span>
+
+          <div class="emoji-qantity">
+            {{ reaction.value.length }}
+          </div>
+
+          <div class="userReaction">
             <span class="emoji-symbol">{{ reaction.key }}</span>
 
-            <div class="emoji-qantity">
-              {{ reaction.value.length }}
+            @for (uid of reaction.value; track uid) {
+            <div>
+              <span class="text--regular bold">
+                {{ chat.users()[uid]?.firstName }}
+                {{ chat.users()[uid]?.lastName }}
+              </span>
+              <p class="text--small">hat reagiert</p>
             </div>
-
-            <div class="userReaction">
-              <span class="emoji-symbol">{{ reaction.key }}</span>
-
-              @for (uid of reaction.value; track uid) {
-              <div>
-                <span class="text--regular bold">
-                  {{ chat.users()[uid]?.firstName }}
-                  {{ chat.users()[uid]?.lastName }}
-                </span>
-                <p class="text--small">hat reagiert</p>
-              </div>
-              }
-            </div>
-          </div>
-        </div>
-        }
-      </div>
-    </div>
-
-    <div class="reaction-bar">
-      <div (click)="chat.toggleReaction(item.id!, '✅')" class="reaction-emoji">
-        <img src="/chat-input/check-emoji.svg" alt="">
-      </div>
-      <div class="reaction-emoji">
-        <img src="/chat-input/thumb-emoji.svg" alt="">
-      </div>
-      <app-emoji-picker (emojiSelected)="toggleSelectedEmoji(item.id!, $event)"></app-emoji-picker>
-      <button class="icon-btn" type="button" aria-label="Sentiment">
-        <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
-      </button>
-      <button class="icon-btn" type="button" aria-label="Sentiment">
-        <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
-      </button>
-    </div>
-  </div>
-
-  } @else {
-
-  <div class="message-field-other">
-    <span class="avatar">
-      <img [src]="chat.users()[item.senderId]?.avatar" alt="Profilbild" class="avatar__img" />
-    </span>
-
-    <div class="message-info-container">
-      <div class="message-info">
-        <p class="text--regular bold message-name">
-          {{ chat.users()[item.senderId]?.firstName }}
-          {{ chat.users()[item.senderId]?.lastName }}
-        </p>
-        <p class="time">{{ item.createdAt ? (item.createdAt.toDate() | date:'HH:mm') : '' }} Uhr</p>
-      </div>
-
-      <div class="message text--regular">{{ item.text }}</div>
-
-      <div class="answer-container">
-        <div class="thread-answer">
-          <p (click)="openThread(item)" class="answers">2 Antworten</p>
-          <p class="time">Letzte Antwort 14:56</p>
-        </div>
-
-        <div class="reactions">
-          <div class="fast-emoji">
-            <img src="/chat-input/check-emoji.svg" alt="">
-            <div class="emoji-qantity">1</div>
+            }
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="reaction-bar-other">
-      <div class="reaction-emoji">
-        <img src="/chat-input/check-emoji.svg" alt="">
-      </div>
-      <div class="reaction-emoji">
-        <img src="/chat-input/thumb-emoji.svg" alt="">
-      </div>
-      <app-emoji-picker (emojiSelected)="toggleSelectedEmoji(item.id!, $event)"></app-emoji-picker>
-      <button class="icon-btn" type="button" aria-label="Sentiment">
-        <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
-      </button>
+      }
     </div>
   </div>
 
-  }
+  <div class="reaction-bar">
+    <div (click)="chat.toggleReaction(item.id!, '✅')" class="reaction-emoji">
+      <img src="/chat-input/check-emoji.svg" alt="">
+    </div>
+    <div class="reaction-emoji">
+      <img src="/chat-input/thumb-emoji.svg" alt="">
+    </div>
+    <app-emoji-picker (emojiSelected)="toggleSelectedEmoji(item.id!, $event)"></app-emoji-picker>
+    <button class="icon-btn" type="button" aria-label="Sentiment">
+      <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
+    </button>
+    <button class="icon-btn" type="button" aria-label="Sentiment">
+      <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
+    </button>
+  </div>
+</div>
+
+} @else {
+
+<div class="message-field-other">
+  <span class="avatar">
+    <img [src]="chat.users()[item.senderId]?.avatar" alt="Profilbild" class="avatar__img" />
+  </span>
+
+  <div class="message-info-container">
+    <div class="message-info">
+      <p class="text--regular bold message-name" (click)="displayForeignUserService.setSelectedUser(chat.users()[item.senderId]); displayForeignUserService.toggle();">
+        {{ chat.users()[item.senderId]?.firstName }}
+        {{ chat.users()[item.senderId]?.lastName }}
+      </p>
+      <p class="time">{{ item.createdAt ? (item.createdAt.toDate() | date:'HH:mm') : '' }} Uhr</p>
+    </div>
+
+    <div class="message text--regular">{{ item.text }}</div>
+
+    <div class="answer-container">
+      <div class="thread-answer">
+        <p (click)="openThread(item)" class="answers">2 Antworten</p>
+        <p class="time">Letzte Antwort 14:56</p>
+      </div>
+
+      <div class="reactions">
+        <div class="fast-emoji">
+          <img src="/chat-input/check-emoji.svg" alt="">
+          <div class="emoji-qantity">1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reaction-bar-other">
+    <div class="reaction-emoji">
+      <img src="/chat-input/check-emoji.svg" alt="">
+    </div>
+    <div class="reaction-emoji">
+      <img src="/chat-input/thumb-emoji.svg" alt="">
+    </div>
+    <app-emoji-picker (emojiSelected)="toggleSelectedEmoji(item.id!, $event)"></app-emoji-picker>
+    <button class="icon-btn" type="button" aria-label="Sentiment">
+      <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
+    </button>
+  </div>
+</div>
+
+}
 }
 
 <!-- <div class="time-seperator">

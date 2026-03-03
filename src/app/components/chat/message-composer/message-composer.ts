@@ -22,7 +22,7 @@ interface ComposerSearchResult {
 })
 export class MessageComposer {
   @ViewChild('message') textarea!: ElementRef<HTMLTextAreaElement>;
-  
+
   private elementRef = inject(ElementRef); // Für Click-Outside Erkennung
   chatService = inject(ChatService);
   firebaseService = inject(FirebaseService);
@@ -43,7 +43,7 @@ export class MessageComposer {
   filteredResults = computed<ComposerSearchResult[]>(() => {
     const query = this.searchQuery().toLowerCase();
     const type = this.searchType();
-    
+
     if (type === 'channel') return this.getChannelResults(query);
     if (type === 'user') return this.getUserResults(query);
     return [];
@@ -76,9 +76,9 @@ export class MessageComposer {
 
   // --- DROPDOWN TOGGLE LOGIK ---
   toggleUserDropdown(event: Event) {
-    event.stopPropagation(); 
+    event.stopPropagation();
     const isAlreadyOpen = this.showDropdown() && this.searchType() === 'user';
-    
+
     if (isAlreadyOpen) {
       this.resetSearchState();
     } else {
@@ -146,7 +146,7 @@ export class MessageComposer {
   }
 
   sendMessageOnEnter(event: KeyboardEvent, message: HTMLTextAreaElement) {
-    if (event.key === 'Enter' && message.value.length > 1) {
+    if (event.key === 'Enter' && !event.shiftKey && message.value.trim().length > 0) {
       event.preventDefault();
       this.sendMessage(message);
     }

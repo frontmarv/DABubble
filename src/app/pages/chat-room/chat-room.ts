@@ -13,6 +13,7 @@ import { NotLoggedIn } from '../../components/profile-view/not-logged-in/not-log
 import { AuthService } from '../../services/auth.service';
 import { FirebaseService } from '../../services/firebase.service';
 import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
+import { ShowUserProfile } from '../../services/showUserProfile';
 
 interface SearchResult {
   type: 'channel' | 'user';
@@ -35,6 +36,7 @@ export class ChatRoom implements OnInit {
   private elementRef = inject(ElementRef);
   displayForeignUserService = inject(DisplayForeignUserService);
   firebaseService = inject(FirebaseService);
+  showUserProfileService = inject(ShowUserProfile);
 
   // --- UI STATE ---
   isSidebarOpen = true;
@@ -136,8 +138,6 @@ export class ChatRoom implements OnInit {
   onMobileNavigation() { if (this.isMobile()) this.isSidebarOpen = false; }
   goBackToSidebar() { this.isSidebarOpen = true; }
   toggleProfileMenu() { this.isProfileMenuOpen = !this.isProfileMenuOpen; }
-  openProfile() { this.showUserProfile = true; this.isProfileMenuOpen = false; }
-  closeProfile() { this.showUserProfile = false; }
   closeForeignUserProfile() { this.displayForeignUserService.setToFalse(); }
   async logOut() { await this.authService.logout(); }
 

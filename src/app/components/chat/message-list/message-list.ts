@@ -6,10 +6,12 @@ import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { EmojiPicker } from '../../emoji-picker/emoji-picker';
 import { EmojiPickerStateService } from '../../../services/emoji-picker-serivce';
-import { ViewChild, ElementRef } from '@angular/core';
+import { ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { Message } from '../../../models/message.class';
-
+import { DisplayForeignUserService } from '../../../services/display-foreign-user.service';
+import { ShowUserProfile } from '../../../services/showUserProfile';
 @Component({
+
   selector: 'app-message-list',
   imports: [DatePipe, CommonModule, EmojiPicker],
   templateUrl: './message-list.html',
@@ -17,13 +19,16 @@ import { Message } from '../../../models/message.class';
 })
 export class MessageList {
   emojiPickerService = inject(EmojiPickerStateService);
-  threadService      = inject(ThreadStateService);
-  chat               = inject(ChatService);
-  firebaseService    = inject(FirebaseService);
+  threadService = inject(ThreadStateService);
+  chat = inject(ChatService);
+  firebaseService = inject(FirebaseService);
+  displayForeignUserService = inject(DisplayForeignUserService);
+  showUserProfileService = inject(ShowUserProfile);
   @ViewChild('scrollAnchor') private scrollAnchor!: ElementRef;
+  @Output() mobileNavigation = new EventEmitter<void>();
 
   openThread(message: Message): void {
-    const basePath    = this.chat.basePath();
+    const basePath = this.chat.basePath();
     const contextName = this.resolveContextName();
 
     if (!basePath || !message.id) return;
@@ -43,5 +48,10 @@ export class MessageList {
 
   toggleSelectedEmoji(itemId: string, emoji: string): void {
     this.chat.toggleReaction(itemId, emoji);
+  }
+
+  selectDm(user: any) {
+    this.mobileNavigation.emit();
+    this.chat.openChatRoom(user);
   }
 }

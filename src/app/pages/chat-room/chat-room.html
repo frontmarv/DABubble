@@ -13,12 +13,8 @@
         </div>
 
         <div class="search-bar hide-on-mobile">
-            <input 
-                type="text" 
-                placeholder="Devspace durchsuchen" 
-                [value]="searchQuery()"
-                (input)="onSearchInput($event)"
-            />
+            <input type="text" placeholder="Devspace durchsuchen" [value]="searchQuery()"
+                (input)="onSearchInput($event)" />
             <img src="/main-page/search.svg" alt="Suche" />
 
             @if (showSearchDropdown() && filteredResults().length > 0) {
@@ -27,14 +23,13 @@
                 <div class="search-item" (click)="selectResult(item)">
                     <div class="search-item-left">
                         @if (item.type === 'channel') {
-                            <span class="prefix">#</span>
+                        <span class="prefix">#</span>
                         } @else {
-                            <div class="search-avatar-container">
-                                <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar" />
-                                <span class="status" 
-                                      [class.status--online]="item.status === 'online'" 
-                                      [class.status--offline]="item.status !== 'online'"></span>
-                            </div>
+                        <div class="search-avatar-container">
+                            <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar" />
+                            <span class="status" [class.status--online]="item.status === 'online'"
+                                [class.status--offline]="item.status !== 'online'"></span>
+                        </div>
                         }
                     </div>
                     <span class="name">{{ item.name }}</span>
@@ -46,20 +41,18 @@
 
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
             <span class="user-name">
-                {{ firebaseService.currentUser()?.firstName }} 
+                {{ firebaseService.currentUser()?.firstName }}
                 {{ firebaseService.currentUser()?.lastName }}
             </span>
             <img [src]="getAvatarUrl(firebaseService.currentUser()?.avatar)" alt="Profilbild" class="avatar" />
-            
-            <span class="status" 
-                  [class.status--online]="firebaseService.currentUser()?.status === 'online'" 
-                  [class.status--offline]="firebaseService.currentUser()?.status !== 'online'"
-                  aria-hidden="true"></span>
-            
+
+            <span class="status" [class.status--online]="firebaseService.currentUser()?.status === 'online'"
+                [class.status--offline]="firebaseService.currentUser()?.status !== 'online'" aria-hidden="true"></span>
+
             <span class="dropdown-arrow" aria-hidden="true"></span>
 
             <div class="profile-menu" (click)="$event.stopPropagation()">
-                <div class="menu-item hover" (click)="openProfile()">
+                <div class="menu-item hover" (click)="showUserProfileService.setToTrue()">
                     <img src="/main-page/account_circle.svg" alt="Profil" />
                     <span>Profil</span>
                 </div>
@@ -88,12 +81,12 @@
         <app-thread-panel></app-thread-panel>
     </div>
 
-    @if (showUserProfile) {
-        <app-profile-view [user]="firebaseService.currentUser()" (close)="closeProfile()">
-        </app-profile-view>
+    @if (showUserProfileService.showUserProfile()) {
+    <app-profile-view [user]="firebaseService.currentUser()" (close)="showUserProfileService.setToFalse()">
+    </app-profile-view>
     }
 
     @if (displayForeignUserService.showForeignUserProfile()) {
-        <app-not-logged-in (close)="closeForeignUserProfile()"></app-not-logged-in>
+    <app-not-logged-in (close)="closeForeignUserProfile()"></app-not-logged-in>
     }
 </div>

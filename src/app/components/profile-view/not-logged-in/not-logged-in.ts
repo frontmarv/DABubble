@@ -26,6 +26,7 @@ export class NotLoggedIn {
 
   selectDm(user: any) {
     this.mobileNavigation.emit();
+    this.displayForeignUserService.setToFalse();
     this.chat.openChatRoom(user);
   }
 
