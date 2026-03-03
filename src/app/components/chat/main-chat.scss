@@ -207,7 +207,8 @@ app-message-list {
   justify-content: center;
   flex-shrink: 0;
 
-  img, span {
+  img,
+  span {
     width: 24px;
     height: 24px;
   }
@@ -225,7 +226,7 @@ app-message-list {
 }
 
 .channel-tag-icon--purple {
-  background-color: var(--color-purple2); 
+  background-color: var(--color-purple2);
 }
 
 .channel-tag-name {
@@ -312,6 +313,35 @@ app-message-list {
   &:hover {
     color: var(--color-black);
   }
+}
+
+.start_screen {
+  cursor: default;
+  &:hover {
+    background: unset;
+  }
+}
+
+input[type="text"] {
+  font-size: 18px;
+  cursor: pointer;
+  width: 100%;
+  height: 55px;
+  border-radius: 30px;
+  border: 1px solid var(--color-light-purple-lines);
+  padding: 30px;
+  transition:
+    border-color 0.2s,
+}
+
+input[type="text"]:focus {
+  border-color: var(--color-purple3);
+  outline: none;
+  cursor: text;
+}
+
+input::placeholder {
+  font-size: 18px;
 }
 
 @media (max-width: 1240px) {
