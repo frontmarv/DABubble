@@ -45,6 +45,7 @@ export class Sidebar {
   selectChannel(channelId: string) {
     this.firebaseService.setSelectedChannel(channelId);
     this.mobileNavigation.emit();
+    this.chat.openChannel(channelId);
   }
 
   selectDm(user: any) {

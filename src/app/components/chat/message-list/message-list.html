@@ -13,7 +13,7 @@
           {{ chat.users()[item.senderId]?.firstName }}
           {{ chat.users()[item.senderId]?.lastName }}
         </p>
-        <p class="time">{{ item.createdAt.toDate() | date:'HH:mm' }} Uhr</p>
+        <p class="time">{{ item.createdAt ? (item.createdAt.toDate() | date:'HH:mm') : '' }} Uhr</p>
       </div>
 
       <div class="message text--regular">{{ item.text }}</div>
@@ -79,14 +79,14 @@
           {{ chat.users()[item.senderId]?.firstName }}
           {{ chat.users()[item.senderId]?.lastName }}
         </p>
-        <p class="time">{{ item.createdAt.toDate() | date:'HH:mm' }} Uhr</p>
+        <p class="time">{{ item.createdAt ? (item.createdAt.toDate() | date:'HH:mm') : '' }} Uhr</p>
       </div>
 
       <div class="message text--regular">{{ item.text }}</div>
 
       <div class="answer-container">
         <div class="thread-answer">
-          <p (click)="openThread()" class="answers">2 Antworten</p>
+          <p (click)="openThread(item)" class="answers">2 Antworten</p>
           <p class="time">Letzte Antwort 14:56</p>
         </div>
 
@@ -115,8 +115,6 @@
 
   }
 }
-
-
 
 <!-- <div class="time-seperator">
     <div class="line">

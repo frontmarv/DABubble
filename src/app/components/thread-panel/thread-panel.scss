@@ -73,8 +73,6 @@ h4 {
   border: 1px solid var(--color-light-purple-lines);
 }
 
-// messages
-
 .message-field-other {
   padding: 20px 40px;
   gap: 20px;
@@ -97,6 +95,53 @@ h4 {
 }
 
 
+.message-input-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 24px 24px 24px;
+  border: 1px solid var(--color-light-purple-lines);
+  border-radius: 20px;
+  padding: 12px 16px;
+  gap: 8px;
+  background-color: var(--color-white);
+
+  textarea {
+    width: 100%;
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1.5;
+    min-height: 48px;
+    max-height: 140px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    color: var(--color-black);
+
+    &::placeholder {
+      color: var(--color-light-purple-lines);
+    }
+  }
+
+  .message-buttons-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .send-btn {
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
+}
 
 @media (max-width: 1240px) {
   .thread {
@@ -131,12 +176,10 @@ h4 {
 @media (max-width: 1240px) {
   .thread {
     position: absolute;
-    /* NEU: absolute statt fixed löst das Scrollbalken-Problem sofort! */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    /* Nimmt exakt die Höhe des Layouts an */
     min-width: 0;
     max-width: 100%;
     border-radius: 0;
@@ -166,6 +209,10 @@ h4 {
     padding: 12px 18px;
     gap: 12px;
   }
+
+  .message-input-container {
+    margin: 0 12px 16px 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -174,5 +221,10 @@ h4 {
   .message-field-user {
     padding: 10px 14px;
     gap: 10px;
+  }
+
+  .message-input-container {
+    margin: 0 8px 12px 8px;
+    padding: 10px 12px;
   }
 }

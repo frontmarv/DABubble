@@ -1,87 +1,105 @@
-<aside [class]="this.threadService.isThreadVisible() ? 'thread' : 'thread thread--closed'">
+<aside [class]="threadService.isThreadVisible() ? 'thread' : 'thread thread--closed'">
+
     <header>
         <div class="header__content">
             <h4>Thread</h4>
             <span>#</span>
-            <span>Entwicklerteam</span>
+            <span>{{ threadService.parentContextName() }}</span>
         </div>
-        <div class="close-btn" (click)="this.threadService.setHidden()">
+        <div class="close-btn" (click)="threadService.setHidden()">
             <img src="/main-page/close-button.svg" alt="">
         </div>
     </header>
     <section class="chat-messages">
 
-        <!-- chatcomponente fremd component here -->
-        <div class="message-field-other">
-            <span class="avatar">
-                <img src="/shared/profile-pics/profile-pic4.svg" alt="Profilbild" class="avatar__img" />
-            </span>
-            <div class="message-info-container">
-                <div class="message-info">
-                    <p class="text--regular bold message-name">Noah Braun</p>
-                    <p class="time">14:25</p>
+        @if (threadService.parentMessage(); as parent) {
+            @let parentUser = getUserFor(parent.senderId);
+
+            <div [class]="isOwnMessage(parent.senderId) ? 'message-field-user' : 'message-field-other'">
+                <span class="avatar">
+                    <img [src]="parentUser?.avatar || '/shared/profile-pics/profile-pic1.svg'"
+                         alt="Profilbild" class="avatar__img" />
+                </span>
+                <div class="message-info-container">
+                    <div class="message-info">
+                        <p class="text--regular bold message-name">
+                            {{ parentUser?.firstName }} {{ parentUser?.lastName }}
+                        </p>
+                        {{ parent.createdAt ? (parent.createdAt.toDate() | date:'HH:mm') : '' }}
+                    </div>
+                    <div class="message text--regular">{{ parent.text }}</div>
                 </div>
-                <div class="message text--regular">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi
-                    aperiam
-                    porro nostrum asperiores quisquam recusandae eum doloribus facere alias ducimus! Tenetur iure atque
-                    impedit,
-                    excepturi illo incidunt. Quasi, nesciunt expedita!</div>
+                <div [class]="isOwnMessage(parent.senderId) ? 'reaction-bar' : 'reaction-bar-other'">
+                    <app-emoji-picker></app-emoji-picker>
+                </div>
             </div>
-            <div class="reaction-bar-other">
-                <app-emoji-picker></app-emoji-picker>
-            </div>
-        </div>
+        }
 
         <div class="chat-messages__separator">
-            <span>2 Antworten</span>
+            <span>{{ threadService.threadMessages().length }} Antworten</span>
             <div class="separator__line"></div>
         </div>
 
-        <!-- chatcomponente fremd component here -->
-        <div class="message-field-other">
-            <span class="avatar">
-                <img src="/shared/profile-pics/profile-pic4.svg" alt="Profilbild" class="avatar__img" />
-            </span>
-            <div class="message-info-container">
-                <div class="message-info">
-                    <p class="text--regular bold message-name">Noah Braun</p>
-                    <p class="time">14:25</p>
-                </div>
-                <div class="message text--regular">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi
-                    aperiam
-                    porro nostrum asperiores quisquam recusandae eum doloribus facere alias ducimus! Tenetur iure atque
-                    impedit,
-                    excepturi illo incidunt. Quasi, nesciunt expedita!</div>
-            </div>
-            <div class="reaction-bar-other">
-                <app-emoji-picker></app-emoji-picker>
-            </div>
-        </div>
+        @for (reply of threadService.threadMessages(); track reply.id) {
+            @let replyUser = getUserFor(reply.senderId);
 
-        <!-- chatcomponente selber component here -->
-        <div class="message-field-user">
-            <span class="avatar">
-                <img src="/shared/profile-pics/profile-pic1.svg" alt="Profilbild" class="avatar__img" />
-            </span>
-            <div class="message-info-container">
-                <div class="message-info">
-                    <p class="text--regular bold message-name">Frederick Beck</p>
-                    <p class="time">14:25</p>
+            @if (isOwnMessage(reply.senderId)) {
+                <div class="message-field-user">
+                    <span class="avatar">
+                        <img [src]="replyUser?.avatar || '/shared/profile-pics/profile-pic1.svg'"
+                             alt="Profilbild" class="avatar__img" />
+                    </span>
+                    <div class="message-info-container">
+                        <div class="message-info">
+                            <p class="text--regular bold message-name">
+                                {{ replyUser?.firstName }} {{ replyUser?.lastName }}
+                            </p>
+                            {{ reply.createdAt ? (reply.createdAt.toDate() | date:'HH:mm') : '' }}
+                        </div>
+                        <div class="message text--regular">{{ reply.text }}</div>
+                    </div>
+                    <div class="reaction-bar">
+                        <app-emoji-picker></app-emoji-picker>
+                        <button class="icon-btn" type="button" aria-label="Bearbeiten">
+                            <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
+                        </button>
+                    </div>
                 </div>
-                <div class="message text--regular">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi
-                    aperiam
-                    porro nostrum asperiores quisquam recusandae eum doloribus facere alias ducimus! Tenetur iure atque
-                    impedit,
-                    excepturi illo incidunt. Quasi, nesciunt expedita!</div>
-            </div>
-            <div class="reaction-bar">
-                <app-emoji-picker></app-emoji-picker>
-                <button class="icon-btn" type="button" aria-label="Sentiment">
-                    <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
-                </button>
-            </div>
-        </div>
+            } @else {
+                <div class="message-field-other">
+                    <span class="avatar">
+                        <img [src]="replyUser?.avatar || '/shared/profile-pics/profile-pic1.svg'"
+                             alt="Profilbild" class="avatar__img" />
+                    </span>
+                    <div class="message-info-container">
+                        <div class="message-info">
+                            <p class="text--regular bold message-name">
+                                {{ replyUser?.firstName }} {{ replyUser?.lastName }}
+                            </p>
+                            {{ reply.createdAt ? (reply.createdAt.toDate() | date:'HH:mm') : '' }}
+                        </div>
+                        <div class="message text--regular">{{ reply.text }}</div>
+                    </div>
+                    <div class="reaction-bar-other">
+                        <app-emoji-picker></app-emoji-picker>
+                    </div>
+                </div>
+            }
+        }
 
     </section>
-    <app-message-composer></app-message-composer>
+
+    <div class="message-input-container">
+        <textarea
+            class="text--regular"
+            maxlength="2000"
+            placeholder="Antworten..."
+            [(ngModel)]="replyText"
+            (keydown)="sendReplyOnEnter($event)">
+        </textarea>
+        <div class="message-buttons-container">
+            <img (click)="sendReply()" class="send-btn" src="/chat-input/send.svg" alt="Senden" />
+        </div>
+    </div>
+
 </aside>

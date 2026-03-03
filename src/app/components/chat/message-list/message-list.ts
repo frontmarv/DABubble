@@ -6,7 +6,9 @@ import { DatePipe } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { EmojiPicker } from '../../emoji-picker/emoji-picker';
 import { EmojiPickerStateService } from '../../../services/emoji-picker-serivce';
-import { ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { ViewChild, ElementRef } from '@angular/core';
+import { Message } from '../../../models/message.class';
+
 @Component({
   selector: 'app-message-list',
   imports: [DatePipe, CommonModule, EmojiPicker],
@@ -14,19 +16,32 @@ import { ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
   styleUrl: './message-list.scss',
 })
 export class MessageList {
-  emojiPickerService = inject(EmojiPickerStateService)
-  threadService = inject(ThreadStateService);
-  chat = inject(ChatService);
-  firebaseService = inject(FirebaseService);
+  emojiPickerService = inject(EmojiPickerStateService);
+  threadService      = inject(ThreadStateService);
+  chat               = inject(ChatService);
+  firebaseService    = inject(FirebaseService);
   @ViewChild('scrollAnchor') private scrollAnchor!: ElementRef;
 
-  openThread() {
-    this.threadService.setVisible();
+  openThread(message: Message): void {
+    const basePath    = this.chat.basePath();
+    const contextName = this.resolveContextName();
+
+    if (!basePath || !message.id) return;
+
+    this.threadService.openThread(message, basePath, contextName);
   }
 
-  toggleSelectedEmoji(itemId: string, emoji: string) {
+  private resolveContextName(): string {
+    const channelId = this.firebaseService.selectedChannelId();
+    if (channelId) {
+      const channel = this.firebaseService.channels().find((c: any) => c.id === channelId);
+      return channel?.name ?? 'Channel';
+    }
+    const other = this.chat.otherUser();
+    return other ? `${other.firstName} ${other.lastName}` : 'Direktnachricht';
+  }
+
+  toggleSelectedEmoji(itemId: string, emoji: string): void {
     this.chat.toggleReaction(itemId, emoji);
   }
 }
-
-
