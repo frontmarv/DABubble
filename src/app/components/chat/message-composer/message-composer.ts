@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, signal, computed, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatService } from '../../../services/chat.service';
 import { FirebaseService } from '../../../services/firebase.service';
@@ -10,6 +10,7 @@ interface ComposerSearchResult {
   name: string;
   id: string;
   avatar?: string | null;
+  status?: string; // Neu: Status für die Anzeige
 }
 
 @Component({
@@ -20,19 +21,25 @@ interface ComposerSearchResult {
   styleUrl: './message-composer.scss',
 })
 export class MessageComposer {
-  
-  // --- INJECTIONS & VIEW ELEMENTS ---
   @ViewChild('message') textarea!: ElementRef<HTMLTextAreaElement>;
+  
+  private elementRef = inject(ElementRef); // Für Click-Outside Erkennung
   chatService = inject(ChatService);
   firebaseService = inject(FirebaseService);
   emojiPickerService = inject(EmojiPickerStateService);
 
-  // --- STATE ---
   searchQuery = signal<string>('');
   searchType = signal<'user' | 'channel' | null>(null);
   showDropdown = signal<boolean>(false);
 
-  // --- COMPUTED: FILTERING ---
+  // --- CLICK OUTSIDE LISTENER ---
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.resetSearchState();
+    }
+  }
+
   filteredResults = computed<ComposerSearchResult[]>(() => {
     const query = this.searchQuery().toLowerCase();
     const type = this.searchType();
@@ -62,11 +69,22 @@ export class MessageComposer {
       type: 'user',
       name: isMe ? `${u.firstName} ${u.lastName} (Du)` : `${u.firstName} ${u.lastName}`,
       id: u.uid,
-      avatar: u.avatar
+      avatar: u.avatar,
+      status: u.status // Status aus den User-Daten übernehmen
     };
   }
 
-  // --- DOM EVENTS (INPUT & MENTIONS) ---
+  // --- DROPDOWN TOGGLE LOGIK ---
+  toggleUserDropdown(event: Event) {
+    event.stopPropagation(); 
+    const isAlreadyOpen = this.showDropdown() && this.searchType() === 'user';
+    
+    if (isAlreadyOpen) {
+      this.resetSearchState();
+    } else {
+      this.activateSearch('user', '');
+    }
+  }
 
   onInput(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
@@ -80,14 +98,14 @@ export class MessageComposer {
     }
   }
 
-  private extractMentionContext(text: string): { type: 'user' | 'channel', query: string } | null {
+  private extractMentionContext(text: string) {
     const lastAt = text.lastIndexOf('@');
     const lastHash = text.lastIndexOf('#');
     const lastSymbolIndex = Math.max(lastAt, lastHash);
 
     if (lastSymbolIndex !== -1 && !text.substring(lastSymbolIndex + 1).includes(' ')) {
       return {
-        type: lastAt > lastHash ? 'user' : 'channel',
+        type: (lastAt > lastHash ? 'user' : 'channel') as 'user' | 'channel',
         query: text.substring(lastSymbolIndex + 1)
       };
     }
@@ -97,7 +115,6 @@ export class MessageComposer {
   selectItem(item: ComposerSearchResult) {
     const textarea = this.textarea.nativeElement;
     textarea.value = this.buildReplacedText(textarea.value, textarea.selectionStart, item);
-    
     this.resetSearchState();
     textarea.focus();
   }
@@ -106,7 +123,6 @@ export class MessageComposer {
     const lastSymbol = item.type === 'user' ? '@' : '#';
     const lastIndex = text.substring(0, cursorPos).lastIndexOf(lastSymbol);
     const cleanName = item.name.replace(' (Du)', '');
-
     return text.substring(0, lastIndex) + `${lastSymbol}${cleanName} ` + text.substring(cursorPos);
   }
 
@@ -122,12 +138,9 @@ export class MessageComposer {
     this.searchQuery.set('');
   }
 
-  // --- MESSAGE ACTIONS ---
-
   sendMessage(textarea: HTMLTextAreaElement) {
     const value = textarea.value.trim();
     if (!value) return;
-
     this.chatService.sendMessage(value);
     this.clearComposer(textarea);
   }
@@ -149,19 +162,15 @@ export class MessageComposer {
   insertEmoji(emoji: string) {
     const textarea = this.textarea.nativeElement;
     const { selectionStart, selectionEnd, value } = textarea;
-    
     textarea.value = value.slice(0, selectionStart) + emoji + value.slice(selectionEnd);
     textarea.selectionStart = textarea.selectionEnd = selectionStart + emoji.length;
     textarea.focus();
   }
 
-  // --- UTILS ---
-
   getAvatarUrl(avatar?: string | null): string {
     const fallback = '/shared/profile-pics/profile-pic1.svg';
     if (!avatar) return fallback;
     if (avatar.startsWith('http')) return avatar;
-    
     const file = avatar.replace(/^\/?shared\/profile-pics\//, '').replace(/^profile-pics\//, '');
     return `/shared/profile-pics/${file}`;
   }

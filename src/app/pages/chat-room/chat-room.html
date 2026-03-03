@@ -31,7 +31,9 @@
                         } @else {
                             <div class="search-avatar-container">
                                 <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar" />
-                                <span class="status status--online"></span>
+                                <span class="status" 
+                                      [class.status--online]="item.status === 'online'" 
+                                      [class.status--offline]="item.status !== 'online'"></span>
                             </div>
                         }
                     </div>
@@ -43,10 +45,17 @@
         </div>
 
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
-            <span class="user-name">{{ firebaseService.currentUser()?.firstName }} {{
-                firebaseService.currentUser()?.lastName }}</span>
+            <span class="user-name">
+                {{ firebaseService.currentUser()?.firstName }} 
+                {{ firebaseService.currentUser()?.lastName }}
+            </span>
             <img [src]="getAvatarUrl(firebaseService.currentUser()?.avatar)" alt="Profilbild" class="avatar" />
-            <span class="status status--online" aria-hidden="true"></span>
+            
+            <span class="status" 
+                  [class.status--online]="firebaseService.currentUser()?.status === 'online'" 
+                  [class.status--offline]="firebaseService.currentUser()?.status !== 'online'"
+                  aria-hidden="true"></span>
+            
             <span class="dropdown-arrow" aria-hidden="true"></span>
 
             <div class="profile-menu" (click)="$event.stopPropagation()">
@@ -79,10 +88,12 @@
         <app-thread-panel></app-thread-panel>
     </div>
 
-    <app-profile-view *ngIf="showUserProfile" [user]="firebaseService.currentUser()" (close)="closeProfile()">
-    </app-profile-view>
+    @if (showUserProfile) {
+        <app-profile-view [user]="firebaseService.currentUser()" (close)="closeProfile()">
+        </app-profile-view>
+    }
 
     @if (displayForeignUserService.showForeignUserProfile()) {
-    <app-not-logged-in (close)="closeForeignUserProfile()"></app-not-logged-in>
+        <app-not-logged-in (close)="closeForeignUserProfile()"></app-not-logged-in>
     }
 </div>

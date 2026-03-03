@@ -6,7 +6,9 @@
             <div class="avatar-wrapper">
                 @if (item.type === 'user') {
                 <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar" />
-                <span class="status status--online"></span>
+                <span class="status" 
+                      [class.status--online]="item.status === 'online'" 
+                      [class.status--offline]="item.status !== 'online'"></span>
                 } @else {
                 <span class="hash-icon">#</span>
                 }
@@ -24,7 +26,7 @@
         <div class="action-icons">
             <app-emoji-picker (emojiSelected)="insertEmoji($event)"></app-emoji-picker>
             <button class="icon-btn" type="button" aria-label="Mention"
-                (click)="searchType.set('user'); showDropdown.set(true)">
+                (click)="toggleUserDropdown($event)">
                 <img class="icon-btn__img" src="/chat-input/alternate-email.svg" alt="Mention" />
             </button>
         </div>
