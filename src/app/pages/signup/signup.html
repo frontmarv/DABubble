@@ -1,4 +1,4 @@
-<ng-container *ngIf="signupStep === 1">
+@if (signupStep === 1) {
     <header class="card-header signup-header">
         <div class="arrow-back" (click)="close.emit()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -32,7 +32,7 @@
                 </svg>
             </div>
             <input type="text" [(ngModel)]="fullName" name="fullName" placeholder="Name und Nachname"
-                class="inputfield--login full-width" (blur)="validateName($event)">
+                class="inputfield--login full-width" (blur)="validateName()">
         </div>
 
         <div class="input-group">
@@ -44,7 +44,7 @@
                 </svg>
             </div>
             <input type="email" [(ngModel)]="email" name="email" placeholder="beispielname@email.com"
-                class="inputfield--login full-width" (blur)="validateEmail($event)">
+                class="inputfield--login full-width" (blur)="validateEmail()">
         </div>
 
         <div class="input-group">
@@ -56,7 +56,7 @@
                 </svg>
             </div>
             <input type="password" [(ngModel)]="password" name="password" placeholder="Passwort"
-                class="inputfield--login full-width" (blur)="validatePassword($event)">
+                class="inputfield--login full-width" (blur)="validatePassword()">
         </div>
 
         <div class="privacy-policy">
@@ -68,12 +68,12 @@
 
         <div class="action-buttons right-aligned">
             <button type="sumbit" class="btn--primary large-btn" (click)="nextStep()"
-                [disabled]="!FormIsValid()">Weiter</button>
+                [disabled]="!isFormValid()">Weiter</button>
         </div>
     </form>
-</ng-container>
+}
 
-<ng-container *ngIf="signupStep === 2">
+@if (signupStep === 2) {
     <header class="card-header signup-header">
         <div class="arrow-back" (click)="prevStep()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -84,15 +84,17 @@
         </div>
         <h1>Wähle deinen Avatar</h1>
 
-        <div class="error-message" *ngIf="errorMessage" style="margin-bottom: 20px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-            <span>{{ errorMessage }}</span>
-        </div>
+        @if (errorMessage) {
+            <div class="error-message" style="margin-bottom: 20px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+                <span>{{ errorMessage }}</span>
+            </div>
+        }
     </header>
     <div class="avatar-selection">
         <div class="big-avatar-wrapper">
@@ -102,16 +104,21 @@
         <p class="text--regular">Aus der Liste wählen</p>
 
         <div class="avatar-list">
-            <div *ngFor="let avatar of avatars" class="avatar-option" (click)="selectAvatar(avatar)"
-                [class.selected]="selectedAvatar === avatar">
-                <img [src]="avatar" alt="Avatar Option">
-            </div>
+            @for (avatar of avatars; track avatar) {
+                <div class="avatar-option" (click)="selectAvatar(avatar)"
+                    [class.selected]="selectedAvatar === avatar">
+                    <img [src]="avatar" alt="Avatar Option">
+                </div>
+            }
         </div>
     </div>
     <div class="action-buttons right-aligned avatar-actions">
         <button type="button" class="btn--primary large-btn" (click)="finishSignup()" [disabled]="isLoading">
-            <span *ngIf="!isLoading">Weiter</span>
-            <span *ngIf="isLoading">Konto wird erstellt...</span>
+            @if (!isLoading) {
+                <span>Weiter</span>
+            } @else {
+                <span>Konto wird erstellt...</span>
+            }
         </button>
     </div>
-</ng-container>
+}

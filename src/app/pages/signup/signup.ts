@@ -7,31 +7,38 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink,],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './signup.html',
   styleUrls: ['../login/login.scss', './signup.scss']
 })
 export class SignupComponent {
+  // --- INJECTIONS ---
   private authService = inject(AuthService);
   private changeDetectorRef = inject(ChangeDetectorRef);
 
+  // --- OUTPUTS ---
   @Output() close = new EventEmitter<void>();
   @Output() success = new EventEmitter<void>();
 
+  // --- STATE ---
   signupStep: number = 1;
   errorMessage: string = '';
   isLoading: boolean = false;
 
+  // --- FORM DATA ---
   fullName: string = '';
   email: string = '';
   password: string = '';
   isPrivacyPolicyAccepted = false;
+  selectedAvatar: string = '/shared/profile-pics/unkown-user.svg';
 
+  // --- VALIDATION STATE ---
   isNameValid: boolean = false;
   isEmailValid: boolean = false;
   isPasswordValid: boolean = false;
 
-  avatars = [
+  // --- CONSTANTS ---
+  readonly avatars = [
     '/shared/profile-pics/unkown-user.svg',
     '/shared/profile-pics/profile-pic1.svg',
     '/shared/profile-pics/profile-pic2.svg',
@@ -41,63 +48,54 @@ export class SignupComponent {
     '/shared/profile-pics/profile-pic6.svg'
   ];
 
-  selectedAvatar: string = '/shared/profile-pics/unkown-user.svg';
+  // --- VALIDATION LOGIC ---
 
-  validateName(event: FocusEvent) {
-    this.errorMessage = '';
-    if (!this.fullName.trim()) {
-      this.isNameValid = false;
-      this.errorMessage = 'Bitte Name eingeben';
-      return;
-    }
-    if (this.fullName.length > 30) {
-      this.isNameValid = false;
-      this.errorMessage = 'Name darf max. 30 Zeichen enthalten';
-      return;
-    }
-    else {
-      this.isNameValid = true;
-      return true
-    }
+  validateName(): void {
+    const name = this.fullName.trim();
+    if (!name) return this.setValidationError('isNameValid', 'Bitte Name eingeben');
+    if (name.length > 30) return this.setValidationError('isNameValid', 'Name darf max. 30 Zeichen enthalten');
+    
+    this.clearValidationError('isNameValid');
   }
 
-  validateEmail(event: FocusEvent) {
-    this.errorMessage = '';
-    if (!this.email.trim() || !this.isValidEmail(this.email)) {
-      this.isEmailValid = false;
-      this.errorMessage = 'Bitte gültige E-Mail-Adresse eingeben';
-      return;
-    }
-    if (this.email.length > 50) {
-      this.isEmailValid = false;
-      this.errorMessage = 'E-mail-Adresse darf max. 50 Zeichen enthalten';
-      return;
-    }
-    else {
-      this.isEmailValid = true;
-      return true
-    }
+  validateEmail(): void {
+    const mail = this.email.trim();
+    if (!mail || !this.isValidEmailFormat(mail)) return this.setValidationError('isEmailValid', 'Bitte gültige E-Mail-Adresse eingeben');
+    if (mail.length > 50) return this.setValidationError('isEmailValid', 'E-mail-Adresse darf max. 50 Zeichen enthalten');
+    
+    this.clearValidationError('isEmailValid');
   }
 
-  validatePassword(event: FocusEvent) {
-    this.errorMessage = '';
+  validatePassword(): void {
     if (!this.password || this.password.length < 6) {
-      this.isPasswordValid = false;
-      this.errorMessage = 'Passwort muss min. 6 Zeichen enthalten';
-      return;
+      return this.setValidationError('isPasswordValid', 'Passwort muss min. 6 Zeichen enthalten');
     }
-    else {
-      this.isPasswordValid = true;
-      return true
-    }
+    this.clearValidationError('isPasswordValid');
   }
 
-  FormIsValid() {
+  private setValidationError(field: 'isNameValid' | 'isEmailValid' | 'isPasswordValid', msg: string): void {
+    this[field] = false;
+    this.errorMessage = msg;
+  }
+
+  private clearValidationError(field: 'isNameValid' | 'isEmailValid' | 'isPasswordValid'): void {
+    this[field] = true;
+    this.errorMessage = '';
+  }
+
+  private isValidEmailFormat(email: string): boolean {
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return emailRegex.test(email);
+  }
+
+  isFormValid(): boolean {
     return this.isNameValid && this.isEmailValid && this.isPasswordValid && this.isPrivacyPolicyAccepted;
   }
 
-  nextStep() {
-    if (this.FormIsValid()) {
+  // --- STEP NAVIGATION & UI ---
+
+  nextStep(): void {
+    if (this.isFormValid()) {
       this.signupStep = 2;
       this.errorMessage = '';
     } else {
@@ -105,42 +103,47 @@ export class SignupComponent {
     }
   }
 
-  prevStep() {
+  prevStep(): void {
     this.signupStep = 1;
     this.errorMessage = '';
   }
 
-  selectAvatar(avatar: string) {
+  selectAvatar(avatar: string): void {
     this.selectedAvatar = avatar;
   }
 
-  async finishSignup() {
-    this.errorMessage = '';
-    this.isLoading = true;
+  // --- SUBMISSION ---
 
-    const nameParts = this.fullName.trim().split(' ');
-    const firstName = nameParts[0] || '';
-    const lastName = nameParts.slice(1).join(' ') || '';
-
+  async finishSignup(): Promise<void> {
+    this.prepareForSubmission();
+    const { firstName, lastName } = this.extractNames();
+    
     const result = await this.authService.signup(
-      this.email,
-      this.password,
-      firstName,
-      lastName,
-      this.selectedAvatar,
-      'offline'
+      this.email, this.password, firstName, lastName, this.selectedAvatar, 'offline'
     );
 
+    this.handleSignupResult(result);
+  }
+
+  private prepareForSubmission(): void {
+    this.errorMessage = '';
+    this.isLoading = true;
+  }
+
+  private extractNames(): { firstName: string, lastName: string } {
+    const parts = this.fullName.trim().split(' ');
+    return {
+      firstName: parts[0] || '',
+      lastName: parts.slice(1).join(' ') || ''
+    };
+  }
+
+  private handleSignupResult(result: any): void {
     if (result.success) {
       this.success.emit();
     } else {
       this.errorMessage = result.error || 'Registrierung fehlgeschlagen.';
       this.changeDetectorRef.markForCheck();
     }
-  }
-
-  private isValidEmail(email: string): boolean {
-    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return emailRegex.test(email);
   }
 }

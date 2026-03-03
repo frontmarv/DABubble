@@ -20,127 +20,149 @@ interface ComposerSearchResult {
   styleUrl: './message-composer.scss',
 })
 export class MessageComposer {
+  
+  // --- INJECTIONS & VIEW ELEMENTS ---
   @ViewChild('message') textarea!: ElementRef<HTMLTextAreaElement>;
-
   chatService = inject(ChatService);
   firebaseService = inject(FirebaseService);
   emojiPickerService = inject(EmojiPickerStateService);
 
+  // --- STATE ---
   searchQuery = signal<string>('');
   searchType = signal<'user' | 'channel' | null>(null);
   showDropdown = signal<boolean>(false);
 
+  // --- COMPUTED: FILTERING ---
   filteredResults = computed<ComposerSearchResult[]>(() => {
     const query = this.searchQuery().toLowerCase();
     const type = this.searchType();
-    const currentUid = this.firebaseService.currentUser()?.uid;
-
-    if (type === 'channel') {
-      return this.firebaseService.channels()
-        .filter(c => c.name.toLowerCase().includes(query))
-        .map(c => ({
-          type: 'channel' as const,
-          name: c.name,
-          id: c.id,
-          avatar: null
-        }));
-    }
-
-    if (type === 'user') {
-      return this.firebaseService.getAllUsers()
-        .filter(u =>
-          u.firstName.toLowerCase().includes(query) ||
-          u.lastName.toLowerCase().includes(query)
-        )
-        .map(u => {
-          const isMe = u.uid === currentUid;
-          return {
-            type: 'user' as const,
-            name: isMe ? `${u.firstName} ${u.lastName} (Du)` : `${u.firstName} ${u.lastName}`,
-            id: u.uid,
-            avatar: u.avatar
-          };
-        })
-        .sort((a, b) => a.name.endsWith('(Du)') ? -1 : 1);
-    }
+    
+    if (type === 'channel') return this.getChannelResults(query);
+    if (type === 'user') return this.getUserResults(query);
     return [];
   });
 
+  private getChannelResults(query: string): ComposerSearchResult[] {
+    return this.firebaseService.channels()
+      .filter(c => c.name.toLowerCase().includes(query))
+      .map(c => ({ type: 'channel', name: c.name, id: c.id, avatar: null }));
+  }
+
+  private getUserResults(query: string): ComposerSearchResult[] {
+    const currentUid = this.firebaseService.currentUser()?.uid;
+    return this.firebaseService.getAllUsers()
+      .filter(u => `${u.firstName} ${u.lastName}`.toLowerCase().includes(query))
+      .map(u => this.mapUserToResult(u, currentUid))
+      .sort((a) => a.name.endsWith('(Du)') ? -1 : 1);
+  }
+
+  private mapUserToResult(u: any, currentUid?: string): ComposerSearchResult {
+    const isMe = u.uid === currentUid;
+    return {
+      type: 'user',
+      name: isMe ? `${u.firstName} ${u.lastName} (Du)` : `${u.firstName} ${u.lastName}`,
+      id: u.uid,
+      avatar: u.avatar
+    };
+  }
+
+  // --- DOM EVENTS (INPUT & MENTIONS) ---
+
   onInput(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
-    const value = textarea.value;
-    const cursorPos = textarea.selectionStart;
-    const textBefore = value.substring(0, cursorPos);
+    const textBeforeCursor = textarea.value.substring(0, textarea.selectionStart);
+    const mentionContext = this.extractMentionContext(textBeforeCursor);
 
-    const lastAt = textBefore.lastIndexOf('@');
-    const lastHash = textBefore.lastIndexOf('#');
+    if (mentionContext) {
+      this.activateSearch(mentionContext.type, mentionContext.query);
+    } else {
+      this.resetSearchState();
+    }
+  }
+
+  private extractMentionContext(text: string): { type: 'user' | 'channel', query: string } | null {
+    const lastAt = text.lastIndexOf('@');
+    const lastHash = text.lastIndexOf('#');
     const lastSymbolIndex = Math.max(lastAt, lastHash);
 
-    if (lastSymbolIndex !== -1 && !textBefore.substring(lastSymbolIndex + 1).includes(' ')) {
-      this.searchType.set(lastAt > lastHash ? 'user' : 'channel');
-      this.searchQuery.set(textBefore.substring(lastSymbolIndex + 1));
-      this.showDropdown.set(true);
-    } else {
-      this.showDropdown.set(false);
-      this.searchType.set(null);
+    if (lastSymbolIndex !== -1 && !text.substring(lastSymbolIndex + 1).includes(' ')) {
+      return {
+        type: lastAt > lastHash ? 'user' : 'channel',
+        query: text.substring(lastSymbolIndex + 1)
+      };
     }
+    return null;
   }
 
   selectItem(item: ComposerSearchResult) {
     const textarea = this.textarea.nativeElement;
-    const value = textarea.value;
-    const cursorPos = textarea.selectionStart;
-    const lastSymbol = item.type === 'user' ? '@' : '#';
-    const lastIndex = value.substring(0, cursorPos).lastIndexOf(lastSymbol);
+    textarea.value = this.buildReplacedText(textarea.value, textarea.selectionStart, item);
+    
+    this.resetSearchState();
+    textarea.focus();
+  }
 
+  private buildReplacedText(text: string, cursorPos: number, item: ComposerSearchResult): string {
+    const lastSymbol = item.type === 'user' ? '@' : '#';
+    const lastIndex = text.substring(0, cursorPos).lastIndexOf(lastSymbol);
     const cleanName = item.name.replace(' (Du)', '');
 
-    const newValue =
-      value.substring(0, lastIndex) +
-      `${lastSymbol}${cleanName}` +
-      " " +
-      value.substring(cursorPos);
+    return text.substring(0, lastIndex) + `${lastSymbol}${cleanName} ` + text.substring(cursorPos);
+  }
 
-    textarea.value = newValue;
+  private activateSearch(type: 'user' | 'channel', query: string) {
+    this.searchType.set(type);
+    this.searchQuery.set(query);
+    this.showDropdown.set(true);
+  }
+
+  private resetSearchState() {
     this.showDropdown.set(false);
     this.searchType.set(null);
     this.searchQuery.set('');
-    textarea.focus();
   }
+
+  // --- MESSAGE ACTIONS ---
 
   sendMessage(textarea: HTMLTextAreaElement) {
     const value = textarea.value.trim();
     if (!value) return;
+
     this.chatService.sendMessage(value);
+    this.clearComposer(textarea);
+  }
+
+  sendMessageOnEnter(event: KeyboardEvent, message: HTMLTextAreaElement) {
+    if (event.key === 'Enter' && message.value.length > 1) {
+      event.preventDefault();
+      this.sendMessage(message);
+    }
+  }
+
+  private clearComposer(textarea: HTMLTextAreaElement) {
     textarea.value = '';
-    this.showDropdown.set(false);
-    this.searchType.set(null);
     textarea.selectionStart = textarea.selectionEnd = 0;
+    this.resetSearchState();
     textarea.focus();
   }
+
+  insertEmoji(emoji: string) {
+    const textarea = this.textarea.nativeElement;
+    const { selectionStart, selectionEnd, value } = textarea;
+    
+    textarea.value = value.slice(0, selectionStart) + emoji + value.slice(selectionEnd);
+    textarea.selectionStart = textarea.selectionEnd = selectionStart + emoji.length;
+    textarea.focus();
+  }
+
+  // --- UTILS ---
 
   getAvatarUrl(avatar?: string | null): string {
     const fallback = '/shared/profile-pics/profile-pic1.svg';
     if (!avatar) return fallback;
     if (avatar.startsWith('http')) return avatar;
+    
     const file = avatar.replace(/^\/?shared\/profile-pics\//, '').replace(/^profile-pics\//, '');
     return `/shared/profile-pics/${file}`;
-  }
-
-  insertEmoji(emoji: string) {
-    const textarea = this.textarea.nativeElement;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-    textarea.value = text.slice(0, start) + emoji + text.slice(end);
-    textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
-    textarea.focus();
-  }
-
-  sendMessageOnEnter(event: any, message: HTMLTextAreaElement) {
-    if (event.key === 'Enter' && message.value.length > 1) {
-      event.preventDefault();
-      this.sendMessage(message);
-    }
   }
 }

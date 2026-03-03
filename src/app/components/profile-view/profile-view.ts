@@ -1,10 +1,8 @@
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../models/user.class';
 import { FirebaseService } from '../../services/firebase.service';
-import { inject } from '@angular/core';
-
 
 @Component({
   selector: 'app-profile-view',
@@ -13,9 +11,9 @@ import { inject } from '@angular/core';
   templateUrl: './profile-view.html',
   styleUrls: ['./profile-view.scss'],
 })
-
 export class ProfileView implements OnChanges {
   firebaseService = inject(FirebaseService);
+
   @Input() user: User | null = null;
   @Output() close = new EventEmitter<void>();
 
@@ -24,12 +22,15 @@ export class ProfileView implements OnChanges {
   errorMessage = '';
   isInputValid = true;
 
+  // --- LIFECYCLE ---
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['user'] && this.user && !this.isEditing) {
-      this.fullName = this.buildFullName(this.user);
-      this.validateFullName(this.fullName);
+      this.resetProfileView();
     }
   }
+
+  // --- VIEW ACTIONS ---
 
   closeProfile(): void {
     this.isEditing = false;
@@ -45,38 +46,46 @@ export class ProfileView implements OnChanges {
   }
 
   cancelEdit(): void {
-    if (this.user) {
-      this.fullName = this.buildFullName(this.user);
-    } else {
-      this.fullName = '';
-    }
-
-    this.validateFullName(this.fullName);
+    this.resetProfileView();
     this.isEditing = false;
   }
+
+  private resetProfileView(): void {
+    this.fullName = this.user ? this.buildFullName(this.user) : '';
+    this.validateFullName(this.fullName);
+  }
+
+  // --- SAVING ---
 
   async saveProfile(): Promise<void> {
     this.validateFullName(this.fullName);
     if (!this.isInputValid) return;
-    else {
-      const currentUser = this.firebaseService.currentUser();
-      await this.firebaseService.updateSingleUser(currentUser?.uid ?? '', {
-        firstName: this.splitFullName(this.fullName).firstName,
-        lastName: this.splitFullName(this.fullName).lastName,
-      });
-      this.closeProfile();
-    }
-
+    
+    await this.updateUserInDb();
+    this.closeProfile();
   }
+
+  private async updateUserInDb(): Promise<void> {
+    const currentUser = this.firebaseService.currentUser();
+    if (!currentUser?.uid) return;
+
+    // Destructuring: Die Funktion wird nur noch EINMAL aufgerufen
+    const { firstName, lastName } = this.splitFullName(this.fullName);
+    await this.firebaseService.updateSingleUser(currentUser.uid, { firstName, lastName });
+  }
+
+  // --- VALIDATION & STRING MANIPULATION ---
 
   validateFullName(value: string): void {
     const trimmed = (value ?? '').trim();
-
     this.isInputValid = trimmed.length > 1 && trimmed.length <= 30;
+    this.updateErrorMessage(trimmed.length);
+  }
 
-    if (trimmed.length < 1) {
+  private updateErrorMessage(length: number): void {
+    if (length < 2) {
       this.errorMessage = 'Bitte Name eingeben';
-    } else if (trimmed.length > 30) {
+    } else if (length > 30) {
       this.errorMessage = 'Name darf maximal 30 Zeichen haben';
     } else {
       this.errorMessage = '';
@@ -84,30 +93,26 @@ export class ProfileView implements OnChanges {
   }
 
   private buildFullName(user: User): string {
-    const first = user.firstName ?? '';
-    const last = user.lastName ?? '';
-    return `${first} ${last}`.trim();
+    return `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
   }
 
   private splitFullName(fullName: string): { firstName: string; lastName: string } {
     const parts = (fullName ?? '').trim().split(/\s+/).filter(Boolean);
     if (parts.length === 0) return { firstName: '', lastName: '' };
-    if (parts.length === 1) return { firstName: parts[0], lastName: '' };
-
-    const firstName = parts[0];
-    const lastName = parts.slice(1).join(' ');
-    return { firstName, lastName };
+    
+    return {
+      firstName: parts[0],
+      lastName: parts.slice(1).join(' ')
+    };
   }
 
+  // --- UTILS ---
+
   getAvatarUrl(avatar?: string | null): string {
-    const fallback = '/shared/profile-pics/profile-pic1.svg';
-    if (!avatar) return fallback;
+    if (!avatar) return '/shared/profile-pics/profile-pic1.svg';
     if (avatar.startsWith('http')) return avatar;
 
-    const file = avatar
-      .replace(/^\/?shared\/profile-pics\//, '')
-      .replace(/^profile-pics\//, '');
-
+    const file = avatar.replace(/^\/?shared\/profile-pics\//, '').replace(/^profile-pics\//, '');
     return `/shared/profile-pics/${file}`;
   }
 }

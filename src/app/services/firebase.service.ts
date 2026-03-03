@@ -1,17 +1,5 @@
-import { Injectable, inject, Injector, runInInjectionContext, signal } from '@angular/core';
-import {
-  Firestore,
-  collection,
-  addDoc,
-  onSnapshot,
-  query,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-  Unsubscribe,
-} from '@angular/fire/firestore';
+import { Injectable, inject, signal } from '@angular/core';
+import { Firestore, collection, addDoc, onSnapshot, query, doc, setDoc, getDoc, updateDoc, arrayUnion, Unsubscribe, } from '@angular/fire/firestore';
 import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -23,7 +11,6 @@ import { Chat } from '../models/chat.class';
 })
 export class FirebaseService {
   public firestore = inject(Firestore);
-  private injector = inject(Injector);
 
   currentUser = signal<User | null>(null);
   channels = signal<any[]>([]);
@@ -39,15 +26,17 @@ export class FirebaseService {
   unsubChats: Unsubscribe | null = null;
 
   constructor() {
-    this.unsubChannels = this.subChannels();
-    this.unsubChats = this.subChats();
+    this.subChannels();
+    this.subChats();
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     if (this.unsubChannels) this.unsubChannels();
     if (this.unsubUser) this.unsubUser();
     if (this.unsubChats) this.unsubChats();
   }
+
+  // --- USER LOGIK ---
 
   async checkUserExists(uid: string): Promise<boolean> {
     const docRef = doc(this.firestore, 'users', uid);
@@ -55,109 +44,119 @@ export class FirebaseService {
     return snap.exists();
   }
 
-  subChannels(): Unsubscribe {
-    const q = query(collection(this.firestore, 'channels'));
+  subUser(uid: string): void {
+    this.unsubUser?.();
+    const docRef = doc(this.firestore, 'users', uid);
+    this.unsubUser = onSnapshot(docRef, (snap) => this.handleUserSnapshot(snap));
+  }
+
+  private handleUserSnapshot(snap: any): void {
+    const data = snap.data();
+    this.currentUser.set(data ? new User(data) : null);
+  }
+
+  async addUser(user: User, uid: string): Promise<void> {
+    const docRef = doc(this.firestore, 'users', uid);
+    await setDoc(docRef, user.toJSON(), { merge: true })
+      .catch((err) => console.error('Fehler beim User-Erstellen:', err));
+  }
+
+  async getSingleUser(uid: string): Promise<User | null> {
+    const docRef = doc(this.firestore, 'users', uid);
+    const snap = await getDoc(docRef);
+    return snap.exists() ? new User(snap.data()) : null;
+  }
+
+  async updateSingleUser(uid: string, userData: any): Promise<void> {
+    const docRef = doc(this.firestore, 'users', uid);
+    await setDoc(docRef, userData, { merge: true });
+  }
+
+  // --- CHANNEL LOGIK ---
+
+  subChannels(): void {
     this.unsubChannels?.();
-    this.unsubChannels = onSnapshot(q, snap => {
-      this.channels.set(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    });
-    return this.unsubChannels;
+    const q = query(collection(this.firestore, 'channels'));
+    this.unsubChannels = onSnapshot(q, (snap) => this.updateChannelsState(snap));
   }
 
-  subChats(): Unsubscribe {
-    const q = query(collection(this.firestore, 'chats'));
-    this.unsubChats?.();
-    this.unsubChats = onSnapshot(q, snap => {
-      this.chats = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    });
-    return this.unsubChats;
+  private updateChannelsState(snap: any): void {
+    const mappedChannels = snap.docs.map((d: any) => ({ id: d.id, ...d.data() }));
+    this.channels.set(mappedChannels);
   }
 
-  setSelectedChannel(id: string) {
+  setSelectedChannel(id: string): void {
     this.selectedChannelId.set(id);
+    this.updateCurrentChannelName(id);
+  }
+
+  private updateCurrentChannelName(id: string): void {
     const channel = this.channels().find((c) => c.id === id);
     if (channel) {
       this.currentChannelName = channel.name;
     }
   }
 
-  subUser(uid: string) {
-    this.unsubUser?.();
-    this.unsubUser = onSnapshot(doc(this.firestore, 'users', uid), (snap) => {
-      const data = snap.data();
-      if (data) {
-        this.currentUser.set(new User(data));
-      } else {
-        this.currentUser.set(null);
-      }
-    });
-  }
-
-  async addUser(user: User, uid: string) {
-    return runInInjectionContext(this.injector, async () => {
-      await setDoc(doc(this.firestore, 'users', uid), user.toJSON(), { merge: true })
-        .catch((err) => console.error(err));
-    });
-  }
-
-  async addChat(chat: Chat) {
-    const chatRef = doc(this.firestore, 'chats', chat.id);
-    await setDoc(chatRef, chat.toJSON());
-  }
-
   async addChannel(channel: Channel): Promise<string | null> {
-    return runInInjectionContext(this.injector, async () => {
-      const data: any = channel.toJSON ? channel.toJSON() : { ...channel };
-      data.createdAt = new Date().getTime();
-
-      try {
-        const docRef = await addDoc(collection(this.firestore, 'channels'), data);
-        return docRef.id;
-      } catch (err) {
-        console.error(err);
-        return null;
-      }
-    });
+    const data = this.prepareChannelData(channel);
+    return await this.saveChannelToFirestore(data);
   }
 
-  async getSingleUser(uid: string): Promise<User | null> {
-    const docRef = doc(this.firestore, 'users', uid);
-    const snap = await getDoc(docRef);
-    if (snap.exists()) {
-      return new User(snap.data());
+  private prepareChannelData(channel: Channel): any {
+    const data: any = channel.toJSON ? channel.toJSON() : { ...channel }; 
+    data.createdAt = Date.now();
+    return data;
+  }
+
+  private async saveChannelToFirestore(data: any): Promise<string | null> {
+    try {
+      const docRef = await addDoc(collection(this.firestore, 'channels'), data);
+      return docRef.id;
+    } catch (err) {
+      console.error('Fehler beim Erstellen des Channels:', err);
+      return null;
     }
-    return null;
   }
 
-  async updateSingleUser(uid: string, userData: any) {
-    const docRef = doc(this.firestore, 'users', uid);
-    await setDoc(docRef, userData, { merge: true });
-  }
-
-  async addMemberToChannel(channelId: string, uid: string) {
+  async addMemberToChannel(channelId: string, uid: string): Promise<void> {
     const channelRef = doc(this.firestore, 'channels', channelId);
-    await updateDoc(channelRef, {
-      members: arrayUnion(uid)
-    });
+    await updateDoc(channelRef, { members: arrayUnion(uid) });
   }
 
-  async updateChannel(channelId: string, data: any) {
+  async updateChannel(channelId: string, data: any): Promise<void> {
     try {
       const channelRef = doc(this.firestore, 'channels', channelId);
       await updateDoc(channelRef, data);
     } catch (error) {
-      console.error('Fehler beim Aktualisieren des Channels: ', error);
+      console.error('Fehler beim Aktualisieren des Channels:', error);
     }
   }
 
+  // --- CHAT LOGIK ---
+
+  subChats(): void {
+    this.unsubChats?.();
+    const q = query(collection(this.firestore, 'chats'));
+    this.unsubChats = onSnapshot(q, (snap) => this.updateChatsState(snap));
+  }
+
+  private updateChatsState(snap: any): void {
+    this.chats = snap.docs.map((d: any) => ({ id: d.id, ...d.data() }));
+  }
+
+  async addChat(chat: Chat): Promise<void> {
+    const chatRef = doc(this.firestore, 'chats', chat.id);
+    await setDoc(chatRef, chat.toJSON());
+  }
+
+  // --- OBSERVABLES ---
+
   private users = new Observable<User[]>((observer) => {
     const q = query(collection(this.firestore, 'users'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const users = querySnapshot.docs.map(d => new User(d.data()));
-      observer.next(users);
-    }, (error) => {
-      observer.error(error);
-    });
+    const unsubscribe = onSnapshot(q, 
+      (snap) => observer.next(snap.docs.map((d) => new User(d.data()))), 
+      (error) => observer.error(error)
+    );
     return () => unsubscribe();
   });
 
