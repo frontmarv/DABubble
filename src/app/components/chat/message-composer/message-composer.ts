@@ -1,6 +1,16 @@
-import { Component, inject, signal, computed, ViewChild, ElementRef, HostListener } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  computed,
+  ViewChild,
+  ElementRef,
+  HostListener,
+  Input,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatService } from '../../../services/chat.service';
+import { ThreadStateService } from '../../../services/thread-state.service';
 import { FirebaseService } from '../../../services/firebase.service';
 import { EmojiPickerStateService } from '../../../services/emoji-picker-serivce';
 import { EmojiPicker } from '../../emoji-picker/emoji-picker';
@@ -10,7 +20,7 @@ interface ComposerSearchResult {
   name: string;
   id: string;
   avatar?: string | null;
-  status?: string; // Neu: Status für die Anzeige
+  status?: string;
 }
 
 @Component({
@@ -22,9 +32,12 @@ interface ComposerSearchResult {
 })
 export class MessageComposer {
   @ViewChild('message') textarea!: ElementRef<HTMLTextAreaElement>;
+  @Input() mode: 'chat' | 'thread' = 'chat';
+  @Input() placeholder: string = 'Nachricht an.....';
 
-  private elementRef = inject(ElementRef); // Für Click-Outside Erkennung
+  private elementRef = inject(ElementRef);
   chatService = inject(ChatService);
+  threadService = inject(ThreadStateService);
   firebaseService = inject(FirebaseService);
   emojiPickerService = inject(EmojiPickerStateService);
 
@@ -32,7 +45,6 @@ export class MessageComposer {
   searchType = signal<'user' | 'channel' | null>(null);
   showDropdown = signal<boolean>(false);
 
-  // --- CLICK OUTSIDE LISTENER ---
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
@@ -43,24 +55,25 @@ export class MessageComposer {
   filteredResults = computed<ComposerSearchResult[]>(() => {
     const query = this.searchQuery().toLowerCase();
     const type = this.searchType();
-
     if (type === 'channel') return this.getChannelResults(query);
     if (type === 'user') return this.getUserResults(query);
     return [];
   });
 
   private getChannelResults(query: string): ComposerSearchResult[] {
-    return this.firebaseService.channels()
-      .filter(c => c.name.toLowerCase().includes(query))
-      .map(c => ({ type: 'channel', name: c.name, id: c.id, avatar: null }));
+    return this.firebaseService
+      .channels()
+      .filter((c) => c.name.toLowerCase().includes(query))
+      .map((c) => ({ type: 'channel', name: c.name, id: c.id, avatar: null }));
   }
 
   private getUserResults(query: string): ComposerSearchResult[] {
     const currentUid = this.firebaseService.currentUser()?.uid;
-    return this.firebaseService.getAllUsers()
-      .filter(u => `${u.firstName} ${u.lastName}`.toLowerCase().includes(query))
-      .map(u => this.mapUserToResult(u, currentUid))
-      .sort((a) => a.name.endsWith('(Du)') ? -1 : 1);
+    return this.firebaseService
+      .getAllUsers()
+      .filter((u) => `${u.firstName} ${u.lastName}`.toLowerCase().includes(query))
+      .map((u) => this.mapUserToResult(u, currentUid))
+      .sort((a) => (a.name.endsWith('(Du)') ? -1 : 1));
   }
 
   private mapUserToResult(u: any, currentUid?: string): ComposerSearchResult {
@@ -70,15 +83,13 @@ export class MessageComposer {
       name: isMe ? `${u.firstName} ${u.lastName} (Du)` : `${u.firstName} ${u.lastName}`,
       id: u.uid,
       avatar: u.avatar,
-      status: u.status // Status aus den User-Daten übernehmen
+      status: u.status,
     };
   }
 
-  // --- DROPDOWN TOGGLE LOGIK ---
   toggleUserDropdown(event: Event) {
     event.stopPropagation();
     const isAlreadyOpen = this.showDropdown() && this.searchType() === 'user';
-
     if (isAlreadyOpen) {
       this.resetSearchState();
     } else {
@@ -106,7 +117,7 @@ export class MessageComposer {
     if (lastSymbolIndex !== -1 && !text.substring(lastSymbolIndex + 1).includes(' ')) {
       return {
         type: (lastAt > lastHash ? 'user' : 'channel') as 'user' | 'channel',
-        query: text.substring(lastSymbolIndex + 1)
+        query: text.substring(lastSymbolIndex + 1),
       };
     }
     return null;
@@ -141,7 +152,12 @@ export class MessageComposer {
   sendMessage(textarea: HTMLTextAreaElement) {
     const value = textarea.value.trim();
     if (!value) return;
-    this.chatService.sendMessage(value);
+    if (this.mode === 'thread') {
+      this.threadService.sendThreadReply(value);
+    } else {
+      this.chatService.sendMessage(value);
+    }
+
     this.clearComposer(textarea);
   }
 

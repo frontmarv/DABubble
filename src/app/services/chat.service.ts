@@ -1,18 +1,25 @@
-import { inject, Injectable, signal, computed } from "@angular/core";
-import { Chat } from "../models/chat.class";
-import { User } from "../models/user.class";
-import { FirebaseService } from "./firebase.service";
+import { inject, Injectable, signal, computed } from '@angular/core';
+import { Chat } from '../models/chat.class';
+import { User } from '../models/user.class';
+import { FirebaseService } from './firebase.service';
 import {
-  collection, doc, onSnapshot, orderBy, query,
-  serverTimestamp, writeBatch, runTransaction, Unsubscribe
-} from "@angular/fire/firestore";
-import { Message } from "../models/message.class";
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  writeBatch,
+  runTransaction,
+  Unsubscribe,
+} from '@angular/fire/firestore';
+import { Message } from '../models/message.class';
 
 type ChatMode = 'dm' | 'channel';
 
 interface ActiveConversation {
   mode: ChatMode;
-  id: string; 
+  id: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -24,14 +31,12 @@ export class ChatService {
   otherUser = signal<User | null>(null);
   private unsubMessages: Unsubscribe | null = null;
 
-  chat = new Chat(); 
+  chat = new Chat();
   readonly basePath = computed<string | null>(() => {
     const conv = this.activeConversation();
     if (!conv) return null;
 
-    return conv.mode === 'dm'
-      ? `chats/${conv.id}`
-      : `channels/${conv.id}`;
+    return conv.mode === 'dm' ? `chats/${conv.id}` : `channels/${conv.id}`;
   });
 
   readonly chatIsActive = computed<boolean>(() => this.activeConversation() !== null);
@@ -61,7 +66,7 @@ export class ChatService {
   private subscribeToMessages(): void {
     this.unsubMessages?.();
     this.unsubMessages = null;
-    this.messages.set([]); 
+    this.messages.set([]);
 
     const path = this.basePath();
     if (!path) return;
@@ -97,26 +102,26 @@ export class ChatService {
 
     const batch = writeBatch(this.firebaseService.firestore);
 
-    const parentRef  = doc(this.firebaseService.firestore, path);
+    const parentRef = doc(this.firebaseService.firestore, path);
     const messageRef = doc(collection(this.firebaseService.firestore, path, 'messages'));
 
     batch.set(messageRef, {
-      senderId:  currentUid,
-      text:      text.trim(),
+      senderId: currentUid,
+      text: text.trim(),
       createdAt: serverTimestamp(),
-      reactions: {}
+      reactions: {},
     });
 
     batch.update(parentRef, {
-      lastMessage:   text.trim(),
-      lastMessageAt: serverTimestamp()
+      lastMessage: text.trim(),
+      lastMessageAt: serverTimestamp(),
     });
 
     await batch.commit();
   }
 
   async toggleReaction(messageId: string, emoji: string): Promise<void> {
-    const path   = this.basePath();
+    const path = this.basePath();
     const userId = this.firebaseService.currentUser()?.uid;
     if (!path || !userId || !messageId || !emoji) return;
 
@@ -132,7 +137,9 @@ export class ChatService {
   }
 
   private calculateNewReactions(
-    msgData: any, emoji: string, userId: string
+    msgData: any,
+    emoji: string,
+    userId: string
   ): Record<string, string[]> {
     const reactions: Record<string, string[]> = { ...(msgData.reactions ?? {}) };
     const current: string[] = reactions[emoji] ?? [];
@@ -157,7 +164,7 @@ export class ChatService {
   }
 
   private buildChatId(): string {
-    const other      = this.otherUser();
+    const other = this.otherUser();
     const currentUid = this.firebaseService.currentUser()?.uid;
     if (!other || !currentUid) return '';
 
@@ -172,14 +179,14 @@ export class ChatService {
 
   private async createChatDocument(chatId: string): Promise<void> {
     const currentUid = this.firebaseService.currentUser()?.uid;
-    const other      = this.otherUser();
+    const other = this.otherUser();
     if (!currentUid || !other) return;
 
     const newChat = new Chat({
-      id:           chatId,
+      id: chatId,
       participants: [currentUid, other.uid],
-      createdAt:    new Date(),
-      lastMessage:  ''
+      createdAt: new Date(),
+      lastMessage: '',
     });
 
     await this.firebaseService.addChat(newChat);
