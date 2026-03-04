@@ -42,6 +42,7 @@ export class ChatService {
   readonly chatIsActive = computed<boolean>(() => this.activeConversation() !== null);
 
   async openChatRoom(user: any): Promise<void> {
+    this.firebaseService.setSelectedChannel('')
     await this.loadOtherUser(user);
     const chatId = this.buildChatId();
     if (!chatId) return;

@@ -5,7 +5,13 @@
         @if (this.chat.otherUser()) {
         <div class="header__content"
             (click)="displayForeignUserService.setSelectedUser(this.chat.otherUser()); displayForeignUserService.toggle()">
-            <img [src]="this.chat.otherUser()?.avatar" alt="">
+            <span class="avatar">
+                <img [src]="this.chat.otherUser()?.avatar" alt="" class="avatar__img"
+                    (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'" />
+                @if(this.chat.otherUser()?.status === 'online') {<span class="status status--online"
+                    aria-hidden="true"></span>}
+                @else{<span class="status status--offline" aria-hidden="true"></span>}
+            </span>
             <h4>{{ this.chat.otherUser()?.firstName }} {{ this.chat.otherUser()?.lastName }}</h4>
         </div>
         }

@@ -51,7 +51,7 @@
       </header>
 
       <div class="profile-avatar">
-        <img [src]="getAvatarUrl(user?.avatar)" referrerpolicy="no-referrer" (error)="$event.target.src='/shared/profile-pics/profile-pic1.svg'">
+        <img [src]="getAvatarUrl(user?.avatar)" referrerpolicy="no-referrer" (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'">
       </div>
 
       <div class="edit-form" *ngIf="user">

@@ -48,9 +48,9 @@ export class Sidebar {
     this.chat.openChannel(channelId);
   }
 
-  selectDm(user: any) {
+  async selectDm(user: any) {
     this.mobileNavigation.emit();
-    this.chat.openChatRoom(user);
+    await this.chat.openChatRoom(user);
   }
 
   toggleChannels() {
@@ -92,7 +92,7 @@ export class Sidebar {
     if (!this.channelName?.trim()) return;
     this.tempChannelName = this.channelName;
     this.tempChannelDescription = this.channelDescription;
-    
+
     this.isCreateChannelOpen = false;
     this.isAddPeopleOpen = true;
   }
@@ -176,4 +176,15 @@ export class Sidebar {
       await this.firebaseService.addMemberToChannel(newId, (user as any).uid);
     }
   }
+
+  isDmActive(user: any): boolean {
+  const active = this.chat.activeConversation();
+  if (!active || active.mode !== 'dm') return false;
+  return active.id === this.buildDmChatId(user);
+}
+
+private buildDmChatId(user: any): string {
+  const currentUid = this.firebaseService.currentUser()?.uid || '';
+  return [currentUid, user.uid].sort().join('_');
+}
 }

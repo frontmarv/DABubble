@@ -317,6 +317,7 @@ app-message-list {
 
 .start_screen {
   cursor: default;
+
   &:hover {
     background: unset;
   }
@@ -345,6 +346,15 @@ input::placeholder {
 }
 
 @media (max-width: 1240px) {
+  .member-avatars-btn {
+    display: none;
+  }
+
+  .add-member-btn {
+    background-color: var(--color-background);
+    border: unset;
+  }
+
   .main-chat {
     border-radius: 20px;
     height: calc(100vh - 94px);

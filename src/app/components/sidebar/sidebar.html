@@ -58,9 +58,9 @@
 
       <nav class="list" [class.collapsed]="!dmOpen" aria-label="Direktnachrichten Liste">
         @for (user of displayAllUsersSidebar(); track user.uid) {
-        <a class="list__item" (click)="selectDm(user)">
+        <a class="list__item" (click)="selectDm(user)" [class.list__item--active]="isDmActive(user)">
           <span class="avatar">
-            <img [src]="user.avatar" alt="" class="avatar__img" (error)="$event.target.src='/shared/profile-pics/profile-pic1.svg'" />
+            <img [src]="user.avatar" alt="" class="avatar__img" (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'" />
             @if(user.status === 'online') {<span class="status status--online" aria-hidden="true"></span>}
             @else{<span class="status status--offline" aria-hidden="true"></span>}
           </span>
