@@ -5,6 +5,8 @@ import { FirebaseService } from '../../services/firebase.service';
 import { EmojiPicker } from '../emoji-picker/emoji-picker';
 import { EmojiPickerStateService } from '../../services/emoji-picker-serivce';
 import { FormsModule } from '@angular/forms';
+import { ShowUserProfile } from '../../services/showUserProfile';
+import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 
 @Component({
   selector: 'app-thread-panel',
@@ -14,10 +16,11 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './thread-panel.scss',
 })
 export class ThreadPanel {
-  threadService     = inject(ThreadStateService);
-  firebaseService   = inject(FirebaseService);
+  threadService = inject(ThreadStateService);
+  firebaseService = inject(FirebaseService);
   emojiPickerService = inject(EmojiPickerStateService);
-
+  showUserProfileService = inject(ShowUserProfile);
+  displayForeignUserService = inject(DisplayForeignUserService);
   replyText = '';
 
   async sendReply(): Promise<void> {
