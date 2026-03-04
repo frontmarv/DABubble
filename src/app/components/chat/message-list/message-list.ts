@@ -27,6 +27,22 @@ export class MessageList {
   @ViewChild('scrollAnchor') private scrollAnchor!: ElementRef;
   @Output() mobileNavigation = new EventEmitter<void>();
 
+  editingMessageId: string | null = null;
+  isEditMsgHoverd: boolean = false;
+
+  setEditMsgHoverdTrue() {
+    this.isEditMsgHoverd = true;
+  }
+
+  setEditMsgHoverdFalse() {
+    this.isEditMsgHoverd = false;
+  }
+
+  setItemToEdit(itemId: string) {
+    this.editingMessageId = itemId;
+    console.log(this.editingMessageId)
+  }
+
   openThread(message: Message): void {
     const basePath = this.chat.basePath();
     const contextName = this.resolveContextName();

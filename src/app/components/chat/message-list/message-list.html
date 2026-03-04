@@ -60,8 +60,14 @@
     <button class="icon-btn" type="button" aria-label="Sentiment">
       <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
     </button>
-    <button class="icon-btn" type="button" aria-label="Sentiment">
+    <button class="icon-btn" type="button" aria-label="Sentiment" (mouseenter)="setEditMsgHoverdTrue()" (mouseleave)="setEditMsgHoverdFalse()">
       <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
+      @if(isEditMsgHoverd){
+      <div class="edit-msg-field">
+        <span (click)="setItemToEdit(item.id!)" class="edit-msg">Nachricht
+          bearbeiten</span>
+      </div>
+      }
     </button>
   </div>
 </div>
@@ -75,7 +81,8 @@
 
   <div class="message-info-container">
     <div class="message-info">
-      <p class="text--regular bold message-name" (click)="displayForeignUserService.setSelectedUser(chat.users()[item.senderId]); displayForeignUserService.toggle();">
+      <p class="text--regular bold message-name"
+        (click)="displayForeignUserService.setSelectedUser(chat.users()[item.senderId]); displayForeignUserService.toggle();">
         {{ chat.users()[item.senderId]?.firstName }}
         {{ chat.users()[item.senderId]?.lastName }}
       </p>
