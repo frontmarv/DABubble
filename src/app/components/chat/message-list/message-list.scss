@@ -5,6 +5,7 @@
     height: 70px;
     flex-shrink: 0;
     //   top: 0;
+    cursor: pointer;
 }
 
 .avatar__img {
@@ -17,7 +18,7 @@
     position: relative;
     display: flex;
     gap: 30px;
-
+    width: 100%;
     &:hover {
         background-color: var(--color-background);
 
@@ -39,7 +40,6 @@
 }
 
 .message-name {
-
     // max-width: 200px;
     &:hover {
         color: var(--color-purple1);
@@ -259,6 +259,32 @@
     top: 20px;
     padding: 10px 20px;
     left: 30px;
+}
+
+.empty-chat-info {
+    padding: 10px 100px 10px 45px;
+    width: 100%;
+    gap: 30px;
+    display: flex;
+    flex-direction: column;
+    .user-info {
+        display: flex;
+        align-items: flex-end;
+        gap: 25px;
+    }
+    h4 {
+        cursor: pointer;
+    }
+    .user-tag-inChat {
+        color: var(--color-purple3);
+        cursor: pointer;
+        &:hover {
+            font-weight: bold;
+        }
+    }
+    p {
+        color: var(--color-text-grey);
+    }
 }
 
 @media (max-width: 900px) {

@@ -70,4 +70,10 @@ export class MessageList {
     this.mobileNavigation.emit();
     this.chat.openChatRoom(user);
   }
+
+  clickOnUser(){
+    this.displayForeignUserService.setSelectedUser(this.chat.otherUser()); 
+    this.displayForeignUserService.toggle();
+  }
+
 }

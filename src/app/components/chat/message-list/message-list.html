@@ -1,5 +1,4 @@
 @for (item of chat.messages(); track item.id) {
-
 @if (item.senderId === firebaseService.currentUser()?.uid) {
 
 <div class="message-field-user">
@@ -60,7 +59,8 @@
     <button class="icon-btn" type="button" aria-label="Sentiment">
       <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
     </button>
-    <button class="icon-btn" type="button" aria-label="Sentiment" (mouseenter)="setEditMsgHoverdTrue()" (mouseleave)="setEditMsgHoverdFalse()">
+    <button class="icon-btn" type="button" aria-label="Sentiment" (mouseenter)="setEditMsgHoverdTrue()"
+      (mouseleave)="setEditMsgHoverdFalse()">
       <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
       @if(isEditMsgHoverd){
       <div class="edit-msg-field">
@@ -121,6 +121,21 @@
 </div>
 
 }
+} @empty {
+<div class="empty-chat-info">
+  <div class="user-info">
+    <span class="avatar" (click)="clickOnUser()">
+      <img [src]="this.chat.otherUser()?.avatar" alt="" class="avatar__img"
+        (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'" />
+    </span>
+    <h4 (click)="clickOnUser()">
+      {{ this.chat.otherUser()?.firstName }} {{ this.chat.otherUser()?.lastName }}</h4>
+  </div>
+
+  <p>Diese Unterhaltung findet nur zwischen <span class="user-tag-inChat"
+      (click)="clickOnUser()">@{{
+      this.chat.otherUser()?.firstName }} {{ this.chat.otherUser()?.lastName }}</span> und dir statt</p>
+</div>
 }
 
 <!-- <div class="time-seperator">

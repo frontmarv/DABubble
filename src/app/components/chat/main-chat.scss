@@ -129,6 +129,10 @@ app-message-list {
   scrollbar-width: thin;
   padding-top: 21px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
 }
 
 .members-list {
@@ -331,8 +335,7 @@ input[type="text"] {
   border-radius: 30px;
   border: 1px solid var(--color-light-purple-lines);
   padding: 30px;
-  transition:
-    border-color 0.2s,
+  transition: border-color 0.2s;
 }
 
 input[type="text"]:focus {
