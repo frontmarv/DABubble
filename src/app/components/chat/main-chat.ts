@@ -139,7 +139,9 @@ export class MainChat {
   async joinCurrentChannel(): Promise<void> {
     const channel = this.currentChannel();
     const uid = this.firebaseService.currentUser()?.uid;
-    if (channel && uid) await this.firebaseService.addMemberToChannel(channel.id, uid);
+    if (!channel || !uid) return;
+    await this.firebaseService.addMemberToChannel(channel.id, uid);
+    this.chat.openChannel(channel.id);
   }
 
   private async addAllUsers(channelId: string): Promise<void> {

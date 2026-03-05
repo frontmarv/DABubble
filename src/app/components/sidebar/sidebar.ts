@@ -39,12 +39,15 @@ export class Sidebar {
 
   displayAllUsersSidebar = this.firebaseService.getAllUsers;
 
-  // --- NAVIGATION ---
-
   selectChannel(channelId: string): void {
     this.firebaseService.setSelectedChannel(channelId);
     this.mobileNavigation.emit();
-    this.chat.openChannel(channelId);
+  
+    const uid = this.firebaseService.currentUser()?.uid;
+    const channel = this.firebaseService.channels().find(c => c.id === channelId);
+    const isMember = channel?.members?.includes(uid) ?? false;
+  
+    if (isMember) this.chat.openChannel(channelId);
   }
 
   async selectDm(user: any): Promise<void> {
@@ -107,8 +110,6 @@ export class Sidebar {
     this.selectedMembers = this.selectedMembers.filter((u) => u.uid !== user.uid);
   }
 
-  // --- CHANNEL CREATION ---
-
   async createChannel(): Promise<void> {
     if (!this.isAddPeopleOpen || this.isCreating || !this.tempChannelName?.trim()) return;
     this.isCreating = true;
@@ -145,8 +146,6 @@ export class Sidebar {
       await this.firebaseService.addMemberToChannel(newId, (user as any).uid);
     }
   }
-
-  // --- ACTIVE STATE HELPER ---
 
   isDmActive(user: any): boolean {
     const active = this.chat.activeConversation();

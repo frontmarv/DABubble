@@ -48,14 +48,15 @@
             }
         </header>
     
-        @if (this.chat.chatIsActive() || isCurrentUserMember()) {
+        @if (chat.activeConversation()?.mode === 'dm' || isCurrentUserMember()) {
             <app-message-list></app-message-list>
             <app-message-composer></app-message-composer>
         } @else {
             <div class="channel-blocking-screen">
+                <div class="channel-blocking-screen__icon">🔒</div>
                 <h3>Du bist noch kein Mitglied in diesem Channel.</h3>
-                <p>Schau dich gerne um oder tritt dem Channel bei, um mitzulesen.</p>
-                <button class="btn--primary" style="margin-top: 15px;" (click)="joinCurrentChannel()">Beitreten</button>
+                <p>Schau dich gerne um oder tritt dem Channel bei, um mitzulesen und zu schreiben.</p>
+                <button class="btn--primary" (click)="joinCurrentChannel()">Beitreten</button>
             </div>
         }
     </div>
