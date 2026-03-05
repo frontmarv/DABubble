@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { ThreadStateService } from '../../../services/thread-state.service';
 import { ChatService } from '../../../services/chat.service';
 import { FirebaseService } from '../../../services/firebase.service';
@@ -72,9 +72,64 @@ export class MessageList {
     this.chat.openChatRoom(user);
   }
 
-  clickOnUser(){
-    this.displayForeignUserService.setSelectedUser(this.chat.otherUser()); 
+  clickOnUser() {
+    this.displayForeignUserService.setSelectedUser(this.chat.otherUser());
     this.displayForeignUserService.toggle();
   }
 
+
+  shouldShowDateSeparator(index: number): boolean {
+    const messages = this.chat.messages();
+    const current = this.asDate(messages?.[index]?.createdAt);
+
+    if (!current) return false;
+    if (index === 0) return true;
+
+    const prev = this.asDate(messages?.[index - 1]?.createdAt);
+    if (!prev) return true;
+
+    return !this.isSameLocalDay(prev, current);
+  }
+
+
+  getDateSeparatorLabel(date?: Date | null): string {
+    if (!date) return '';
+
+    const now = new Date();
+
+    if (this.isSameLocalDay(date, now)) return 'Heute';
+
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+
+    if (this.isSameLocalDay(date, yesterday)) return 'Gestern';
+
+    const weekday = new Intl.DateTimeFormat('de-DE', { weekday: 'long' }).format(date);
+    const day = new Intl.DateTimeFormat('de-DE', { day: '2-digit' }).format(date);
+    const month = new Intl.DateTimeFormat('de-DE', { month: 'long' }).format(date);
+
+    const monthCap = month.charAt(0).toUpperCase() + month.slice(1);
+
+    return `${weekday}, ${day}.${monthCap}`;
+  }
+
+  private asDate(value: any): Date | null {
+    if (!value) return null;
+
+    // Firestore Timestamp
+    if (typeof value?.toDate === 'function') return value.toDate();
+
+    // Date already
+    if (value instanceof Date) return value;
+
+    return null;
+  }
+
+  private isSameLocalDay(a: Date, b: Date): boolean {
+    return (
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate()
+    );
+  }
 }

@@ -13,12 +13,17 @@
     object-fit: cover;
 }
 
+.messages {
+    width: 100%;
+}
+
 .message-field-other {
     padding: 10px 100px 10px 45px;
     position: relative;
     display: flex;
     gap: 30px;
     width: 100%;
+
     &:hover {
         background-color: var(--color-background);
 
@@ -40,6 +45,7 @@
 }
 
 .message-name {
+
     // max-width: 200px;
     &:hover {
         color: var(--color-purple1);
@@ -95,8 +101,9 @@
     position: relative;
     display: flex;
     gap: 30px;
+    width: 100%;
     justify-content: flex-end;
-
+    width: 100%;
     &:hover {
         background-color: var(--color-background);
 
@@ -133,10 +140,25 @@
     }
 }
 
+.chat-container {
+    width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    height: 600px;
+}
+
+.messages {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100%;
+}
+
 .time-seperator {
     display: flex;
     justify-content: center;
-
+    width: 100%;
     .line {
         margin-top: 25px;
         margin-bottom: 25px;
@@ -262,26 +284,32 @@
 }
 
 .empty-chat-info {
-    padding: 10px 100px 10px 45px;
+    padding: 10px 45px;
     width: 100%;
     gap: 30px;
     display: flex;
     flex-direction: column;
+
     .user-info {
         display: flex;
         align-items: flex-end;
         gap: 25px;
     }
+
     h4 {
         cursor: pointer;
+        word-break: break-all;
     }
+
     .user-tag-inChat {
         color: var(--color-purple3);
         cursor: pointer;
+
         &:hover {
             font-weight: bold;
         }
     }
+
     p {
         color: var(--color-text-grey);
     }
@@ -315,6 +343,10 @@
 
     .reaction-bar {
         left: 20px;
+    }
+
+    .empty-chat-info {
+        padding: 10px 20px;
     }
 }
 
