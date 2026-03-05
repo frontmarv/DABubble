@@ -13,6 +13,10 @@
     object-fit: cover;
 }
 
+.messages {
+    width: 100%;
+}
+
 .message-field-other {
     padding: 10px 100px 10px 45px;
     position: relative;
@@ -99,7 +103,7 @@
     gap: 30px;
     width: 100%;
     justify-content: flex-end;
-
+    width: 100%;
     &:hover {
         background-color: var(--color-background);
 
@@ -136,10 +140,25 @@
     }
 }
 
+.chat-container {
+    width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    height: 600px;
+}
+
+.messages {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100%;
+}
+
 .time-seperator {
     display: flex;
     justify-content: center;
-
+    width: 100%;
     .line {
         margin-top: 25px;
         margin-bottom: 25px;
