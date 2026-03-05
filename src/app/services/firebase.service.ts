@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Firestore, collection, addDoc, onSnapshot, query, doc, setDoc, getDoc, updateDoc, arrayUnion, Unsubscribe, } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, onSnapshot, query, doc, setDoc, getDoc, updateDoc, arrayUnion, Unsubscribe, getDocs, collectionGroup } from '@angular/fire/firestore';
 import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -36,8 +36,6 @@ export class FirebaseService {
     if (this.unsubChats) this.unsubChats();
   }
 
-  // --- USER LOGIK ---
-
   async checkUserExists(uid: string): Promise<boolean> {
     const docRef = doc(this.firestore, 'users', uid);
     const snap = await getDoc(docRef);
@@ -72,8 +70,6 @@ export class FirebaseService {
     await setDoc(docRef, userData, { merge: true });
   }
 
-  // --- CHANNEL LOGIK ---
-
   subChannels(): void {
     this.unsubChannels?.();
     const q = query(collection(this.firestore, 'channels'));
@@ -103,7 +99,7 @@ export class FirebaseService {
   }
 
   private prepareChannelData(channel: Channel): any {
-    const data: any = channel.toJSON ? channel.toJSON() : { ...channel }; 
+    const data: any = channel.toJSON ? channel.toJSON() : { ...channel };
     data.createdAt = Date.now();
     return data;
   }
@@ -132,7 +128,36 @@ export class FirebaseService {
     }
   }
 
-  // --- CHAT LOGIK ---
+  async searchMessagesInChannels(term: string): Promise<{ channelId: string; channelName: string; messageId: string; text: string }[]> {
+    const results: { channelId: string; channelName: string; messageId: string; text: string }[] = [];
+    const lowerTerm = term.toLowerCase();
+    const currentChannels = this.channels();
+
+    const searchPromises = currentChannels.map(async (channel) => {
+      try {
+        const messagesRef = collection(this.firestore, 'channels', channel.id, 'messages');
+        const snapshot = await getDocs(messagesRef);
+
+        snapshot.forEach((msgDoc) => {
+          const data = msgDoc.data();
+          const text: string = data['text'] ?? '';
+          if (text.toLowerCase().includes(lowerTerm)) {
+            results.push({
+              channelId: channel.id,
+              channelName: channel.name,
+              messageId: msgDoc.id,
+              text,
+            });
+          }
+        });
+      } catch (err) {
+        console.error(`Fehler beim Suchen in Channel ${channel.id}:`, err);
+      }
+    });
+
+    await Promise.all(searchPromises);
+    return results;
+  }
 
   subChats(): void {
     this.unsubChats?.();
@@ -149,12 +174,10 @@ export class FirebaseService {
     await setDoc(chatRef, chat.toJSON());
   }
 
-  // --- OBSERVABLES ---
-
   private users = new Observable<User[]>((observer) => {
     const q = query(collection(this.firestore, 'users'));
-    const unsubscribe = onSnapshot(q, 
-      (snap) => observer.next(snap.docs.map((d) => new User(d.data()))), 
+    const unsubscribe = onSnapshot(q,
+      (snap) => observer.next(snap.docs.map((d) => new User(d.data()))),
       (error) => observer.error(error)
     );
     return () => unsubscribe();

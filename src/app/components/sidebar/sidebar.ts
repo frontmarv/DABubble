@@ -13,10 +13,10 @@ import { ChatService } from '../../services/chat.service';
   styleUrl: './sidebar.scss',
 })
 export class Sidebar {
-  // --- INJECTIONS & OUTPUTS ---
   chat = inject(ChatService);
   firebaseService = inject(FirebaseService);
   displayForeignUserService = inject(DisplayForeignUserService);
+
   @Output() mobileNavigation = new EventEmitter<void>();
 
   // --- UI STATE ---
@@ -29,53 +29,47 @@ export class Sidebar {
   // --- FORM STATE ---
   channelName = '';
   channelDescription = '';
-  addPeopleOption: string = 'all';
-  private tempChannelName = '';
-  private tempChannelDescription = '';
-
-  // --- MEMBER SEARCH STATE ---
+  addPeopleOption = 'all';
   memberSearch = '';
   filteredMembers: any[] = [];
   selectedMembers: any[] = [];
+
+  private tempChannelName = '';
+  private tempChannelDescription = '';
 
   displayAllUsersSidebar = this.firebaseService.getAllUsers;
 
   // --- NAVIGATION ---
 
-  selectChannel(channelId: string) {
+  selectChannel(channelId: string): void {
     this.firebaseService.setSelectedChannel(channelId);
     this.mobileNavigation.emit();
     this.chat.openChannel(channelId);
   }
 
-  async selectDm(user: any) {
+  async selectDm(user: any): Promise<void> {
     this.mobileNavigation.emit();
     await this.chat.openChatRoom(user);
   }
 
-  toggleChannels() {
-    this.channelsOpen = !this.channelsOpen;
+  toggleChannels(): void { this.channelsOpen = !this.channelsOpen; }
+  toggleDm(): void { this.dmOpen = !this.dmOpen; }
+
+  // --- MODAL MANAGEMENT ---
+
+  openCreateChannel(): void { this.isCreateChannelOpen = true; }
+  closeCreateChannel(): void { this.resetCreationState(); }
+  closeAddPeople(): void { this.resetCreationState(); }
+
+  proceedToAddMembers(): void {
+    if (!this.channelName?.trim()) return;
+    this.tempChannelName = this.channelName;
+    this.tempChannelDescription = this.channelDescription;
+    this.isCreateChannelOpen = false;
+    this.isAddPeopleOpen = true;
   }
 
-  toggleDm() {
-    this.dmOpen = !this.dmOpen;
-  }
-
-  // --- MODAL MANAGEMENT & FORM RESET ---
-
-  openCreateChannel() {
-    this.isCreateChannelOpen = true;
-  }
-
-  closeCreateChannel() {
-    this.resetCreationState();
-  }
-
-  closeAddPeople() {
-    this.resetCreationState();
-  }
-
-  private resetCreationState() {
+  private resetCreationState(): void {
     this.isCreateChannelOpen = false;
     this.isAddPeopleOpen = false;
     this.channelName = '';
@@ -88,75 +82,51 @@ export class Sidebar {
     this.selectedMembers = [];
   }
 
-  proceedToAddMembers() {
-    if (!this.channelName?.trim()) return;
-    this.tempChannelName = this.channelName;
-    this.tempChannelDescription = this.channelDescription;
+  // --- MEMBER SEARCH ---
 
-    this.isCreateChannelOpen = false;
-    this.isAddPeopleOpen = true;
-  }
-
-  // --- MEMBER SEARCH & FILTERING ---
-
-  filterMembers() {
+  filterMembers(): void {
     const search = this.memberSearch.toLowerCase().trim();
-    if (!search) {
-      this.filteredMembers = [];
-      return;
-    }
-    this.filteredMembers = this.getMatchingMembers(search);
+    this.filteredMembers = search ? this.getMatchingMembers(search) : [];
   }
 
   private getMatchingMembers(search: string): any[] {
-    const alreadySelected = this.selectedMembers.map((u) => u.uid);
+    const selected = this.selectedMembers.map((u) => u.uid);
     return this.firebaseService.getAllUsers().filter((u: any) => {
-      const fullName = `${u.firstName} ${u.lastName}`.toLowerCase();
-      return fullName.includes(search) && !alreadySelected.includes(u.uid);
+      return `${u.firstName} ${u.lastName}`.toLowerCase().includes(search)
+        && !selected.includes(u.uid);
     });
   }
 
-  selectMember(user: any) {
+  selectMember(user: any): void {
     this.selectedMembers.push(user);
     this.memberSearch = '';
     this.filteredMembers = [];
   }
 
-  removeMember(user: any) {
+  removeMember(user: any): void {
     this.selectedMembers = this.selectedMembers.filter((u) => u.uid !== user.uid);
   }
 
-  // --- CHANNEL CREATION LOGIC ---
+  // --- CHANNEL CREATION ---
 
-  async createChannel() {
-    if (!this.isValidForCreation()) return;
-
+  async createChannel(): Promise<void> {
+    if (!this.isAddPeopleOpen || this.isCreating || !this.tempChannelName?.trim()) return;
     this.isCreating = true;
     try {
-      const newId = await this.saveNewChannel();
+      const newId = await this.firebaseService.addChannel(
+        new Channel({ name: this.tempChannelName, description: this.tempChannelDescription })
+      );
       if (newId) await this.handleNewChannelMembers(newId);
       this.resetCreationState();
-    } catch (error) {
-      console.error('Fehler beim Erstellen des Channels:', error);
+    } catch (e) {
+      console.error('Fehler beim Erstellen des Channels:', e);
     } finally {
       this.isCreating = false;
     }
   }
 
-  private isValidForCreation(): boolean {
-    return Boolean(this.isAddPeopleOpen && !this.isCreating && this.tempChannelName?.trim());
-  }
-
-  private async saveNewChannel(): Promise<string | null> {
-    const newChannel = new Channel({
-      name: this.tempChannelName,
-      description: this.tempChannelDescription,
-    });
-    return await this.firebaseService.addChannel(newChannel);
-  }
-
-  private async handleNewChannelMembers(newId: string) {
-    if (this.addPeopleOption === 'specific' && this.selectedMembers.length > 0) {
+  private async handleNewChannelMembers(newId: string): Promise<void> {
+    if (this.addPeopleOption === 'specific' && this.selectedMembers.length) {
       await this.addSpecificMembers(newId);
     } else if (this.addPeopleOption === 'all') {
       await this.addAllMembers(newId);
@@ -164,27 +134,28 @@ export class Sidebar {
     this.firebaseService.setSelectedChannel(newId);
   }
 
-  private async addSpecificMembers(newId: string) {
+  private async addSpecificMembers(newId: string): Promise<void> {
     for (const user of this.selectedMembers) {
       await this.firebaseService.addMemberToChannel(newId, user.uid);
     }
   }
 
-  private async addAllMembers(newId: string) {
-    const allUsers = this.firebaseService.getAllUsers();
-    for (const user of allUsers) {
+  private async addAllMembers(newId: string): Promise<void> {
+    for (const user of this.firebaseService.getAllUsers()) {
       await this.firebaseService.addMemberToChannel(newId, (user as any).uid);
     }
   }
 
-  isDmActive(user: any): boolean {
-  const active = this.chat.activeConversation();
-  if (!active || active.mode !== 'dm') return false;
-  return active.id === this.buildDmChatId(user);
-}
+  // --- ACTIVE STATE HELPER ---
 
-private buildDmChatId(user: any): string {
-  const currentUid = this.firebaseService.currentUser()?.uid || '';
-  return [currentUid, user.uid].sort().join('_');
-}
+  isDmActive(user: any): boolean {
+    const active = this.chat.activeConversation();
+    if (!active || active.mode !== 'dm') return false;
+    return active.id === this.buildDmChatId(user);
+  }
+
+  private buildDmChatId(user: any): string {
+    const currentUid = this.firebaseService.currentUser()?.uid || '';
+    return [currentUid, user.uid].sort().join('_');
+  }
 }

@@ -9,6 +9,7 @@ import { ChannelInfo } from '../channel-info/channel-info';
 
 @Component({
   selector: 'app-chat',
+  standalone: true,
   imports: [MessageList, MessageComposer, FormsModule, ChannelInfo],
   templateUrl: './main-chat.html',
   styleUrl: './main-chat.scss',
@@ -18,7 +19,7 @@ export class MainChat {
   displayForeignUserService = inject(DisplayForeignUserService);
   firebaseService = inject(FirebaseService);
 
-  // --- SIGNALS & COMPUTED ---
+  // --- COMPUTED STATE ---
 
   currentChannel = computed(() => {
     const id = this.firebaseService.selectedChannelId();
@@ -30,9 +31,17 @@ export class MainChat {
     const channel = this.currentChannel();
     if (!channel) return [];
     const allUsers = this.firebaseService.getAllUsers();
-    if (!channel.members || channel.members.length === 0) return allUsers;
+    if (!channel.members?.length) return allUsers;
     return allUsers.filter((u: any) => channel.members.includes(u.uid));
   });
+
+  isCurrentUserMember = computed(() => {
+    const channel = this.currentChannel();
+    const uid = this.firebaseService.currentUser()?.uid;
+    return channel?.members?.includes(uid) ?? false;
+  });
+
+  // --- MODAL SIGNALS ---
 
   showMembersModal = signal(false);
   showAddPeopleModal = signal(false);
@@ -43,153 +52,105 @@ export class MainChat {
   filteredUsers = signal<any[]>([]);
   selectedUsers = signal<any[]>([]);
 
-  // --- VIEW HELPER ---
+  // --- VIEW HELPERS ---
 
-  getVisibleMembers(): any[] {
-    return this.channelMembers().slice(0, 3);
-  }
-
-  getMemberCount(): number {
-    return this.channelMembers().length;
-  }
+  getVisibleMembers(): any[] { return this.channelMembers().slice(0, 3); }
+  getMemberCount(): number { return this.channelMembers().length; }
 
   // --- MODAL MANAGEMENT ---
 
-  openMembersModal() {
-    this.showMembersModal.set(true);
-    this.showAddPeopleModal.set(false);
-  }
+  openMembersModal(): void { this.showMembersModal.set(true); this.showAddPeopleModal.set(false); }
+  closeMembersModal(): void { this.showMembersModal.set(false); }
+  openChannelInfo(): void { this.showChannelInfoModal.set(true); }
+  closeChannelInfo(): void { this.showChannelInfoModal.set(false); }
 
-  closeMembersModal() {
-    this.showMembersModal.set(false);
-  }
-
-  switchToAddPeople() {
+  switchToAddPeople(): void {
     this.showMembersModal.set(false);
     this.openAddPeopleModal();
   }
 
-  openAddPeopleModal() {
+  openAddPeopleModal(): void {
     this.showAddPeopleModal.set(true);
     this.showMembersModal.set(false);
     this.resetAddPeopleState();
   }
 
-  closeAddPeopleModal() {
+  closeAddPeopleModal(): void {
     this.showAddPeopleModal.set(false);
     this.resetAddPeopleState();
   }
 
-  private resetAddPeopleState() {
+  private resetAddPeopleState(): void {
     this.addPersonSearch.set('');
     this.filteredUsers.set([]);
     this.selectedUsers.set([]);
   }
 
-  openChannelInfo() {
-    this.showChannelInfoModal.set(true);
-  }
+  // --- USER SEARCH ---
 
-  closeChannelInfo() {
-    this.showChannelInfoModal.set(false);
-  }
-
-  // --- USER SEARCH & FILTERING ---
-
-  filterUsers() {
+  filterUsers(): void {
     const search = this.addPersonSearch().toLowerCase().trim();
-    if (!search) {
-      this.filteredUsers.set([]);
-      return;
-    }
-    this.filteredUsers.set(this.getMatchingUsers(search));
+    this.filteredUsers.set(search ? this.getMatchingUsers(search) : []);
   }
 
   private getMatchingUsers(search: string): any[] {
-    const excludedIds = this.getExcludedUserIds();
-    return this.firebaseService
-      .getAllUsers()
-      .filter((u: any) => this.isUserMatchingSearch(u, search) && !excludedIds.includes(u.uid));
+    const excluded = this.getExcludedUserIds();
+    return this.firebaseService.getAllUsers()
+      .filter((u: any) => this.matchesSearch(u, search) && !excluded.includes(u.uid));
   }
 
   private getExcludedUserIds(): string[] {
-    const channel = this.currentChannel();
-    const channelMemberIds = channel?.members || [];
-    const selectedUserIds = this.selectedUsers().map((u: any) => u.uid);
-    return [...channelMemberIds, ...selectedUserIds];
+    return [
+      ...(this.currentChannel()?.members ?? []),
+      ...this.selectedUsers().map((u: any) => u.uid),
+    ];
   }
 
-  private isUserMatchingSearch(user: any, search: string): boolean {
-    const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-    return fullName.includes(search);
+  private matchesSearch(user: any, search: string): boolean {
+    return `${user.firstName} ${user.lastName}`.toLowerCase().includes(search);
   }
 
-  selectUser(user: any) {
+  selectUser(user: any): void {
     this.selectedUsers.update((users) => [...users, user]);
     this.addPersonSearch.set('');
     this.filteredUsers.set([]);
   }
 
-  removeSelectedUser(user: any) {
+  removeSelectedUser(user: any): void {
     this.selectedUsers.update((users) => users.filter((u) => u.uid !== user.uid));
   }
 
-  // --- ADDING MEMBERS ---
+  // --- MEMBER MANAGEMENT ---
 
-  async addMembersToChannel() {
+  async addMembersToChannel(): Promise<void> {
     const channel = this.currentChannel();
-    if (!channel || this.selectedUsers().length === 0) return;
-
+    if (!channel || !this.selectedUsers().length) return;
     this.isAddingMembers.set(true);
-    await this.processMemberAdditions(channel);
-    this.finalizeMemberAddition();
-  }
-
-  private async processMemberAdditions(channel: any) {
     try {
-      if (!channel.members || channel.members.length === 0) {
-        await this.addAllExistingUsersToChannel(channel.id);
-      }
-      await this.addSelectedUsersToChannel(channel.id);
+      if (!channel.members?.length) await this.addAllUsers(channel.id);
+      await this.addSelectedUsers(channel.id);
     } catch (e) {
       console.error('Fehler beim Hinzufügen von Mitgliedern:', e);
     }
-  }
-
-  private async addAllExistingUsersToChannel(channelId: string) {
-    const allUsers = this.firebaseService.getAllUsers();
-    for (const user of allUsers) {
-      await this.firebaseService.addMemberToChannel(channelId, (user as any).uid);
-    }
-  }
-
-  private async addSelectedUsersToChannel(channelId: string) {
-    for (const user of this.selectedUsers()) {
-      await this.firebaseService.addMemberToChannel(channelId, user.uid);
-    }
-  }
-
-  private finalizeMemberAddition() {
     this.closeAddPeopleModal();
     this.isAddingMembers.set(false);
   }
 
-  // main-chat.ts
-  isCurrentUserMember = computed(() => {
+  async joinCurrentChannel(): Promise<void> {
     const channel = this.currentChannel();
-    const currentUser = this.firebaseService.currentUser();
+    const uid = this.firebaseService.currentUser()?.uid;
+    if (channel && uid) await this.firebaseService.addMemberToChannel(channel.id, uid);
+  }
 
-    if (!channel || !currentUser) return false;
-    // Fallback auf leeres Array, falls members undefined ist
-    return channel.members?.includes(currentUser.uid) ?? false;
-  });
+  private async addAllUsers(channelId: string): Promise<void> {
+    for (const user of this.firebaseService.getAllUsers()) {
+      await this.firebaseService.addMemberToChannel(channelId, (user as any).uid);
+    }
+  }
 
-  // Optional, falls du den User direkt per Klick beitreten lassen willst:
-  async joinCurrentChannel() {
-    const channel = this.currentChannel();
-    const currentUser = this.firebaseService.currentUser();
-    if (channel && currentUser) {
-      await this.firebaseService.addMemberToChannel(channel.id, currentUser.uid);
+  private async addSelectedUsers(channelId: string): Promise<void> {
+    for (const user of this.selectedUsers()) {
+      await this.firebaseService.addMemberToChannel(channelId, user.uid);
     }
   }
 }
