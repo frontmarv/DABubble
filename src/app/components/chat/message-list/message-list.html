@@ -15,7 +15,9 @@
       <p class="time">{{ item.createdAt ? (item.createdAt.toDate() | date:'HH:mm') : '' }} Uhr</p>
     </div>
 
-    <div class="message text--regular">{{ item.text }}</div>
+    <div class="message text--regular">
+      <app-message-formatter [text]="item.text"></app-message-formatter>
+    </div>
 
     <div class="answer-container">
       @let reactions = item.reactions;

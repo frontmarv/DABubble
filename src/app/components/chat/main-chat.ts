@@ -1,11 +1,11 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageList } from "./message-list/message-list";
-import { MessageComposer } from "./message-composer/message-composer";
+import { MessageList } from './message-list/message-list';
+import { MessageComposer } from './message-composer/message-composer';
 import { ChatService } from '../../services/chat.service';
 import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 import { FirebaseService } from '../../services/firebase.service';
-import { ChannelInfo } from '../channel-info/channel-info'; 
+import { ChannelInfo } from '../channel-info/channel-info';
 
 @Component({
   selector: 'app-chat',
@@ -21,7 +21,7 @@ export class MainChat {
   // --- SIGNALS & COMPUTED ---
 
   currentChannel = computed(() => {
-    const id = this.firebaseService.selectedChannelId(); 
+    const id = this.firebaseService.selectedChannelId();
     if (!id) return null;
     return this.firebaseService.channels().find((c: any) => c.id === id) ?? null;
   });
@@ -38,7 +38,7 @@ export class MainChat {
   showAddPeopleModal = signal(false);
   showChannelInfoModal = signal(false);
   isAddingMembers = signal(false);
-  
+
   addPersonSearch = signal('');
   filteredUsers = signal<any[]>([]);
   selectedUsers = signal<any[]>([]);
@@ -107,9 +107,9 @@ export class MainChat {
 
   private getMatchingUsers(search: string): any[] {
     const excludedIds = this.getExcludedUserIds();
-    return this.firebaseService.getAllUsers().filter((u: any) => 
-      this.isUserMatchingSearch(u, search) && !excludedIds.includes(u.uid)
-    );
+    return this.firebaseService
+      .getAllUsers()
+      .filter((u: any) => this.isUserMatchingSearch(u, search) && !excludedIds.includes(u.uid));
   }
 
   private getExcludedUserIds(): string[] {
@@ -125,13 +125,13 @@ export class MainChat {
   }
 
   selectUser(user: any) {
-    this.selectedUsers.update(users => [...users, user]);
+    this.selectedUsers.update((users) => [...users, user]);
     this.addPersonSearch.set('');
     this.filteredUsers.set([]);
   }
 
   removeSelectedUser(user: any) {
-    this.selectedUsers.update(users => users.filter((u) => u.uid !== user.uid));
+    this.selectedUsers.update((users) => users.filter((u) => u.uid !== user.uid));
   }
 
   // --- ADDING MEMBERS ---
@@ -139,7 +139,7 @@ export class MainChat {
   async addMembersToChannel() {
     const channel = this.currentChannel();
     if (!channel || this.selectedUsers().length === 0) return;
-    
+
     this.isAddingMembers.set(true);
     await this.processMemberAdditions(channel);
     this.finalizeMemberAddition();
@@ -172,5 +172,24 @@ export class MainChat {
   private finalizeMemberAddition() {
     this.closeAddPeopleModal();
     this.isAddingMembers.set(false);
+  }
+
+  // main-chat.ts
+  isCurrentUserMember = computed(() => {
+    const channel = this.currentChannel();
+    const currentUser = this.firebaseService.currentUser();
+
+    if (!channel || !currentUser) return false;
+    // Fallback auf leeres Array, falls members undefined ist
+    return channel.members?.includes(currentUser.uid) ?? false;
+  });
+
+  // Optional, falls du den User direkt per Klick beitreten lassen willst:
+  async joinCurrentChannel() {
+    const channel = this.currentChannel();
+    const currentUser = this.firebaseService.currentUser();
+    if (channel && currentUser) {
+      await this.firebaseService.addMemberToChannel(channel.id, currentUser.uid);
+    }
   }
 }

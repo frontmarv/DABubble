@@ -1,0 +1,15 @@
+<span class="formatted-message">
+    @for (part of parsedText; track $index) {
+      @if (part.type === 'text') {
+        <span class="text-part">{{ part.content }}</span>
+      } @else if (part.type === 'user') {
+        <span class="mention user-mention" (click)="onUserClick(part.data, $event)">
+          {{ part.content }}
+        </span>
+      } @else if (part.type === 'channel') {
+        <span class="mention channel-mention" (click)="onChannelClick(part.data, $event)">
+          {{ part.content }}
+        </span>
+      }
+    }
+  </span>

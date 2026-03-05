@@ -10,10 +10,11 @@ import { ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { Message } from '../../../models/message.class';
 import { DisplayForeignUserService } from '../../../services/display-foreign-user.service';
 import { ShowUserProfile } from '../../../services/showUserProfile';
+import { MessageFormatter } from '../message-formatter/message-formatter';
 @Component({
 
   selector: 'app-message-list',
-  imports: [DatePipe, CommonModule, EmojiPicker],
+  imports: [DatePipe, CommonModule, EmojiPicker, MessageFormatter],
   templateUrl: './message-list.html',
   styleUrl: './message-list.scss',
 })

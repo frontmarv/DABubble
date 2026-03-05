@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, User as FirebaseUser } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, User as FirebaseUser, } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { FirebaseService } from './firebase.service';
 import { User } from '../models/user.class';
 import { sendPasswordResetEmail, confirmPasswordReset } from 'firebase/auth';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   // --- INJECTIONS ---
@@ -34,16 +34,31 @@ export class AuthService {
 
   // --- CORE AUTH METHODS ---
 
-  async signup(email: string, pass: string, firstName: string, lastName: string, avatar: string, status: string) {
+  async signup(
+    email: string,
+    pass: string,
+    firstName: string,
+    lastName: string,
+    avatar: string,
+    status: string
+  ) {
     try {
       const { user } = await createUserWithEmailAndPassword(this.auth, email, pass);
       const cleanAvatar = avatar?.trim() || 'unkown-user.svg';
 
       const newUser = new User({
-        uid: user.uid, firstName, lastName, email, avatar: cleanAvatar, status
+        uid: user.uid,
+        firstName,
+        lastName,
+        email,
+        avatar: cleanAvatar,
+        status,
       });
 
       await this.firebaseService.addUser(newUser, user.uid);
+
+      await this.addTargetUserToWelcomeChannel(user.uid);
+
       return { success: true };
     } catch (error: any) {
       return { success: false, error: this.getErrorMessage(error.code) };
@@ -75,6 +90,19 @@ export class AuthService {
     const uid = this.currentFirebaseUser?.uid;
     if (uid) {
       await this.firebaseService.updateSingleUser(uid, { status: 'offline' });
+    }
+  }
+
+  // auth.service.ts
+  private async addTargetUserToWelcomeChannel(uid: string) {
+    // Wir suchen den Channel, der "willkommen" heißt (oder "Allgemein" als Fallback)
+    const channels = this.firebaseService.channels();
+    const welcomeChannel = channels.find(
+      (c) => c.name.toLowerCase() === 'willkommen' || c.name.toLowerCase() === 'allgemein'
+    );
+
+    if (welcomeChannel) {
+      await this.firebaseService.addMemberToChannel(welcomeChannel.id, uid);
     }
   }
 
@@ -114,17 +142,18 @@ export class AuthService {
       lastName,
       email: fbUser.email || '',
       avatar: photo,
-      status: 'online'
+      status: 'online',
     });
 
     await this.firebaseService.addUser(newGoogleUser, fbUser.uid);
+    await this.addTargetUserToWelcomeChannel(fbUser.uid);
   }
 
-  private extractGoogleNames(displayName: string | null): { firstName: string, lastName: string } {
+  private extractGoogleNames(displayName: string | null): { firstName: string; lastName: string } {
     const nameParts = (displayName || 'Google User').trim().split(/\s+/);
     return {
       firstName: nameParts[0] || 'Google',
-      lastName: nameParts.slice(1).join(' ') || ''
+      lastName: nameParts.slice(1).join(' ') || '',
     };
   }
 
@@ -170,7 +199,7 @@ export class AuthService {
       'auth/wrong-password': 'Falsches Passwort.',
       'auth/invalid-credential': 'Ungültige Anmeldedaten. Bitte überprüfe E-Mail und Passwort.',
       'auth/too-many-requests': 'Zu viele Anmeldeversuche. Bitte versuche es später.',
-      'auth/network-request-failed': 'Netzwerkfehler. Bitte überprüfe deine Internetverbindung.'
+      'auth/network-request-failed': 'Netzwerkfehler. Bitte überprüfe deine Internetverbindung.',
     };
 
     return errorMessages[errorCode] || 'Ein unbekannter Fehler ist aufgetreten.';
