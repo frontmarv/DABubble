@@ -19,6 +19,7 @@
     display: flex;
     gap: 30px;
     width: 100%;
+
     &:hover {
         background-color: var(--color-background);
 
@@ -40,6 +41,7 @@
 }
 
 .message-name {
+
     // max-width: 200px;
     &:hover {
         color: var(--color-purple1);
@@ -95,6 +97,7 @@
     position: relative;
     display: flex;
     gap: 30px;
+    width: 100%;
     justify-content: flex-end;
 
     &:hover {
@@ -262,26 +265,32 @@
 }
 
 .empty-chat-info {
-    padding: 10px 100px 10px 45px;
+    padding: 10px 45px;
     width: 100%;
     gap: 30px;
     display: flex;
     flex-direction: column;
+
     .user-info {
         display: flex;
         align-items: flex-end;
         gap: 25px;
     }
+
     h4 {
         cursor: pointer;
+        word-break: break-all;
     }
+
     .user-tag-inChat {
         color: var(--color-purple3);
         cursor: pointer;
+
         &:hover {
             font-weight: bold;
         }
     }
+
     p {
         color: var(--color-text-grey);
     }
@@ -315,6 +324,10 @@
 
     .reaction-bar {
         left: 20px;
+    }
+
+    .empty-chat-info {
+        padding: 10px 20px;
     }
 }
 
