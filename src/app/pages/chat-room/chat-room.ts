@@ -104,14 +104,18 @@ export class ChatRoom implements OnInit {
 
   private getChannelResults(term: string): SearchResult[] {
     return this.firebaseService.channels()
-      .filter((c) => c.name.toLowerCase().includes(term))
-      .map((c) => ({ type: 'channel' as const, name: c.name, id: c.id, avatar: null }));
+      .filter((c) => (c.name || '').toLowerCase().includes(term))
+      .map((c) => ({ type: 'channel' as const, name: c.name || 'Unbenannt', id: c.id, avatar: null }));
   }
 
   private getUserResults(term: string): SearchResult[] {
     const currentUid = this.firebaseService.currentUser()?.uid;
     return this.firebaseService.getAllUsers()
-      .filter((u: any) => u.firstName.toLowerCase().includes(term) || u.lastName.toLowerCase().includes(term))
+      .filter((u: any) => {
+        const firstName = u.firstName || '';
+        const lastName = u.lastName || '';
+        return firstName.toLowerCase().includes(term) || lastName.toLowerCase().includes(term);
+      })
       .map((u: any) => this.mapUserToSearchResult(u, currentUid))
       .sort((a) => (a.name.endsWith('(Du)') ? -1 : 1));
   }

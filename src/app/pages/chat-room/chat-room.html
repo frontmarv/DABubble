@@ -18,7 +18,7 @@
             @if (showSearchDropdown() && filteredResults().length > 0) {
             <div class="search-dropdown">
                 @for (item of filteredResults(); track item.id) {
-                <div class="search-item" (click)="selectResult(item)">
+                <div class="search-item" (click)="selectResult(item)">                   
                     <div class="search-item-left">
                         @if (item.type === 'channel') {
                             <span class="prefix">#</span>
@@ -27,27 +27,23 @@
                                 <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar" />
                                 <span class="status" [class.status--online]="item.status === 'online'" [class.status--offline]="item.status !== 'online'"></span>
                             </div>
-                        } @else {
-                            <img src="/main-page/chat.svg" class="search-icon" alt="" />
                         }
-                    </div>
+                    </div>                   
                     <div class="search-item-info">
                         <span class="name">{{ item.name }}</span>
                         @if (item.context) {
                             <span class="context-text">{{ item.context }}</span>
                         }
-                    </div>
+                    </div>                   
                 </div>
                 }
             </div>
             }
-        </div>
-
-        <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
+        </div> <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
             <span class="user-name">{{ firebaseService.currentUser()?.firstName }} {{ firebaseService.currentUser()?.lastName }}</span>
             <img [src]="getAvatarUrl(firebaseService.currentUser()?.avatar)" alt="Profilbild" class="avatar" />
             <span class="status" [class.status--online]="firebaseService.currentUser()?.status === 'online'" [class.status--offline]="firebaseService.currentUser()?.status !== 'online'"></span>
-            <span class="dropdown-arrow"></span>
+            <span class="dropdown-arrow"></span>           
             <div class="profile-menu" (click)="$event.stopPropagation()">
                 <div class="menu-item hover" (click)="showUserProfileService.setToTrue()">
                     <img src="/main-page/account_circle.svg" alt="Profil" />
