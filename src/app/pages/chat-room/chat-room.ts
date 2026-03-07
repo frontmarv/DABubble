@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth.service';
 import { FirebaseService } from '../../services/firebase.service';
 import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 import { ShowUserProfile } from '../../services/showUserProfile';
+import { ChatService } from '../../services/chat.service';
 
 interface SearchResult {
   type: 'channel' | 'user' | 'message';
@@ -34,6 +35,7 @@ export class ChatRoom implements OnInit {
   displayForeignUserService = inject(DisplayForeignUserService);
   firebaseService = inject(FirebaseService);
   showUserProfileService = inject(ShowUserProfile);
+  chatService = inject(ChatService);
 
   isSidebarOpen = true;
   isProfileMenuOpen = false;
@@ -151,11 +153,13 @@ export class ChatRoom implements OnInit {
         this.displayForeignUserService.toggle();
       }
     } else if (item.type === 'message' || item.type === 'channel') {
-      this.firebaseService.setSelectedChannel(item.channelId || item.id);
+      const targetId = item.channelId || item.id;
+      this.chatService.activeConversation.set(null); 
+      this.firebaseService.setSelectedChannel(targetId);
+      this.chatService.openChannel(targetId);
     }
     this.resetSearch();
   }
-
   private resetSearch() {
     this.searchQuery.set('');
     this.filteredResults.set([]);
