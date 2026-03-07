@@ -104,8 +104,12 @@ export class MessageComposer {
 
   private buildReplacedText(text: string, cursor: number, item: ComposerSearchResult): string {
     const symbol = item.type === 'user' ? '@' : '#';
-    const lastIdx = text.substring(0, cursor).lastIndexOf(symbol);
+    const textBeforeCursor = text.substring(0, cursor);
+    const lastIdx = textBeforeCursor.lastIndexOf(symbol);
     const name = item.name.replace(' (Du)', '');
+    if (lastIdx === -1) {
+      return textBeforeCursor + `${symbol}${name} ` + text.substring(cursor);
+    }
     return text.substring(0, lastIdx) + `${symbol}${name} ` + text.substring(cursor);
   }
 
