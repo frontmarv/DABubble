@@ -39,21 +39,23 @@ export class Sidebar {
 
   displayAllUsersSidebar = this.firebaseService.getAllUsers;
 
-  selectChannel(channelId: string): void {
-    this.firebaseService.setSelectedChannel(channelId);
-    this.mobileNavigation.emit();
-  
-    const uid = this.firebaseService.currentUser()?.uid;
-    const channel = this.firebaseService.channels().find(c => c.id === channelId);
-    const isMember = channel?.members?.includes(uid) ?? false;
-  
-    if (isMember) this.chat.openChannel(channelId);
-  }
+selectChannel(channelId: string): void {
+  this.chat.activeConversation.set(null); 
+  this.firebaseService.setSelectedChannel(channelId);
+  this.mobileNavigation.emit();
 
-  async selectDm(user: any): Promise<void> {
-    this.mobileNavigation.emit();
-    await this.chat.openChatRoom(user);
-  }
+  const uid = this.firebaseService.currentUser()?.uid;
+  const channel = this.firebaseService.channels().find(c => c.id === channelId);
+  const isMember = channel?.members?.includes(uid) ?? false;
+
+  if (isMember) this.chat.openChannel(channelId);
+}
+
+async selectDm(user: any): Promise<void> {
+  this.firebaseService.setSelectedChannel(''); 
+  this.mobileNavigation.emit();
+  await this.chat.openChatRoom(user);
+}
 
   toggleChannels(): void { this.channelsOpen = !this.channelsOpen; }
   toggleDm(): void { this.dmOpen = !this.dmOpen; }
