@@ -49,7 +49,7 @@ export class ChatService {
     await this.commitMessage(path, uid, text.trim());
   }
 
-  async toggleReaction(messageId: string, emoji: string): Promise<void> {
+  async toggleReaction(messageId: string, emoji: string | number | symbol): Promise<void> {
     const path = this.basePath();
     const userId = this.firebaseService.currentUser()?.uid;
     if (!path || !userId || !messageId || !emoji) return;
@@ -108,16 +108,17 @@ export class ChatService {
     await batch.commit();
   }
 
-  private calculateNewReactions(msgData: any, emoji: string, userId: string): Record<string, string[]> {
+private calculateNewReactions(msgData: any, emoji: string | number | symbol, userId: string): Record<string, string[]> {
+    const emojiKey = String(emoji);
     const reactions: Record<string, string[]> = { ...(msgData.reactions ?? {}) };
-    const current: string[] = reactions[emoji] ?? [];
+    const current: string[] = reactions[emojiKey] ?? [];
 
     if (current.includes(userId)) {
       const updated = current.filter((id) => id !== userId);
-      if (updated.length === 0) { const { [emoji]: _, ...rest } = reactions; return rest; }
-      reactions[emoji] = updated;
+      if (updated.length === 0) { const { [emojiKey]: _, ...rest } = reactions; return rest; }
+      reactions[emojiKey] = updated;
     } else {
-      reactions[emoji] = [...current, userId];
+      reactions[emojiKey] = [...current, userId];
     }
     return reactions;
   }

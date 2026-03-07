@@ -106,6 +106,7 @@ export class SignupComponent {
   prevStep(): void {
     this.signupStep = 1;
     this.errorMessage = '';
+    this.isLoading = false;
   }
 
   selectAvatar(avatar: string): void {
