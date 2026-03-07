@@ -48,6 +48,7 @@ selectChannel(channelId: string): void {
 
 async selectDm(user: any): Promise<void> {
   this.firebaseService.setSelectedChannel(''); 
+  this.chat.activeConversation.set(null);
   this.mobileNavigation.emit();
   await this.chat.openChatRoom(user);
 }
