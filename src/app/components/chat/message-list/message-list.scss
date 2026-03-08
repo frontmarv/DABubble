@@ -84,13 +84,6 @@
     align-items: flex-start;
 }
 
-.answer-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-}
-
 .reaction-container {
     display: flex;
     justify-content: flex-end;
@@ -215,26 +208,6 @@
     gap: 20px;
     align-items: center;
     padding-right: 8px;
-}
-
-.reactions {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--color-white);
-    height: 34px;
-    padding: 5px 10px 5px 10px;
-    width: fit-content;
-    border: 1px solid var(--color-light-purple-lines);
-    border-radius: 30px;
-    gap: 10px;
-    cursor: pointer;
-
-    &:hover {
-        .userReaction {
-            display: flex;
-        }
-    }
 }
 
 .fast-emoji {
@@ -385,17 +358,8 @@
         font-size: 0.95rem;
     }
 
-    .reactions {
-        padding: 3px 8px;
-        gap: 5px;
-    }
-
     .fast-emoji {
         width: 34px;
         height: 34px;
-    }
-
-    .answer-container {
-        flex-direction: column;
     }
 }

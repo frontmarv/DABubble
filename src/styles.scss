@@ -429,3 +429,41 @@ app-message-composer {
     width: 100% !important;
     max-width: 320px !important;
 }
+
+.answer-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+
+    @media screen and (max-width: 480px) {
+        flex-direction: column;
+    }
+}
+
+.reactions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-white);
+    height: 34px;
+    padding: 5px 10px 5px 10px;
+    width: fit-content;
+    border: 1px solid var(--color-light-purple-lines);
+    border-radius: 30px;
+    gap: 10px;
+    cursor: pointer;
+
+    &:hover {
+        .userReaction {
+            display: flex;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+
+        padding: 3px 8px;
+        gap: 5px;
+
+    }
+}
