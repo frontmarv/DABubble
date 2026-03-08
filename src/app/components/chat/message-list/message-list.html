@@ -1,7 +1,6 @@
 <div class="chat-container" #scrollContainer>
   <div class="messages">
     @for (item of chat.messages(); track item.id; let i = $index) {
-    @if (item.senderId === firebaseService.currentUser()?.uid) {
     @if (shouldShowDateSeparator(i)) {
     <div class="time-seperator">
       <div class="line">
@@ -11,6 +10,8 @@
       </div>
     </div>
     }
+    @if (item.senderId === firebaseService.currentUser()?.uid) {
+
     <div class="message-field-user">
       <span class="avatar">
         <img [src]="chat.users()[item.senderId]?.avatar" alt="Profilbild" class="avatar__img" />
@@ -28,14 +29,13 @@
         <div class="message text--regular">
           <app-message-formatter [text]="item.text"></app-message-formatter>
         </div>
-
-        <div class="reaction-container">
+        <div class="answer-container">
           @let reactions = item.reactions;
           @let visibleReactions = getVisibleReactions(reactions, item.id!);
           @let hiddenCount = getHiddenReactionsCount(reactions, item.id!);
           @let isExpanded = isReactionsExpanded(item.id!);
           @for (reaction of (visibleReactions | keyvalue); track reaction.key) {
-          <div class="reactions" (click)="toggleSelectedEmoji(item.id!, reaction.key); $event.stopPropagation()">
+          <div class="reactions" (click)="toggleEmoji(item.id!, reaction.key); $event.stopPropagation()">
             <div class="fast-emoji">
               <span class="emoji-symbol">{{ reaction.key }}</span>
               <div class="emoji-qantity">
@@ -47,9 +47,9 @@
                 <span class="emoji-symbol">{{ reaction.key }}</span>
                 <div>
                   <span class="text--regular bold">
-                      {{ formatReactionUsers(reaction.value) }}
-                    </span>
-                    <span class="text--small">hat reagiert</span>
+                    {{ formatReactionUsers(reaction.value) }}
+                  </span>
+                  <span class="text--small">hat reagiert</span>
                 </div>
               </div>
               }
@@ -68,17 +68,15 @@
           </div>
           }
         </div>
-
-
       </div>
       <div class="reaction-bar">
-        <div (click)="chat.toggleReaction(item.id!, '✅')" class="reaction-emoji">
+        <div (click)="toggleEmoji(item.id!, '✅')" class="reaction-emoji">
           <img src="/chat-input/check-emoji.svg" alt="">
         </div>
-        <div class="reaction-emoji">
+        <div (click)="toggleEmoji(item.id!, '👍')" class="reaction-emoji">
           <img src="/chat-input/thumb-emoji.svg" alt="">
         </div>
-        <app-emoji-picker (emojiSelected)="toggleSelectedEmoji(item.id!, $event)"></app-emoji-picker>
+        <app-emoji-picker (emojiSelected)="toggleEmoji(item.id!, $event)"></app-emoji-picker>
         <button class="icon-btn" type="button" aria-label="Sentiment">
           <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
         </button>
@@ -87,8 +85,11 @@
           <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
           @if(isEditMsgHoverd){
           <div class="edit-msg-field">
-            <span (click)="setItemToEdit(item.id!)" class="edit-msg">Nachricht
-              bearbeiten</span>
+            <span
+              (click)="editOldMessageSerivce.setEditMessage(item.id!, item.text); setEditMsgHoverdFalse(); $event.stopPropagation()"
+              class="edit-msg">
+              Nachricht bearbeiten
+            </span>
           </div>
           }
         </button>
@@ -121,47 +122,40 @@
             <p (click)="openThread(item)" class="answers">2 Antworten</p>
             <p class="time">Letzte Antwort 14:56</p>
           </div>
+          @let reactions = item.reactions;
 
-          <div class="reaction-container">
-
-
-            @let reactions = item.reactions;
-
-            @for (reaction of (reactions | keyvalue); track reaction.key) {
-            <div class="reactions" (click)="toggleSelectedEmoji(item.id!, reaction.key); $event.stopPropagation()">
-              <div class="fast-emoji">
-                <span class="emoji-symbol">{{ reaction.key }}</span>
-                <div class="emoji-qantity">
-                  {{ reaction.value.length }}
-                </div>
-                @if(!isMobileActive()){
-                <div class="userReaction">
-                  <span class="emoji-symbol">{{ reaction.key }}</span>
-                  <div>
-                    <span class="text--regular bold">
-                      {{ formatReactionUsers(reaction.value) }}
-                    </span>
-                    <span class="text--small">hat reagiert</span>
-                  </div>
-                </div>
-                }
+          @for (reaction of (reactions | keyvalue); track reaction.key) {
+          <div class="reactions" (click)="toggleEmoji(item.id!, reaction.key); $event.stopPropagation()">
+            <div class="fast-emoji">
+              <span class="emoji-symbol">{{ reaction.key }}</span>
+              <div class="emoji-qantity">
+                {{ reaction.value.length }}
               </div>
+              @if(!isMobileActive()){
+              <div class="userReaction">
+                <span class="emoji-symbol">{{ reaction.key }}</span>
+                <div>
+                  <span class="text--regular bold">
+                    {{ formatReactionUsers(reaction.value) }}
+                  </span>
+                  <span class="text--small">hat reagiert</span>
+                </div>
+              </div>
+              }
             </div>
-            }
-
-
           </div>
+          }
         </div>
       </div>
 
       <div class="reaction-bar-other">
-        <div class="reaction-emoji">
+        <div (click)="toggleEmoji(item.id!, '✅')" class="reaction-emoji">
           <img src="/chat-input/check-emoji.svg" alt="">
         </div>
-        <div class="reaction-emoji">
+        <div (click)="toggleEmoji(item.id!, '👍')" class="reaction-emoji">
           <img src="/chat-input/thumb-emoji.svg" alt="">
         </div>
-        <app-emoji-picker (emojiSelected)="toggleSelectedEmoji(item.id!, $event)"></app-emoji-picker>
+        <app-emoji-picker (emojiSelected)="toggleEmoji(item.id!, $event)"></app-emoji-picker>
         <button class="icon-btn" type="button" aria-label="Sentiment">
           <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
         </button>

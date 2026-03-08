@@ -4,6 +4,7 @@ import { User } from '../models/user.class';
 import { FirebaseService } from './firebase.service';
 import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch, runTransaction, Unsubscribe } from '@angular/fire/firestore';
 import { Message } from '../models/message.class';
+import { editOldMessageService } from './editOldMessage-service';
 
 type ChatMode = 'dm' | 'channel';
 interface ActiveConversation { mode: ChatMode; id: string; }
@@ -11,6 +12,7 @@ interface ActiveConversation { mode: ChatMode; id: string; }
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private firebaseService = inject(FirebaseService);
+  editOldMessageSerivce = inject(editOldMessageService);
 
   activeConversation = signal<ActiveConversation | null>(null);
   messages = signal<Message[]>([]);
@@ -108,7 +110,7 @@ export class ChatService {
     await batch.commit();
   }
 
-private calculateNewReactions(msgData: any, emoji: string | number | symbol, userId: string): Record<string, string[]> {
+  private calculateNewReactions(msgData: any, emoji: string | number | symbol, userId: string): Record<string, string[]> {
     const emojiKey = String(emoji);
     const reactions: Record<string, string[]> = { ...(msgData.reactions ?? {}) };
     const current: string[] = reactions[emojiKey] ?? [];
@@ -159,4 +161,19 @@ private calculateNewReactions(msgData: any, emoji: string | number | symbol, use
       if (user) this.users.update((cache) => ({ ...cache, [uid]: user }));
     }
   }
+
+  async updateOldMessage(text: string): Promise<void> {
+    const path = this.basePath();
+    const messageId = this.editOldMessageSerivce.currentMessageId();
+    if (!path || !messageId || !text.trim()) return;
+    const batch = writeBatch(this.firebaseService.firestore);
+    const messageRef = doc(this.firebaseService.firestore, path, 'messages', messageId);
+    batch.update(messageRef, {
+      text: text.trim(),
+      // editedAt: serverTimestamp()
+    });
+    await batch.commit();
+    this.editOldMessageSerivce.clearEditMessage();
+  }
+
 }

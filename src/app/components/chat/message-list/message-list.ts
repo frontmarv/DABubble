@@ -9,6 +9,7 @@ import { DisplayForeignUserService } from '../../../services/display-foreign-use
 import { ShowUserProfile } from '../../../services/showUserProfile';
 import { MessageFormatter } from '../message-formatter/message-formatter';
 import { Message } from '../../../models/message.class';
+import { editOldMessageService } from '../../../services/editOldMessage-service';
 
 @Component({
   selector: 'app-message-list',
@@ -24,11 +25,11 @@ export class MessageList {
   firebaseService = inject(FirebaseService);
   displayForeignUserService = inject(DisplayForeignUserService);
   showUserProfileService = inject(ShowUserProfile);
+  editOldMessageSerivce = inject(editOldMessageService);
 
   @ViewChild('scrollAnchor') private scrollAnchor!: ElementRef;
   @Output() mobileNavigation = new EventEmitter<void>();
 
-  editingMessageId: string | null = null;
   isEditMsgHoverd = false;
   expandedReactions = new Set<string>();
 
@@ -43,7 +44,6 @@ export class MessageList {
 
   setEditMsgHoverdTrue(): void { this.isEditMsgHoverd = true; }
   setEditMsgHoverdFalse(): void { this.isEditMsgHoverd = false; }
-  setItemToEdit(itemId: string): void { this.editingMessageId = itemId; }
 
   openThread(message: Message): void {
     const basePath = this.chat.basePath();
@@ -64,7 +64,7 @@ export class MessageList {
 
   // --- REACTIONS & DM ---
 
-  toggleSelectedEmoji(itemId: string, emoji: string | number | symbol): void { this.chat.toggleReaction(itemId, emoji); }
+  toggleEmoji(itemId: string, emoji: string | number | symbol): void { this.chat.toggleReaction(itemId, emoji); }
 
   selectDm(user: any): void {
     this.mobileNavigation.emit();
@@ -175,4 +175,5 @@ export class MessageList {
     const allButLast = names.slice(0, -1).join(', ');
     return `${allButLast} und ${names[names.length - 1]}`;
   }
+  
 }

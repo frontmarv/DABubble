@@ -86,7 +86,7 @@
 
 .answer-container {
     display: flex;
-    justify-content: flex-end;
+    flex-wrap: wrap;
     align-items: center;
     gap: 8px;
 }
@@ -214,6 +214,7 @@
     display: flex;
     gap: 20px;
     align-items: center;
+    padding-right: 8px;
 }
 
 .reactions {
@@ -243,7 +244,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
 }
 
 .userReaction {
@@ -392,5 +393,9 @@
     .fast-emoji {
         width: 34px;
         height: 34px;
+    }
+
+    .answer-container {
+        flex-direction: column;
     }
 }

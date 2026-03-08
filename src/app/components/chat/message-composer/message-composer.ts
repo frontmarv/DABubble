@@ -1,10 +1,11 @@
-import { Component, inject, signal, computed, ViewChild, ElementRef, HostListener, Input } from '@angular/core';
+import { Component, inject, signal, computed, ViewChild, ElementRef, HostListener, Input, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatService } from '../../../services/chat.service';
 import { ThreadStateService } from '../../../services/thread-state.service';
 import { FirebaseService } from '../../../services/firebase.service';
 import { EmojiPickerStateService } from '../../../services/emoji-picker-serivce';
 import { EmojiPicker } from '../../emoji-picker/emoji-picker';
+import { editOldMessageService } from '../../../services/editOldMessage-service';
 
 interface ComposerSearchResult {
   type: 'user' | 'channel';
@@ -31,6 +32,7 @@ export class MessageComposer {
   threadService = inject(ThreadStateService);
   firebaseService = inject(FirebaseService);
   emojiPickerService = inject(EmojiPickerStateService);
+  editOldMessageSerivce = inject(editOldMessageService);
 
   searchQuery = signal<string>('');
   searchType = signal<'user' | 'channel' | null>(null);
@@ -41,6 +43,15 @@ export class MessageComposer {
     if (!this.elementRef.nativeElement.contains(event.target)) this.resetSearchState();
   }
 
+  constructor() {
+    effect(() => {
+      const textToEdit = this.editOldMessageSerivce.currentMessageText();
+      if (textToEdit && this.textarea) {
+        this.textarea.nativeElement.value = textToEdit;
+        this.textarea.nativeElement.focus();
+      }
+    });
+  }
   filteredResults = computed<ComposerSearchResult[]>(() => {
     const type = this.searchType();
     if (type === 'channel') return this.getChannelResults(this.searchQuery().toLowerCase());
@@ -118,7 +129,11 @@ export class MessageComposer {
   sendMessage(textarea: HTMLTextAreaElement): void {
     const value = textarea.value.trim();
     if (!value) return;
-    this.mode === 'thread' ? this.threadService.sendThreadReply(value) : this.chatService.sendMessage(value);
+    if (this.editOldMessageSerivce.currentMessageId() === "") {
+      this.mode === 'thread' ? this.threadService.sendThreadReply(value) : this.chatService.sendMessage(value);
+    } else {
+      this.chatService.updateOldMessage(value);
+    }
     this.clearComposer(textarea);
   }
 
