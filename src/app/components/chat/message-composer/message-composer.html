@@ -1,4 +1,4 @@
-<div class="message-input-container">
+<div class="message-input-container" [class.disabled-container]="isRecipientDeleted()">
     @if (showDropdown() && filteredResults().length > 0) {
     <div class="mention-dropdown">
         @for (item of filteredResults(); track item.id) {
@@ -20,18 +20,27 @@
     }
 
     <textarea #message class="text--regular" maxlength="2000"
-        [placeholder]="placeholder"
+        [disabled]="isRecipientDeleted()"
+        [placeholder]="isRecipientDeleted() ? 'An gelöschte Nutzer können keine Nachrichten gesendet werden' : placeholder"
         (input)="onInput($event)"
         (keydown)="sendMessageOnEnter($event, message)"></textarea>
 
     <div class="message-buttons-container">
         <div class="action-icons">
-            <app-emoji-picker (emojiSelected)="insertEmoji($event)"></app-emoji-picker>
+            <app-emoji-picker 
+                (emojiSelected)="insertEmoji($event)" 
+                [class.disabled-icon]="isRecipientDeleted()">
+            </app-emoji-picker>
+            
             <button class="icon-btn" type="button" aria-label="Mention"
+                [disabled]="isRecipientDeleted()"
                 (click)="toggleUserDropdown($event)">
                 <img class="icon-btn__img" src="/chat-input/alternate-email.svg" alt="Mention" />
             </button>
         </div>
-        <img (click)="sendMessage(message)" class="send-btn" src="/chat-input/send.svg" alt="Senden" />
+        <img (click)="!isRecipientDeleted() && sendMessage(message)" 
+             class="send-btn" 
+             [class.disabled-btn]="isRecipientDeleted()"
+             src="/chat-input/send.svg" alt="Senden" />
     </div>
 </div>

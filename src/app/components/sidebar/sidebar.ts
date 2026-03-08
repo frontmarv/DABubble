@@ -39,6 +39,13 @@ export class Sidebar {
 
   displayAllUsersSidebar = this.firebaseService.getAllUsers;
 
+  getUserName(user: any): string {
+    if (!user || !user.firstName || user.firstName === 'Gelöschter') {
+      return 'Gelöschter Nutzer';
+    }
+    return `${user.firstName} ${user.lastName}`;
+  }
+
 selectChannel(channelId: string): void {
   this.chat.activeConversation.set(null); 
   this.firebaseService.setSelectedChannel(channelId);
@@ -94,6 +101,7 @@ async selectDm(user: any): Promise<void> {
     const selected = this.selectedMembers.map((u) => u.uid);
     return this.firebaseService.getAllUsers().filter((u: any) => {
       return `${u.firstName} ${u.lastName}`.toLowerCase().includes(search)
+        && u.firstName !== 'Gelöschter' // NEU HINZUGEFÜGT
         && !selected.includes(u.uid);
     });
   }
@@ -141,7 +149,10 @@ async selectDm(user: any): Promise<void> {
 
   private async addAllMembers(newId: string): Promise<void> {
     for (const user of this.firebaseService.getAllUsers()) {
-      await this.firebaseService.addMemberToChannel(newId, (user as any).uid);
+      // 💡 NUR HINZUGEFÜGT: if-Bedingung um den bestehenden Aufruf
+      if ((user as any).firstName !== 'Gelöschter') {
+        await this.firebaseService.addMemberToChannel(newId, (user as any).uid);
+      }
     }
   }
 

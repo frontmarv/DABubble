@@ -165,7 +165,7 @@ export class MessageList {
         return 'Du';
       }
       const user = allUsers.find(u => u.uid === uid);
-      return user ? `${user.firstName} ${user.lastName}` : 'Unbekannt';
+      return user ? `${user.firstName} ${user.lastName}` : 'Gelöschter Nutzer';
     });
 
     if (names.length === 1) {

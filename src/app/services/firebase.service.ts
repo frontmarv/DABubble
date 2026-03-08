@@ -60,9 +60,35 @@ export class FirebaseService {
   }
 
   async getSingleUser(uid: string): Promise<User | null> {
-    const docRef = doc(this.firestore, 'users', uid);
-    const snap = await getDoc(docRef);
-    return snap.exists() ? new User(snap.data()) : null;
+    if (!uid) {
+      console.warn('getSingleUser wurde ohne UID aufgerufen.');
+      return this.getDeletedUserFallback('unknown');
+    }
+
+    try {
+      const docRef = doc(this.firestore, 'users', uid); 
+      const snap = await getDoc(docRef);
+
+      if (snap.exists()) {
+        return new User(snap.data());
+      } else {
+        return this.getDeletedUserFallback(uid);
+      }
+    } catch (error) {
+      console.error('Fehler beim Abrufen des Users:', error);
+      return this.getDeletedUserFallback(uid);
+    }
+  }
+
+  private getDeletedUserFallback(uid: string): User {
+    return new User({
+      uid: uid,
+      firstName: 'Gelöschter',
+      lastName: 'Nutzer',
+      email: '',
+      avatar: '/login/avatar-grey.svg',
+      status: 'offline'
+    });
   }
 
   async updateSingleUser(uid: string, userData: any): Promise<void> {
