@@ -39,25 +39,32 @@ export class Sidebar {
 
   displayAllUsersSidebar = this.firebaseService.getAllUsers;
 
-selectChannel(channelId: string): void {
-  this.chat.activeConversation.set(null); 
-  this.firebaseService.setSelectedChannel(channelId);
-  this.mobileNavigation.emit();
-  this.chat.openChannel(channelId);
-}
+  getUserName(user: any): string {
+    if (!user) return 'Unbekannter Nutzer';
+    if (!user.firstName || user.firstName === 'Gelöschter') {
+      return 'Gelöschter Nutzer';
+    }
+    return `${user.firstName} ${user.lastName || ''}`.trim();
+  }
 
-async selectDm(user: any): Promise<void> {
-  this.firebaseService.setSelectedChannel(''); 
-  this.chat.activeConversation.set(null);
-  this.mobileNavigation.emit();
-  await this.chat.openChatRoom(user);
-}
+  selectChannel(channelId: string): void {
+    this.chat.activeConversation.set(null); 
+    this.firebaseService.setSelectedChannel(channelId);
+    this.mobileNavigation.emit();
+    this.chat.openChannel(channelId);
+  }
+
+  async selectDm(user: any): Promise<void> {
+    this.firebaseService.setSelectedChannel(''); 
+    this.chat.activeConversation.set(null);
+    this.mobileNavigation.emit();
+    await this.chat.openChatRoom(user);
+  }
 
   toggleChannels(): void { this.channelsOpen = !this.channelsOpen; }
   toggleDm(): void { this.dmOpen = !this.dmOpen; }
 
   // --- MODAL MANAGEMENT ---
-
   openCreateChannel(): void { this.isCreateChannelOpen = true; }
   closeCreateChannel(): void { this.resetCreationState(); }
   closeAddPeople(): void { this.resetCreationState(); }
@@ -84,7 +91,6 @@ async selectDm(user: any): Promise<void> {
   }
 
   // --- MEMBER SEARCH ---
-
   filterMembers(): void {
     const search = this.memberSearch.toLowerCase().trim();
     this.filteredMembers = search ? this.getMatchingMembers(search) : [];
@@ -94,6 +100,7 @@ async selectDm(user: any): Promise<void> {
     const selected = this.selectedMembers.map((u) => u.uid);
     return this.firebaseService.getAllUsers().filter((u: any) => {
       return `${u.firstName} ${u.lastName}`.toLowerCase().includes(search)
+        && u.firstName !== 'Gelöschter' // 💡 Filtert gelöschte Nutzer aus der Suche
         && !selected.includes(u.uid);
     });
   }
@@ -141,7 +148,9 @@ async selectDm(user: any): Promise<void> {
 
   private async addAllMembers(newId: string): Promise<void> {
     for (const user of this.firebaseService.getAllUsers()) {
-      await this.firebaseService.addMemberToChannel(newId, (user as any).uid);
+      if ((user as any).firstName !== 'Gelöschter') {
+        await this.firebaseService.addMemberToChannel(newId, (user as any).uid);
+      }
     }
   }
 

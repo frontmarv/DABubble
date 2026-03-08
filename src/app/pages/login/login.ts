@@ -9,11 +9,13 @@ import { Intro } from '../../components/intro/intro';
 
 // --- SERVICES ---
 import { AuthService } from '../../services/auth.service';
+import { ChatService } from '../../services/chat.service';
+import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, SignupComponent, Intro],
+  imports: [CommonModule, FormsModule, RouterLink, SignupComponent, Intro,],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -22,6 +24,8 @@ export class Login implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private changeDetectorRef = inject(ChangeDetectorRef);
+  private chatService = inject(ChatService);
+  private firebaseService = inject(FirebaseService);
 
   // --- UI STATE ---
   showSignup: boolean = false;
@@ -89,6 +93,8 @@ export class Login implements OnInit {
     this.isLoading = false;
     
     if (result.success) {
+      this.firebaseService.setSelectedChannel('');
+      this.chatService.activeConversation.set(null);
       this.router.navigate(['/main']);
     } else {
       this.errorMessage = result.error || defaultError;

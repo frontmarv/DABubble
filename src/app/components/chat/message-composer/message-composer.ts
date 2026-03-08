@@ -59,6 +59,12 @@ export class MessageComposer {
     return [];
   });
 
+  isRecipientDeleted(): boolean {
+    if (this.mode === 'thread') return false;
+    const otherUser = this.chatService.otherUser();
+    return otherUser?.firstName === 'Gelöschter';
+  }
+
   // --- SEARCH RESULTS ---
 
   private getChannelResults(query: string): ComposerSearchResult[] {
@@ -70,7 +76,10 @@ export class MessageComposer {
   private getUserResults(query: string): ComposerSearchResult[] {
     const currentUid = this.firebaseService.currentUser()?.uid;
     return this.firebaseService.getAllUsers()
-      .filter((u) => `${u.firstName} ${u.lastName}`.toLowerCase().includes(query))
+      .filter((u) => {
+        const fullName = `${u.firstName} ${u.lastName}`.toLowerCase();
+        return fullName.includes(query) && u.firstName !== 'Gelöschter';
+      })
       .map((u) => this.mapUser(u, currentUid))
       .sort((a) => (a.name.endsWith('(Du)') ? -1 : 1));
   }
@@ -127,6 +136,7 @@ export class MessageComposer {
   // --- SEND ---
 
   sendMessage(textarea: HTMLTextAreaElement): void {
+    if (this.isRecipientDeleted()) return;
     const value = textarea.value.trim();
     if (!value) return;
     if (this.editOldMessageSerivce.currentMessageId() === "") {

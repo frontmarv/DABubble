@@ -96,3 +96,21 @@
         }
     }
 }
+
+.message-input-container.disabled-container {
+    background-color: var(--color-background); 
+    cursor: not-allowed;
+    outline: 1px solid var(--color-light-purple-lines) !important;
+
+    textarea {
+        background: transparent;
+        cursor: not-allowed;
+        color: var(--color-text-grey);
+    }
+}
+
+.disabled-btn {
+    opacity: 0.3;
+    filter: grayscale(1);
+    cursor: not-allowed;
+}

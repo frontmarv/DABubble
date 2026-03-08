@@ -65,9 +65,10 @@
             @else{<span class="status status--offline" aria-hidden="true"></span>}
           </span>
           <span class="text--small">
-            {{ user.firstName }} {{ user.lastName }}
+            {{ getUserName(user) }}
+            
             @if (user.uid === firebaseService.currentUser()?.uid) {
-            <span>(Du)</span>
+              <span>(Du)</span>
             }
           </span>
         </a>
