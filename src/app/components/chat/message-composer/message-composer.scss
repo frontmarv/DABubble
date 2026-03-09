@@ -21,6 +21,7 @@
     &:hover {
         outline: 1px solid var(--color-purple2);
     }
+
     &:focus-within {
         outline: 1px solid var(--color-purple1);
     }
@@ -46,18 +47,23 @@
 
         &:hover {
             background-color: var(--color-background);
-            .mention-name { color: var(--color-purple1); }
+
+            .mention-name {
+                color: var(--color-purple1);
+            }
         }
 
         .avatar-wrapper {
             position: relative;
             display: flex;
+
             img {
                 width: 32px;
                 height: 32px;
                 border-radius: 50%;
                 object-fit: cover;
             }
+
             .status {
                 width: 10px;
                 height: 10px;
@@ -91,6 +97,7 @@
     .send-btn {
         cursor: pointer;
         transition: transform var(--transition-fast);
+
         &:hover {
             transform: scale(1.1);
         }
@@ -98,7 +105,7 @@
 }
 
 .message-input-container.disabled-container {
-    background-color: var(--color-background); 
+    background-color: var(--color-background);
     cursor: not-allowed;
     outline: 1px solid var(--color-light-purple-lines) !important;
 
@@ -113,4 +120,14 @@
     opacity: 0.3;
     filter: grayscale(1);
     cursor: not-allowed;
+}
+
+.send-cancel-btn {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.btn--primary {
+    padding: 7px 14px;
 }

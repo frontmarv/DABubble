@@ -18,28 +18,25 @@
     </div>
     }
 
-    <textarea #message class="text--regular" maxlength="2000"
-        [disabled]="isRecipientDeleted()"
+    <textarea #message class="text--regular" maxlength="2000" [disabled]="isRecipientDeleted()"
         [placeholder]="isRecipientDeleted() ? 'An gelöschte Nutzer können keine Nachrichten gesendet werden' : placeholder"
-        (input)="onInput($event)"
-        (keydown)="sendMessageOnEnter($event, message)"></textarea>
+        (input)="onInput($event)" (keydown)="sendMessageOnEnter($event, message)"></textarea>
 
     <div class="message-buttons-container">
         <div class="action-icons">
-            <app-emoji-picker 
-                (emojiSelected)="insertEmoji($event)" 
-                [class.disabled-icon]="isRecipientDeleted()">
+            <app-emoji-picker (emojiSelected)="insertEmoji($event)" [class.disabled-icon]="isRecipientDeleted()">
             </app-emoji-picker>
-            
-            <button class="icon-btn" type="button" aria-label="Mention"
-                [disabled]="isRecipientDeleted()"
+
+            <button class="icon-btn" type="button" aria-label="Mention" [disabled]="isRecipientDeleted()"
                 (click)="toggleUserDropdown($event)">
                 <img class="icon-btn__img" src="/chat-input/alternate-email.svg" alt="Mention" />
             </button>
         </div>
-        <img (click)="!isRecipientDeleted() && sendMessage(message)" 
-             class="send-btn" 
-             [class.disabled-btn]="isRecipientDeleted()"
-             src="/chat-input/send.svg" alt="Senden" />
+        <div class="send-cancel-btn">
+            @if(editOldMessageSerivce.currentMessageId() !== ""){<button class="btn--primary" (click)="editOldMessageSerivce.clearEditMessage(); clearComposer(message)">Cancel Edit</button>}
+            <img (click)="!isRecipientDeleted() && sendMessage(message)" class="send-btn"
+                [class.disabled-btn]="isRecipientDeleted()" src="/chat-input/send.svg" alt="Senden" />
+        </div>
+
     </div>
 </div>

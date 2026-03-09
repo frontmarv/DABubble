@@ -154,7 +154,7 @@ export class MessageComposer {
     }
   }
 
-  private clearComposer(textarea: HTMLTextAreaElement): void {
+  clearComposer(textarea: HTMLTextAreaElement): void {
     textarea.value = '';
     textarea.selectionStart = textarea.selectionEnd = 0;
     this.resetSearchState();
