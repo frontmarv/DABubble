@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef, Output, EventEmitter, effect } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ThreadStateService } from '../../../services/thread-state.service';
 import { ChatService } from '../../../services/chat.service';
@@ -27,13 +27,34 @@ export class MessageList {
   showUserProfileService = inject(ShowUserProfile);
   editOldMessageSerivce = inject(editOldMessageService);
 
-  @ViewChild('scrollAnchor') private scrollAnchor!: ElementRef;
+  @ViewChild('bottom') bottom!: ElementRef;
   @Output() mobileNavigation = new EventEmitter<void>();
 
   isEditMsgHoverd = false;
 
+
   setEditMsgHoverdTrue(): void { this.isEditMsgHoverd = true; }
   setEditMsgHoverdFalse(): void { this.isEditMsgHoverd = false; }
+
+  ngAfterViewInit() {
+    this.scrollToBottom();
+  }
+
+    constructor() {
+    effect(() => {
+      const messages = this.chat.messages();
+
+      if (messages.length && this.bottom) {
+        setTimeout(() => {
+          this.scrollToBottom();
+        });
+      }
+    });
+  }
+
+  scrollToBottom() {
+    this.bottom.nativeElement.scrollIntoView({ behavior: 'auto' });
+  }
 
   openThread(message: Message): void {
     const basePath = this.chat.basePath();
