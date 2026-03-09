@@ -13,7 +13,7 @@
     @if (item.senderId === firebaseService.currentUser()?.uid) {
 
     <div class="message-field-user">
-      <span class="avatar">
+      <span class="avatar" (click)="showUserProfileService.setToTrue()">
         <img [src]="chat.users()[item.senderId]?.avatar" alt="Profilbild" class="avatar__img" />
       </span>
 
@@ -99,7 +99,7 @@
     } @else {
 
     <div class="message-field-other">
-      <span class="avatar">
+      <span class="avatar" (click)="displayForeignUserService.setSelectedUser(chat.users()[item.senderId]); displayForeignUserService.toggle();">
         <img [src]="chat.users()[item.senderId]?.avatar" alt="Profilbild" class="avatar__img" />
       </span>
 

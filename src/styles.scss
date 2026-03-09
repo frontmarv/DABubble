@@ -136,23 +136,27 @@ a {
 
 h1 {
     font-size: 4.5rem;
-    font-weight: bold;
     color: var(--color-white);
 }
 
 h2 {
     font-size: 2.875rem;
-    font-weight: bold;
     color: var(--color-purple1);
 }
 
 h3 {
     font-size: 2rem;
-    font-weight: bold;
 }
 
 h4 {
     font-size: 1.5rem;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    word-break: break-all;
     font-weight: bold;
 }
 
@@ -177,16 +181,19 @@ h4 {
 .text--big {
     font-size: 1.25rem;
     font-weight: 400;
+    word-break: break-all;
 }
 
 .text--regular {
     font-size: 1.125rem;
     font-weight: 400;
+    word-break: break-all;
 }
 
 .text--small {
     font-size: 1rem;
     font-weight: 400;
+    word-break: break-all;
 }
 
 .bold {
@@ -435,10 +442,6 @@ app-message-composer {
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
-
-    @media screen and (max-width: 480px) {
-        flex-direction: column;
-    }
 }
 
 .reactions {
@@ -461,9 +464,7 @@ app-message-composer {
     }
 
     @media screen and (max-width: 480px) {
-
         padding: 3px 8px;
         gap: 5px;
-
     }
 }

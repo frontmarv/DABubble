@@ -86,7 +86,7 @@ export class FirebaseService {
       firstName: 'Gelöschter',
       lastName: 'Nutzer',
       email: '',
-      avatar: '/login/avatar-grey.svg',
+      avatar: '/shared/profile-pics/unkown-user.svg',
       status: 'offline'
     });
   }
