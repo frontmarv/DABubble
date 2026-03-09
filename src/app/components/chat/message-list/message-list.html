@@ -3,10 +3,9 @@
     @for (item of chat.messages(); track item.id; let i = $index) {
     @if (shouldShowDateSeparator(i)) {
     <div class="time-seperator">
-      <div class="line">
-        <div class="day">
-          {{ getDateSeparatorLabel(item.createdAt.toDate()) }}
-        </div>
+      <div class="line"></div>
+      <div class="day">
+        {{ getDateSeparatorLabel(item.createdAt.toDate()) }}
       </div>
     </div>
     }
@@ -193,7 +192,7 @@
       <p>Dieser Raum ist nur für dich da. Mache dir Notizen, liste deine To-dos auf oder bewahre Links griffbereit auf.
         Du kannst hier auch gerne Dinge mit dir selbst besprechen.</p>
     </div>
-    } 
+    }
     }
 
   </div>
