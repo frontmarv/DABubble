@@ -41,7 +41,6 @@
 }
 
 .message-name {
-
     // max-width: 200px;
     &:hover {
         color: var(--color-purple1);
@@ -71,7 +70,7 @@
     flex-direction: column;
     gap: 8px;
     align-items: flex-end;
-    width: 100%f;
+    width: 100%;
 
     .time {
         font-size: 14px;
@@ -149,6 +148,8 @@
 .chat-container {
     flex: 1;
     width: 98%;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .messages {
@@ -161,28 +162,26 @@
 .time-seperator {
     display: flex;
     justify-content: center;
-
+    position: relative;
+    height: 35px;
     .line {
-        margin-top: 25px;
-        margin-bottom: 25px;
-        position: relative;
+        position: absolute;
         width: 90%;
         border: 1px solid var(--color-light-purple-lines);
-
-        .day {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            background-color: var(--color-white);
-            height: 35px;
-            padding: 5px 15px 5px 15px;
-            width: fit-content;
-            border: 1px solid var(--color-light-purple-lines);
-            border-radius: 30px;
-            top: -17.5px;
-            right: 45%;
-        }
+        bottom: 17.5px;
+    }
+    .day {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        background-color: var(--color-white);
+        height: 35px;
+        padding: 5px 15px 5px 15px;
+        width: fit-content;
+        border: 1px solid var(--color-light-purple-lines);
+        border-radius: 30px;
+        bottom: 0;
     }
 }
 
@@ -241,7 +240,7 @@
         display: none;
     }
 
-    >div {
+    > div {
         display: flex;
         flex-direction: column;
         justify-content: center;

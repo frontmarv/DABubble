@@ -134,6 +134,20 @@ app-message-list {
   align-items: flex-end;
 }
 
+.new-message-composer {
+  flex: 1;
+  scrollbar-width: thin;
+  padding-top: 21px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+
 .channel-blocking-screen {
   flex: 1;
   display: flex;

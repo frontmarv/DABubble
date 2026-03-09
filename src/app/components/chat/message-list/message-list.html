@@ -1,12 +1,11 @@
-<div class="chat-container" #scrollContainer>
+<div class="chat-container">
   <div class="messages">
     @for (item of chat.messages(); track item.id; let i = $index) {
     @if (shouldShowDateSeparator(i)) {
     <div class="time-seperator">
-      <div class="line">
-        <div class="day">
-          {{ getDateSeparatorLabel(item.createdAt.toDate()) }}
-        </div>
+      <div class="line"></div>
+      <div class="day">
+        {{ getDateSeparatorLabel(item.createdAt.toDate()) }}
       </div>
     </div>
     }
@@ -161,7 +160,6 @@
         </button>
       </div>
     </div>
-
     }
     } @empty {
     @if (this.chat.otherUser()?.uid !== this.firebaseService.currentUser()?.uid){
@@ -195,7 +193,6 @@
     </div>
     }
     }
-
+    <div #bottom></div>
   </div>
-  <div #bottomAnchor></div>
 </div>
