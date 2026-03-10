@@ -2,14 +2,18 @@
     <header>
         <div class="backdrop" [class.show]="isProfileMenuOpen" (click)="isProfileMenuOpen=false"></div>        
         <div class="header-left">
-            @if (isMobile() && !isSidebarOpen) {
-            <button class="mobile-back-btn icon-btn" type="button" aria-label="Zurück" (click)="goBackToSidebar()">
-                <img src="/login/arrow-back.svg" alt="Zurück" />
-            </button>
+            @if (!isSidebarOpen) {
+                <div class="mobile-back-btn" (click)="goBackToSidebar()">
+                    <img src="login/arrow-back.svg" alt="Zurück">
+                </div>
+                <img class="logo" src="/main-page/workspace-logo.svg" alt="Devspace">
+                <h2 class="logo-text">Devspace</h2>
+            } 
+            @else {
+                <img class="logo" src="/shared/dabubble-logo.svg" alt="DABubble">
+                <h2 class="logo-text">DABubble</h2>
             }
-            <img src="/shared/dabubble-logo.svg" alt="DABubble Logo" class="logo" />
-            <h2 class="logo-text">DABubble</h2>
-        </div>
+         </div>
 
         <div class="search-bar hide-on-mobile">
             <input type="text" placeholder="Devspace durchsuchen Nutze # oder @" [value]="searchQuery()" (input)="onSearchInput($event)" />
