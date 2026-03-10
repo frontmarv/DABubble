@@ -22,7 +22,19 @@ export class ThreadPanel {
     return senderId === this.firebaseService.currentUser()?.uid;
   }
 
+  isActuallyDeleted(uid: string): boolean {
+    if (!uid) return true;
+    const allUsers = this.firebaseService.getAllUsers();
+    const userExists = allUsers.some((u) => u.uid === uid);
+    return allUsers.length > 0 && !userExists;
+  }
+
   getUserFor(uid: string) {
-    return this.threadService.users()[uid];
+    const cachedUser = this.threadService.users()[uid];
+    if (cachedUser && cachedUser.firstName !== 'Gelöschter') return cachedUser;
+
+    const globalUser = this.firebaseService.getAllUsers().find((u) => u.uid === uid);
+    if (globalUser) return globalUser;
+    return null;
   }
 }

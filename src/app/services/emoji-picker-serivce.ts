@@ -62,15 +62,12 @@ export class EmojiPickerStateService {
         const currentUserId = this.firebaseService.currentUser()?.uid;
         const allUsers = this.firebaseService.getAllUsers();
         const names = userIds.map(uid => {
-            if (uid === currentUserId) {
-                return 'Du';
-            }
+            if (uid === currentUserId) return 'Du';
             const user = allUsers.find(u => u.uid === uid);
-            return user ? `${user.firstName} ${user.lastName}` : 'Gelöschter Nutzer';
+            if (user) return `${user.firstName} ${user.lastName}`;
+            return allUsers.length > 0 ? 'Gelöschter Nutzer' : 'Laden...';
         });
-        if (names.length === 1) {
-            return `${names[0]}`;
-        }
+        if (names.length === 1) return names[0]; 
         const allButLast = names.slice(0, -1).join(', ');
         return `${allButLast} und ${names[names.length - 1]}`;
     }

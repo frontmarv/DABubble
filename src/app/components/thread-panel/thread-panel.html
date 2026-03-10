@@ -23,8 +23,16 @@
                 <div class="message-info-container">
                     <div class="message-info">
                         <p class="text--regular bold message-name">
-                            {{ parentUser?.firstName }} {{ parentUser?.lastName }}
-                        </p>
+                            @if (parentUser) {
+                              {{ parentUser.firstName }} {{ parentUser.lastName }}
+                            } @else {
+                              @if (isActuallyDeleted(parent.senderId)) {
+                                 Gelöschter Nutzer
+                              } @else {
+                                 Laden...
+                              }
+                            }
+                          </p>
                         <p class="time">
                             {{ parent.createdAt ? (parent.createdAt.toDate() | date:'HH:mm') : '' }} Uhr
                         </p>
