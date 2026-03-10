@@ -162,7 +162,7 @@
     </div>
     }
     } @empty {
-    @if (this.chat.otherUser()?.uid !== this.firebaseService.currentUser()?.uid){
+    @if (this.chat.otherUser()?.uid !== this.firebaseService.currentUser()?.uid && !this.firebaseService.selectedChannelId()){
     <div class="empty-chat-info">
       <div class="user-info">
         <span class="avatar" (click)="clickOnUser()">
@@ -177,8 +177,19 @@
           this.chat.otherUser()?.firstName }} {{ this.chat.otherUser()?.lastName }}</span> und dir statt</p>
     </div>
     }
-    @else{
-    <div class="empty-chat-info">
+    @else {
+      @if(this.firebaseService.selectedChannelId()){
+            <div class="empty-chat-info">
+      <div>
+        <h4 class="cursor-default">
+          # {{ this.firebaseService.currentChannelName }}
+        </h4>
+      </div>
+      <p>Dieser Channel wurde neu erstellt. Das ist der Anfang des Channels #{{this.firebaseService.currentChannelName}}</p>
+    </div>
+      }
+      @else {
+            <div class="empty-chat-info">
       <div class="user-info">
         <span class="avatar" (click)="this.showUserProfileService.setToTrue()">
           <img [src]="this.firebaseService.currentUser()?.avatar" alt="" class="avatar__img"
@@ -191,6 +202,7 @@
       <p>Dieser Raum ist nur für dich da. Mache dir Notizen, liste deine To-dos auf oder bewahre Links griffbereit auf.
         Du kannst hier auch gerne Dinge mit dir selbst besprechen.</p>
     </div>
+      }
     }
     }
     <div #bottom></div>

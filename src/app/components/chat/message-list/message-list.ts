@@ -40,15 +40,18 @@ export class MessageList {
     this.scrollToBottom();
   }
 
-    constructor() {
+  lastMessageCount = 0;
+
+  constructor() {
     effect(() => {
       const messages = this.chat.messages();
 
-      if (messages.length && this.bottom) {
+      if (messages.length > this.lastMessageCount && this.bottom) {
         setTimeout(() => {
           this.scrollToBottom();
         });
       }
+      this.lastMessageCount = messages.length;
     });
   }
 
