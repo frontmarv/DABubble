@@ -13,36 +13,36 @@
     <section class="chat-messages">
 
         @if (threadService.parentMessage(); as parent) {
-            @let parentUser = getUserFor(parent.senderId);
+        @let parentUser = getUserFor(parent.senderId);
 
-            <div [class]="isOwnMessage(parent.senderId) ? 'message-field-user' : 'message-field-other'">
-                <span class="avatar">
-                    <img [src]="parentUser?.avatar || '/shared/profile-pics/profile-pic1.svg'"
-                         alt="Profilbild" class="avatar__img" />
-                </span>
-                <div class="message-info-container">
-                    <div class="message-info">
-                        <p class="text--regular bold message-name">
-                            @if (parentUser) {
-                              {{ parentUser.firstName }} {{ parentUser.lastName }}
-                            } @else {
-                              @if (isActuallyDeleted(parent.senderId)) {
-                                 Gelöschter Nutzer
-                              } @else {
-                                 Laden...
-                              }
-                            }
-                          </p>
-                        <p class="time">
-                            {{ parent.createdAt ? (parent.createdAt.toDate() | date:'HH:mm') : '' }} Uhr
-                        </p>
-                    </div>
-                    <div class="message text--regular">{{ parent.text }}</div>
+        <div [class]="isOwnMessage(parent.senderId) ? 'message-field-user' : 'message-field-other'">
+            <span class="avatar">
+                <img [src]="parentUser?.avatar || '/shared/profile-pics/profile-pic1.svg'" alt="Profilbild"
+                    class="avatar__img" />
+            </span>
+            <div class="message-info-container">
+                <div class="message-info">
+                    <p class="text--regular bold message-name">
+                        @if (parentUser) {
+                        {{ parentUser.firstName }} {{ parentUser.lastName }}
+                        } @else {
+                        @if (isActuallyDeleted(parent.senderId)) {
+                        Gelöschter Nutzer
+                        } @else {
+                        Laden...
+                        }
+                        }
+                    </p>
+                    <p class="time">
+                        {{ parent.createdAt ? (parent.createdAt.toDate() | date:'HH:mm') : '' }} Uhr
+                    </p>
                 </div>
-                <div [class]="isOwnMessage(parent.senderId) ? 'reaction-bar' : 'reaction-bar-other'">
-                    <app-emoji-picker></app-emoji-picker>
-                </div>
+                <div class="message text--regular">{{ parent.text }}</div>
             </div>
+            <div [class]="isOwnMessage(parent.senderId) ? 'reaction-bar' : 'reaction-bar-other'">
+                <app-emoji-picker></app-emoji-picker>
+            </div>
+        </div>
         }
 
         <div class="chat-messages__separator">
@@ -51,58 +51,68 @@
         </div>
 
         @for (reply of threadService.threadMessages(); track reply.id) {
-            @let replyUser = getUserFor(reply.senderId);
+        @let replyUser = getUserFor(reply.senderId);
 
-            @if (isOwnMessage(reply.senderId)) {
-                <div class="message-field-user">
-                    <span class="avatar">
-                        <img [src]="replyUser?.avatar || '/shared/profile-pics/profile-pic1.svg'"
-                             alt="Profilbild" class="avatar__img" />
-                    </span>
-                    <div class="message-info-container">
-                        <div class="message-info">
-                            <p class="text--regular bold message-name">
-                                {{ replyUser?.firstName }} {{ replyUser?.lastName }}
-                            </p>
-                            <p class="time">
-                                {{ reply.createdAt ? (reply.createdAt.toDate() | date:'HH:mm') : '' }} Uhr
-                            </p>
-                        </div>
-                        <div class="message text--regular">{{ reply.text }}</div>
-                    </div>
-                    <div class="reaction-bar">
-                        <app-emoji-picker></app-emoji-picker>
-                        <button class="icon-btn" type="button" aria-label="Bearbeiten">
-                            <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
-                        </button>
-                    </div>
+        @if (isOwnMessage(reply.senderId)) {
+        <div class="message-field-user">
+            <span class="avatar">
+                <img [src]="replyUser?.avatar || '/shared/profile-pics/profile-pic1.svg'" alt="Profilbild"
+                    class="avatar__img" />
+            </span>
+            <div class="message-info-container">
+                <div class="message-info">
+                    <p class="text--regular bold message-name">
+                        {{ replyUser?.firstName }} {{ replyUser?.lastName }}
+                    </p>
+                    <p class="time">
+                        {{ reply.createdAt ? (reply.createdAt.toDate() | date:'HH:mm') : '' }} Uhr
+                    </p>
                 </div>
-            } @else {
-                <div class="message-field-other">
-                    <span class="avatar">
-                        <img [src]="replyUser?.avatar || '/shared/profile-pics/profile-pic1.svg'"
-                             alt="Profilbild" class="avatar__img" />
-                    </span>
-                    <div class="message-info-container">
-                        <div class="message-info">
-                            <p class="text--regular bold message-name">
-                                {{ replyUser?.firstName }} {{ replyUser?.lastName }}
-                            </p>
-                            <p class="time">
-                                {{ reply.createdAt ? (reply.createdAt.toDate() | date:'HH:mm') : '' }} Uhr
-                            </p>
-                        </div>
-                        <div class="message text--regular">{{ reply.text }}</div>
+                <div class="message text--regular">{{ reply.text }}</div>
+            </div>
+            <div class="reaction-bar">
+                <app-emoji-picker></app-emoji-picker>
+                <button class="icon-btn" type="button" aria-label="Sentiment" (mouseenter)="setEditMsgHoverdTrue()"
+                    (mouseleave)="setEditMsgHoverdFalse()">
+                    <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
+                    @if(isEditMsgHoverd){
+                    <div class="edit-msg-field">
+                        <span
+                            (click)="editOldMessageSerivce.setEditMessage(reply.id!, reply.text, 'thread'); setEditMsgHoverdFalse(); $event.stopPropagation()"
+                            class="edit-msg">
+                            Nachricht bearbeiten
+                        </span>
                     </div>
-                    <div class="reaction-bar-other">
-                        <app-emoji-picker></app-emoji-picker>
-                    </div>
+                    }
+                </button>
+            </div>
+        </div>
+        } @else {
+        <div class="message-field-other">
+            <span class="avatar">
+                <img [src]="replyUser?.avatar || '/shared/profile-pics/profile-pic1.svg'" alt="Profilbild"
+                    class="avatar__img" />
+            </span>
+            <div class="message-info-container">
+                <div class="message-info">
+                    <p class="text--regular bold message-name">
+                        {{ replyUser?.firstName }} {{ replyUser?.lastName }}
+                    </p>
+                    <p class="time">
+                        {{ reply.createdAt ? (reply.createdAt.toDate() | date:'HH:mm') : '' }} Uhr
+                    </p>
                 </div>
-            }
+                <div class="message text--regular">{{ reply.text }}</div>
+            </div>
+            <div class="reaction-bar-other">
+                <app-emoji-picker></app-emoji-picker>
+            </div>
+        </div>
+        }
         }
 
     </section>
 
-    <app-message-composer mode="thread" placeholder="Antworten..."></app-message-composer>
+    <app-message-composer [composerType]="'thread'" mode="thread" placeholder="Antworten..."></app-message-composer>
 
 </aside>

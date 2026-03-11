@@ -85,7 +85,7 @@
           @if(isEditMsgHoverd){
           <div class="edit-msg-field">
             <span
-              (click)="editOldMessageSerivce.setEditMessage(item.id!, item.text); setEditMsgHoverdFalse(); $event.stopPropagation()"
+              (click)="editOldMessageSerivce.setEditMessage(item.id!, item.text, 'mainChat'); setEditMsgHoverdFalse(); $event.stopPropagation()"
               class="edit-msg">
               Nachricht bearbeiten
             </span>

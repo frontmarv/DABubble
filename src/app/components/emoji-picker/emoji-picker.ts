@@ -55,7 +55,6 @@ export class EmojiPicker {
 
   handleSelection(event: any) {
     this.emojiSelected.emit(event.emoji.native);
-    console.log('Selected emoji:', event.emoji.native, 'Who reacted:', this.firebaseService.currentUser()?.uid);
     this.setHiddenEmojiPicker();
   }
 

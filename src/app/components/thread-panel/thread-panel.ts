@@ -5,6 +5,7 @@ import { FirebaseService } from '../../services/firebase.service';
 import { EmojiPicker } from '../emoji-picker/emoji-picker';
 import { EmojiPickerStateService } from '../../services/emoji-picker-serivce';
 import { MessageComposer } from '../chat/message-composer/message-composer';
+import { editOldMessageService } from '../../services/editOldMessage-service';
 
 @Component({
   selector: 'app-thread-panel',
@@ -17,7 +18,15 @@ export class ThreadPanel {
   threadService = inject(ThreadStateService);
   firebaseService = inject(FirebaseService);
   emojiPickerService = inject(EmojiPickerStateService);
+  editOldMessageSerivce = inject(editOldMessageService);
+  isEditMsgHoverd = false;
 
+
+  setEditMsgHoverdTrue(): void { this.isEditMsgHoverd = true; }
+  setEditMsgHoverdFalse(): void { this.isEditMsgHoverd = false; }
+  toggleEditMsgHoverd() {
+    this.isEditMsgHoverd != this.isEditMsgHoverd;
+  }
   isOwnMessage(senderId: string): boolean {
     return senderId === this.firebaseService.currentUser()?.uid;
   }

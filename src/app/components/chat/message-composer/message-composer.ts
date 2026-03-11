@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, ViewChild, ElementRef, HostListener, Input, effect } from '@angular/core';
+import { Component, input, inject, signal, computed, AfterViewInit, ViewChild, ElementRef, HostListener, Input, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatService } from '../../../services/chat.service';
 import { ThreadStateService } from '../../../services/thread-state.service';
@@ -22,7 +22,7 @@ interface ComposerSearchResult {
   templateUrl: './message-composer.html',
   styleUrl: './message-composer.scss',
 })
-export class MessageComposer {
+export class MessageComposer implements AfterViewInit {
   @ViewChild('message') textarea!: ElementRef<HTMLTextAreaElement>;
   @Input() mode: 'chat' | 'thread' = 'chat';
   @Input() placeholder = 'Nachricht an.....';
@@ -33,7 +33,7 @@ export class MessageComposer {
   firebaseService = inject(FirebaseService);
   emojiPickerService = inject(EmojiPickerStateService);
   editOldMessageSerivce = inject(editOldMessageService);
-
+  composerType = input<string>('mainChat');
   searchQuery = signal<string>('');
   searchType = signal<'user' | 'channel' | null>(null);
   showDropdown = signal<boolean>(false);
@@ -46,12 +46,19 @@ export class MessageComposer {
   constructor() {
     effect(() => {
       const textToEdit = this.editOldMessageSerivce.currentMessageText();
-      if (textToEdit && this.textarea) {
+      const currentChat = this.editOldMessageSerivce.currentChat();
+      if (textToEdit && this.composerType() === currentChat) {
         this.textarea.nativeElement.value = textToEdit;
         this.textarea.nativeElement.focus();
       }
     });
   }
+
+  ngAfterViewInit(): void {
+    this.textarea.nativeElement.focus();
+  }
+
+
   filteredResults = computed<ComposerSearchResult[]>(() => {
     const type = this.searchType();
     if (type === 'channel') return this.getChannelResults(this.searchQuery().toLowerCase());

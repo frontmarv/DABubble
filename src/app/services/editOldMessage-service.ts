@@ -5,13 +5,14 @@ import { Injectable, signal } from '@angular/core';
 })
 
 export class editOldMessageService {
-    currentMessageId = signal('');
+    currentMessageId = signal<string>('');
     currentMessageText = signal<string>('');
+    currentChat = signal<string>('')
 
-    setEditMessage(id: string, text: string) {
+    setEditMessage(id: string, text: string, currentChat: string) {
         this.currentMessageId.set(id);
         this.currentMessageText.set(text);
-        console.log(this.currentMessageText())
+        this.currentChat.set(currentChat);
     }
 
     clearEditMessage() {
