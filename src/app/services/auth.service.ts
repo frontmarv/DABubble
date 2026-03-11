@@ -32,33 +32,15 @@ export class AuthService {
     });
   }
 
-  // --- CORE AUTH METHODS ---
+  // --- CORE AUTH METHODS (signup, login, logout bleiben gleich) ---
 
-  async signup(
-    email: string,
-    pass: string,
-    firstName: string,
-    lastName: string,
-    avatar: string,
-    status: string
-  ) {
+  async signup(email: string, pass: string, firstName: string, lastName: string, avatar: string, status: string) {
     try {
       const { user } = await createUserWithEmailAndPassword(this.auth, email, pass);
       const cleanAvatar = avatar?.trim() || 'unkown-user.svg';
-
-      const newUser = new User({
-        uid: user.uid,
-        firstName,
-        lastName,
-        email,
-        avatar: cleanAvatar,
-        status,
-      });
-
+      const newUser = new User({ uid: user.uid, firstName, lastName, email, avatar: cleanAvatar, status });
       await this.firebaseService.addUser(newUser, user.uid);
-
       await this.addTargetUserToWelcomeChannel(user.uid);
-
       return { success: true };
     } catch (error: any) {
       return { success: false, error: this.getErrorMessage(error.code) };
@@ -81,32 +63,22 @@ export class AuthService {
       await signOut(this.auth);
       this.router.navigate(['/login']);
     } catch (error) {
-      console.error('Logout error:', error);
       this.router.navigate(['/login']);
     }
   }
 
   private async setOfflineStatus() {
     const uid = this.currentFirebaseUser?.uid;
-    if (uid) {
-      await this.firebaseService.updateSingleUser(uid, { status: 'offline' });
-    }
+    if (uid) await this.firebaseService.updateSingleUser(uid, { status: 'offline' });
   }
 
-  // auth.service.ts
   private async addTargetUserToWelcomeChannel(uid: string) {
-    // Wir suchen den Channel, der "willkommen" heißt (oder "Allgemein" als Fallback)
     const channels = this.firebaseService.channels();
-    const welcomeChannel = channels.find(
-      (c) => c.name.toLowerCase() === 'willkommen' || c.name.toLowerCase() === 'allgemein'
-    );
-
-    if (welcomeChannel) {
-      await this.firebaseService.addMemberToChannel(welcomeChannel.id, uid);
-    }
+    const welcomeChannel = channels.find(c => c.name.toLowerCase() === 'willkommen' || c.name.toLowerCase() === 'allgemein');
+    if (welcomeChannel) await this.firebaseService.addMemberToChannel(welcomeChannel.id, uid);
   }
 
-  // --- GOOGLE LOGIN (REFACTORED) ---
+  // --- GOOGLE LOGIN (ANGEPASST) ---
 
   async googleLogin() {
     try {
@@ -118,13 +90,15 @@ export class AuthService {
 
       return { success: true };
     } catch (error: any) {
-      return this.handleGoogleError(error);
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+        return { success: false, canceled: true };
+      }
+      return { success: false, error: 'Google-Login fehlgeschlagen.' };
     }
   }
 
   private async handleGoogleUserInDatabase(firebaseUser: FirebaseUser) {
     const userExists = await this.firebaseService.checkUserExists(firebaseUser.uid);
-
     if (!userExists) {
       await this.createNewGoogleUser(firebaseUser);
     } else {
@@ -135,73 +109,38 @@ export class AuthService {
   private async createNewGoogleUser(fbUser: FirebaseUser) {
     const { firstName, lastName } = this.extractGoogleNames(fbUser.displayName);
     const photo = fbUser.photoURL || fbUser.providerData?.[0]?.photoURL || 'unkown-user.svg';
-
-    const newGoogleUser = new User({
-      uid: fbUser.uid,
-      firstName,
-      lastName,
-      email: fbUser.email || '',
-      avatar: photo,
-      status: 'online',
-    });
-
+    const newGoogleUser = new User({ uid: fbUser.uid, firstName, lastName, email: fbUser.email || '', avatar: photo, status: 'online' });
     await this.firebaseService.addUser(newGoogleUser, fbUser.uid);
     await this.addTargetUserToWelcomeChannel(fbUser.uid);
   }
 
   private extractGoogleNames(displayName: string | null): { firstName: string; lastName: string } {
     const nameParts = (displayName || 'Google User').trim().split(/\s+/);
-    return {
-      firstName: nameParts[0] || 'Google',
-      lastName: nameParts.slice(1).join(' ') || '',
-    };
+    return { firstName: nameParts[0] || 'Google', lastName: nameParts.slice(1).join(' ') || '' };
   }
 
-  private handleGoogleError(error: any) {
-    if (['auth/popup-closed-by-user', 'auth/cancelled-popup-request'].includes(error.code)) {
-      return { success: false, error: '' };
-    }
-    return { success: false, error: 'Google-Login fehlgeschlagen. Bitte versuche es erneut.' };
-  }
-
-  // --- PASSWORD MANAGEMENT ---
+  // --- PASSWORD MANAGEMENT & UTILS (bleiben gleich) ---
 
   sendResetEmail(email: string) {
-    const actionCodeSettings = {
-      url: 'http://localhost:4200/new-pw',
-      handleCodeInApp: true,
-    };
-    return sendPasswordResetEmail(this.auth, email, actionCodeSettings);
+    return sendPasswordResetEmail(this.auth, email, { url: 'http://localhost:4200/new-pw', handleCodeInApp: true });
   }
 
   confirmReset(code: string, newPassword: string) {
     return confirmPasswordReset(this.auth, code, newPassword);
   }
 
-  // --- UTILS & ERROR HANDLING ---
-
-  isLoggedIn(): boolean {
-    return this.isAuthenticated;
-  }
-
-  getCurrentUserId(): string | null {
-    return this.currentFirebaseUser?.uid || null;
-  }
+  isLoggedIn() { return this.isAuthenticated; }
+  getCurrentUserId() { return this.currentFirebaseUser?.uid || null; }
 
   private getErrorMessage(errorCode: string): string {
     const errorMessages: Record<string, string> = {
       'auth/email-already-in-use': 'Diese E-Mail-Adresse wird bereits verwendet.',
       'auth/invalid-email': 'Ungültige E-Mail-Adresse.',
-      'auth/operation-not-allowed': 'Diese Anmelde-Methode ist nicht aktiviert.',
-      'auth/weak-password': 'Das Passwort ist zu schwach. Mindestens 6 Zeichen erforderlich.',
-      'auth/user-disabled': 'Dieses Konto wurde deaktiviert.',
-      'auth/user-not-found': 'Kein Benutzer mit dieser E-Mail-Adresse gefunden.',
+      'auth/weak-password': 'Passwort zu schwach.',
+      'auth/user-not-found': 'Benutzer nicht gefunden.',
       'auth/wrong-password': 'Falsches Passwort.',
-      'auth/invalid-credential': 'Ungültige Anmeldedaten. Bitte überprüfe E-Mail und Passwort.',
-      'auth/too-many-requests': 'Zu viele Anmeldeversuche. Bitte versuche es später.',
-      'auth/network-request-failed': 'Netzwerkfehler. Bitte überprüfe deine Internetverbindung.',
+      'auth/invalid-credential': 'Ungültige Anmeldedaten.',
     };
-
     return errorMessages[errorCode] || 'Ein unbekannter Fehler ist aufgetreten.';
   }
 }

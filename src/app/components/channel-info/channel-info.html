@@ -36,8 +36,14 @@
                         style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg'); width: 20px; height: 20px; background-color: var(--color-black);"></span>
                     <span class="text--regular">{{ channel?.name }}</span>
                     } @else {
-                    <input class="inputfield--dialogs edit-input" type="text" placeholder="z.B. Entwicklerteam"
-                        [ngModel]="editChannelNameInput()" (ngModelChange)="editChannelNameInput.set($event)" />
+                    <div style="width: 100%; display: flex; flex-direction: column; gap: 4px;">
+                        <input class="inputfield--dialogs edit-input" type="text" placeholder="z.B. Entwicklerteam"
+                            [ngModel]="editChannelNameInput()" (ngModelChange)="editChannelNameInput.set($event); channelNameError.set('')" />
+                        
+                        @if (channelNameError()) {
+                        <div class="error-message"><span>{{ channelNameError() }}</span></div>
+                        }
+                    </div>
                     }
                 </div>
             </div>

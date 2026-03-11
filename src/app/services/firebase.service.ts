@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Firestore, collection, addDoc, onSnapshot, query, doc, setDoc, getDoc, updateDoc, arrayUnion, Unsubscribe, getDocs, collectionGroup } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, onSnapshot, query, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, Unsubscribe, getDocs } from '@angular/fire/firestore';
 import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -34,6 +34,15 @@ export class FirebaseService {
     if (this.unsubChannels) this.unsubChannels();
     if (this.unsubUser) this.unsubUser();
     if (this.unsubChats) this.unsubChats();
+  }
+
+  async removeMemberFromChannel(channelId: string, uid: string): Promise<void> {
+    try {
+      const channelRef = doc(this.firestore, 'channels', channelId);
+      await updateDoc(channelRef, { members: arrayRemove(uid) });
+    } catch (error) {
+      console.error('Fehler beim Entfernen des Mitglieds:', error);
+    }
   }
 
   async checkUserExists(uid: string): Promise<boolean> {
