@@ -26,8 +26,16 @@ export class ChannelInfo {
     this.close.emit();
   }
 
-  leaveChannel() {
-    console.log('Channel wird verlassen...');
+  async leaveChannel() {
+    const currentUid = this.firebaseService.currentUser()?.uid;
+    
+    if (this.channel?.id && currentUid) {
+      try {
+        await this.firebaseService.removeMemberFromChannel(this.channel.id, currentUid);
+      } catch (error) {
+        console.error('Fehler beim Verlassen des Channels:', error);
+      }
+    }
     this.closeModal();
   }
 
