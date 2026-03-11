@@ -29,6 +29,7 @@ export class Sidebar {
   // --- FORM STATE ---
   channelName = '';
   channelDescription = '';
+  channelNameError = ''; 
   addPeopleOption = 'all';
   memberSearch = '';
   filteredMembers: any[] = [];
@@ -70,8 +71,20 @@ export class Sidebar {
   closeAddPeople(): void { this.resetCreationState(); }
 
   proceedToAddMembers(): void {
-    if (!this.channelName?.trim()) return;
-    this.tempChannelName = this.channelName;
+    const name = this.channelName?.trim();
+    if (!name) return;
+
+    const nameExists = this.firebaseService.channels().some(
+      (c: any) => c.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (nameExists) {
+      this.channelNameError = 'Dieser Channel existiert bereits.';
+      return; 
+    }
+
+    this.channelNameError = ''; 
+    this.tempChannelName = name;
     this.tempChannelDescription = this.channelDescription;
     this.isCreateChannelOpen = false;
     this.isAddPeopleOpen = true;
@@ -84,6 +97,7 @@ export class Sidebar {
     this.channelDescription = '';
     this.tempChannelName = '';
     this.tempChannelDescription = '';
+    this.channelNameError = ''; 
     this.addPeopleOption = 'all';
     this.memberSearch = '';
     this.filteredMembers = [];
@@ -100,7 +114,7 @@ export class Sidebar {
     const selected = this.selectedMembers.map((u) => u.uid);
     return this.firebaseService.getAllUsers().filter((u: any) => {
       return `${u.firstName} ${u.lastName}`.toLowerCase().includes(search)
-        && u.firstName !== 'Gelöschter' // 💡 Filtert gelöschte Nutzer aus der Suche
+        && u.firstName !== 'Gelöschter' 
         && !selected.includes(u.uid);
     });
   }

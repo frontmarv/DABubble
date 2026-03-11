@@ -97,9 +97,13 @@
           <label class="modal__label text--small bold">Channel-Name</label>
           <div class="input-wrapper">
             <span class="input-icon icon-mask hashtag-icon" style="-webkit-mask-image: url('/main-page/tag.svg'); mask-image: url('/main-page/tag.svg');" aria-label="#"></span>
-            <input class="inputfield--dialogs with-icon" type="text" placeholder="z.B. Kooperationsprojekte"
-              [(ngModel)]="channelName" />
+            <input class="inputfield--dialogs with-icon" type="text" placeholder="z.B. Kooperationsprojekte" [(ngModel)]="channelName" (input)="channelNameError = ''" />
           </div>
+          @if (channelNameError) {
+          <div class="error-message">
+            <span>{{ channelNameError }}</span>
+          </div>
+          }
         </div>
 
         <div class="input-group">

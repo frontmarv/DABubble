@@ -20,6 +20,7 @@ export class ChannelInfo {
   editChannelDescMode = signal(false);
   editChannelNameInput = signal('');
   editChannelDescInput = signal('');
+  channelNameError = signal(''); 
 
   closeModal() {
     this.close.emit();
@@ -27,7 +28,6 @@ export class ChannelInfo {
 
   leaveChannel() {
     console.log('Channel wird verlassen...');
-    // Hier später die Austritts-Logik einbauen
     this.closeModal();
   }
 
@@ -35,6 +35,7 @@ export class ChannelInfo {
     if (this.editChannelNameMode()) {
       this.saveChannelName();
     } else {
+      this.channelNameError.set(''); 
       this.editChannelNameInput.set(this.channel?.name || '');
       this.editChannelNameMode.set(true);
     }
@@ -51,7 +52,22 @@ export class ChannelInfo {
 
   async saveChannelName() {
     const newName = this.editChannelNameInput().trim();
-    if (this.channel && newName.length > 0 && newName !== this.channel.name) {
+    if (this.channel && newName.length > 0) {
+      if (newName === this.channel.name) {
+        this.editChannelNameMode.set(false);
+        return;
+      }
+
+      const nameExists = this.firebaseService.channels().some(
+        (c: any) => c.name.toLowerCase() === newName.toLowerCase()
+      );
+
+      if (nameExists) {
+        this.channelNameError.set('Dieser Channel existiert bereits.');
+        return; 
+      }
+
+      this.channelNameError.set(''); 
       try {
         await this.firebaseService.updateChannel(this.channel.id, { name: newName });
       } catch (e) {
