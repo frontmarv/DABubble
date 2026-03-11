@@ -2,12 +2,8 @@ import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-
-// --- COMPONENTS ---
 import { SignupComponent } from '../signup/signup';
 import { Intro } from '../../components/intro/intro';
-
-// --- SERVICES ---
 import { AuthService } from '../../services/auth.service';
 import { ChatService } from '../../services/chat.service';
 import { FirebaseService } from '../../services/firebase.service';
@@ -20,25 +16,20 @@ import { FirebaseService } from '../../services/firebase.service';
   styleUrl: './login.scss',
 })
 export class Login implements OnInit {
-  // --- INJECTIONS ---
   private authService = inject(AuthService);
   private router = inject(Router);
   private changeDetectorRef = inject(ChangeDetectorRef);
   private chatService = inject(ChatService);
   private firebaseService = inject(FirebaseService);
 
-  // --- UI STATE ---
   showSignup: boolean = false;
   showSuccessMessage: boolean = false;
   errorMessage: string = '';
   isLoading: boolean = false;
   showIntro: boolean = true;
 
-  // --- FORM STATE ---
   loginEmail: string = '';
   loginPassword: string = '';
-
-  // --- LIFECYCLE & INTRO ---
 
   ngOnInit(): void {
     this.showIntro = sessionStorage.getItem('loginIntroPlayed') !== 'true';
@@ -62,9 +53,25 @@ export class Login implements OnInit {
     await this.executeAuthRequest(authRequest, 'Gast-Login fehlgeschlagen.');
   }
 
+  // --- GOOGLE LOGIN (MIT SICHERHEITS-NETZ) ---
   async googleLogin() {
-    const authRequest = this.authService.googleLogin();
-    await this.executeAuthRequest(authRequest, 'Google-Login fehlgeschlagen.');
+    this.resetErrorAndSetLoading();
+
+    const handleFocus = () => {
+      setTimeout(() => {
+        if (this.isLoading) {
+          this.isLoading = false;
+          this.changeDetectorRef.markForCheck();
+        }
+      }, 500); 
+      window.removeEventListener('focus', handleFocus);
+    };
+    window.addEventListener('focus', handleFocus);
+
+    const result = await this.authService.googleLogin();
+    
+    window.removeEventListener('focus', handleFocus);
+    this.handleAuthResult(result, 'Google-Login fehlgeschlagen.');
   }
 
   // --- AUTHENTICATION HELPER ---
@@ -96,28 +103,21 @@ export class Login implements OnInit {
       this.firebaseService.setSelectedChannel('');
       this.chatService.activeConversation.set(null);
       this.router.navigate(['/main']);
+    } else if (result.canceled) {
+      this.errorMessage = '';
+      this.changeDetectorRef.markForCheck();
     } else {
       this.errorMessage = result.error || defaultError;
       this.changeDetectorRef.markForCheck();
     }
   }
 
-  // --- SIGNUP LOGIC ---
+  // --- SIGNUP LOGIC (bleibt gleich) ---
 
-  toggleSignup() {
-    this.showSignup = !this.showSignup;
-    this.errorMessage = '';
-  }
-
-  onSignupSuccess() {
-    this.showSuccessMessage = true;
-    setTimeout(() => this.completeSignupFlow(), 2500);
-  }
-
+  toggleSignup() { this.showSignup = !this.showSignup; this.errorMessage = ''; }
+  onSignupSuccess() { this.showSuccessMessage = true; setTimeout(() => this.completeSignupFlow(), 2500); }
   private completeSignupFlow() {
     this.showSuccessMessage = false;
-    this.router.navigate(['/main']).then(() => {
-      this.showSignup = false;
-    });
+    this.router.navigate(['/main']).then(() => { this.showSignup = false; });
   }
 }
