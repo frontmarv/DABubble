@@ -1,55 +1,61 @@
 <div class="main-container">
     <header>
-        <div class="backdrop" [class.show]="isProfileMenuOpen" (click)="isProfileMenuOpen=false"></div>        
+        <div class="backdrop" [class.show]="isProfileMenuOpen" (click)="isProfileMenuOpen=false"></div>
         <div class="header-left">
             @if (!isSidebarOpen) {
-                <div class="mobile-back-btn" (click)="goBackToSidebar()">
-                    <img src="login/arrow-back.svg" alt="Zurück">
-                </div>
-                <img class="logo" src="/main-page/workspace-logo.svg" alt="Devspace">
-                <h2 class="logo-text">Devspace</h2>
-            } 
-            @else {
-                <img class="logo" src="/shared/dabubble-logo.svg" alt="DABubble">
-                <h2 class="logo-text">DABubble</h2>
+            <div class="mobile-back-btn" (click)="goBackToSidebar()">
+                <img src="login/arrow-back.svg" alt="Zurück">
+            </div>
+            <img class="logo" src="/main-page/workspace-logo.svg" alt="Devspace">
+            <h2 class="logo-text">Devspace</h2>
             }
-         </div>
+            @else {
+            <img class="logo" src="/shared/dabubble-logo.svg" alt="DABubble">
+            <h2 class="logo-text">DABubble</h2>
+            }
+        </div>
 
         <div class="search-bar hide-on-mobile">
-            <input type="text" placeholder="Devspace durchsuchen Nutze # oder @" [value]="searchQuery()" (input)="onSearchInput($event)" />
+            <input type="text" placeholder="Devspace durchsuchen Nutze # oder @" [value]="searchQuery()"
+                (input)="onSearchInput($event)" />
             <img src="/main-page/search.svg" alt="Suche" />
 
             @if (showSearchDropdown() && filteredResults().length > 0) {
             <div class="search-dropdown">
                 @for (item of filteredResults(); track item.id) {
-                <div class="search-item" (click)="selectResult(item)">                    
+                <div class="search-item" (click)="selectResult(item)">
                     <div class="search-item-left">
                         @if (item.type === 'channel') {
-                            <span class="prefix">#</span>
+                        <span class="prefix">#</span>
                         } @else if (item.type === 'user') {
-                            <div class="search-avatar-container">
-                                <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar" />
-                                <span class="status" [class.status--online]="item.status === 'online'" [class.status--offline]="item.status !== 'online'"></span>
-                            </div>
+                        <div class="search-avatar-container">
+                            <img [src]="getAvatarUrl(item.avatar)" alt="" class="search-avatar"
+                                referrerpolicy="no-referrer" />
+                            <span class="status" [class.status--online]="item.status === 'online'"
+                                [class.status--offline]="item.status !== 'online'"></span>
+                        </div>
                         }
-                        </div>                    
+                    </div>
                     <div class="search-item-info">
                         <span class="name">{{ item.name }}</span>
                         @if (item.context) {
-                            <span class="context-text">{{ item.context }}</span>
+                        <span class="context-text">{{ item.context }}</span>
                         }
-                    </div>                   
+                    </div>
                 </div>
                 }
             </div>
             }
         </div>
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
-            <span class="user-name">{{ firebaseService.currentUser()?.firstName }} {{ firebaseService.currentUser()?.lastName }}</span>
-            <img [src]="getAvatarUrl(firebaseService.currentUser()?.avatar)" alt="Profilbild" class="avatar" />
-            <span class="status" [class.status--online]="firebaseService.currentUser()?.status === 'online'" [class.status--offline]="firebaseService.currentUser()?.status !== 'online'"></span>
+            <span class="user-name">{{ firebaseService.currentUser()?.firstName }} {{
+                firebaseService.currentUser()?.lastName }}</span>
+            <img [src]="getAvatarUrl(firebaseService.currentUser()?.avatar)" alt="Profilbild" class="avatar"
+                referrerpolicy="no-referrer" />
+            <span class="status" [class.status--online]="firebaseService.currentUser()?.status === 'online'"
+                [class.status--offline]="firebaseService.currentUser()?.status !== 'online'"></span>
             <span class="dropdown-arrow"></span>
-            
+
             <div class="profile-menu" (click)="$event.stopPropagation()">
                 <div class="menu-item hover" (click)="showUserProfileService.setToTrue()">
                     <img src="/main-page/account_circle.svg" alt="Profil" />
@@ -66,24 +72,24 @@
     <div class="layout" [class.layout--sidebar-closed]="!isSidebarOpen">
         <div class="sidebar-wrapper" [class.sidebar-wrapper--closed]="!isSidebarOpen">
             <app-sidebar (mobileNavigation)="onMobileNavigation()"></app-sidebar>
-    
-             <button class="sidebar-toggle" type="button" (click)="toggleSidebar()">
+
+            <button class="sidebar-toggle" type="button" (click)="toggleSidebar()">
                 <span class="sidebar-toggle__text">
                     {{ isSidebarOpen ? 'Workspace-Menü schließen' : 'Workspace-Menü öffnen' }}
                 </span>
-               <img class="sidebar-toggle__icon" 
-                    [class.sidebar-toggle__icon--closed]="!isSidebarOpen" 
+                <img class="sidebar-toggle__icon" [class.sidebar-toggle__icon--closed]="!isSidebarOpen"
                     src="/main-page/Group 2.svg" alt="" />
-             </button>
-       </div>
+            </button>
+        </div>
         <app-chat></app-chat>
         <app-thread-panel></app-thread-panel>
     </div>
 
     @if (showUserProfileService.showUserProfile()) {
-        <app-profile-view [user]="firebaseService.currentUser()" (close)="showUserProfileService.setToFalse()"></app-profile-view>
+    <app-profile-view [user]="firebaseService.currentUser()"
+        (close)="showUserProfileService.setToFalse()"></app-profile-view>
     }
     @if (displayForeignUserService.showForeignUserProfile()) {
-        <app-not-logged-in (close)="closeForeignUserProfile()"></app-not-logged-in>
+    <app-not-logged-in (close)="closeForeignUserProfile()"></app-not-logged-in>
     }
 </div>

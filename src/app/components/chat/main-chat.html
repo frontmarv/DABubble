@@ -7,7 +7,7 @@
                 (click)="displayForeignUserService.setSelectedUser(this.chat.otherUser()); displayForeignUserService.toggle()">
                 <span class="avatar">
                     <img [src]="this.chat.otherUser()?.avatar" alt="" class="avatar__img"
-                        (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'" />
+                        (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'" referrerpolicy="no-referrer"/>
                     @if(this.chat.otherUser()?.status === 'online') {<span class="status status--online"
                         aria-hidden="true"></span>}
                     @else{<span class="status status--offline" aria-hidden="true"></span>}
@@ -33,7 +33,7 @@
                     <button class="member-avatars-btn" type="button" (click)="openMembersModal()">
                         @for (member of getVisibleMembers(); track member.uid) {
                         <img class="member-avatar-small" [src]="member.avatar || '/shared/profile-pics/profile-pic1.svg'"
-                            [alt]="member.firstName" />
+                            [alt]="member.firstName" referrerpolicy="no-referrer"/>
                         }
                         <span class="member-count text--small bold">{{ getMemberCount() }}</span>
                     </button>
@@ -79,7 +79,7 @@
                     (click)="displayForeignUserService.setSelectedUser(member); displayForeignUserService.toggle(); closeMembersModal()">
                     <span class="avatar member-avatar-wrapper">
                         <img [src]="member.avatar || '/shared/profile-pics/profile-pic1.svg'" [alt]="member.firstName"
-                            class="avatar__img" />
+                            class="avatar__img" referrerpolicy="no-referrer"/>
                         @if (member.status === 'online') {
                         <span class="status status--online" aria-hidden="true"></span>
                         } @else {
@@ -135,7 +135,7 @@
                     @for (user of filteredUsers(); track user.uid) {
                     <div class="user-dropdown-item" (click)="selectUser(user)">
                         <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="user-dropdown-avatar"
-                            alt="" />
+                            alt="" referrerpolicy="no-referrer"/>
                         <span class="text--regular">{{ user.firstName }} {{ user.lastName }}</span>
                     </div>
                     }
@@ -145,7 +145,7 @@
                 <div class="selected-chips">
                     @for (user of selectedUsers(); track user.uid) {
                     <span class="chip">
-                        <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="chip-avatar" alt="" />
+                        <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="chip-avatar" alt="" referrerpolicy="no-referrer"/>
                         {{ user.firstName }} {{ user.lastName }}
                         <button class="chip-remove" type="button" (click)="removeSelectedUser(user)">✕</button>
                     </span>

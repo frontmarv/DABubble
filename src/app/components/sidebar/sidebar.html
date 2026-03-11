@@ -60,7 +60,7 @@
         @for (user of displayAllUsersSidebar(); track user.uid) {
         <a class="list__item" (click)="selectDm(user)" [class.list__item--active]="isDmActive(user)">
           <span class="avatar">
-            <img [src]="user.avatar" alt="" class="avatar__img" (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'" />
+            <img [src]="user.avatar" alt="" class="avatar__img" (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'" referrerpolicy="no-referrer"/>
             @if(user.status === 'online') {<span class="status status--online" aria-hidden="true"></span>}
             @else{<span class="status status--offline" aria-hidden="true"></span>}
           </span>
