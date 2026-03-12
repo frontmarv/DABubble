@@ -149,7 +149,7 @@ export class MessageComposer implements AfterViewInit {
     if (this.editOldMessageSerivce.currentMessageId() === "") {
       this.mode === 'thread' ? this.threadService.sendThreadReply(value) : this.chatService.sendMessage(value);
     } else {
-      this.chatService.updateOldMessage(value);
+      this.chatService.updateOldMessage(value, this.mode);
     }
     this.clearComposer(textarea);
   }

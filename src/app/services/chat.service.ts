@@ -2,9 +2,10 @@ import { inject, Injectable, signal, computed } from '@angular/core';
 import { Chat } from '../models/chat.class';
 import { User } from '../models/user.class';
 import { FirebaseService } from './firebase.service';
-import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch, runTransaction, Unsubscribe } from '@angular/fire/firestore';
+import { collection, updateDoc, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch, runTransaction, Unsubscribe } from '@angular/fire/firestore';
 import { Message } from '../models/message.class';
 import { editOldMessageService } from './editOldMessage-service';
+import { ThreadStateService } from './thread-state.service';
 
 type ChatMode = 'dm' | 'channel';
 interface ActiveConversation { mode: ChatMode; id: string; }
@@ -13,7 +14,7 @@ interface ActiveConversation { mode: ChatMode; id: string; }
 export class ChatService {
   private firebaseService = inject(FirebaseService);
   editOldMessageSerivce = inject(editOldMessageService);
-
+  threadService = inject(ThreadStateService);
   activeConversation = signal<ActiveConversation | null>(null);
   messages = signal<Message[]>([]);
   users = signal<Record<string, User>>({});
@@ -163,18 +164,50 @@ export class ChatService {
     }
   }
 
-  async updateOldMessage(text: string): Promise<void> {
-    const path = this.basePath();
+  // async updateOldMessage(text: string, typeOfChat: string): Promise<void> {
+  //   const messageId = this.editOldMessageSerivce.currentMessageId();
+  //   let path: any = '';
+  //   if (typeOfChat === 'thread') {
+
+  //     path = this.threadService.completeDBPathOfThread();
+  //     if (!path || !messageId || !text.trim()) return;
+  //     let batch = writeBatch(this.firebaseService.firestore);
+  //     let messageRef = doc(this.firebaseService.firestore, path, 'threads', messageId);
+  //     batch.update(messageRef, {
+  //       text: text.trim(),
+  //     });
+  //     await batch.commit();
+  //   } else { path = this.basePath(); if (!path || !messageId || !text.trim()) return;
+  //   let batch = writeBatch(this.firebaseService.firestore);
+  //   let messageRef = doc(this.firebaseService.firestore, path, 'messages', messageId);
+  //   let batch = writeBatch(this.firebaseService.firestore);
+  //   let messageRef = doc(this.firebaseService.firestore, path, 'threads', messageId);
+  //   batch.update(messageRef, {
+  //     text: text.trim(),
+  //   });}
+  //   this.editOldMessageSerivce.clearEditMessage();
+  // }
+
+
+  async updateOldMessage(text: string, typeOfChat: string): Promise<void> {
     const messageId = this.editOldMessageSerivce.currentMessageId();
-    if (!path || !messageId || !text.trim()) return;
-    const batch = writeBatch(this.firebaseService.firestore);
-    const messageRef = doc(this.firebaseService.firestore, path, 'messages', messageId);
-    batch.update(messageRef, {
-      text: text.trim(),
-      // editedAt: serverTimestamp()
-    });
-    await batch.commit();
-    this.editOldMessageSerivce.clearEditMessage();
+    const cleanText = text.trim();
+    if (!messageId || !cleanText) return;
+    const path = typeOfChat === 'thread'
+      ? this.threadService.completeDBPathOfThread()
+      : this.basePath();
+    if (!path) return;
+    const subCollection = typeOfChat === 'thread' ? 'threads' : 'messages';
+    const messageRef = doc(this.firebaseService.firestore, path, subCollection, messageId);
+    try {
+      await updateDoc(messageRef, {
+        text: cleanText,
+      });
+      this.editOldMessageSerivce.clearEditMessage();
+    } catch (error) {
+      console.error('Error updating message:', error);
+    }
   }
+
 
 }

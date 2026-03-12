@@ -27,6 +27,7 @@ export class ThreadPanel {
   toggleEditMsgHoverd() {
     this.isEditMsgHoverd != this.isEditMsgHoverd;
   }
+
   isOwnMessage(senderId: string): boolean {
     return senderId === this.firebaseService.currentUser()?.uid;
   }

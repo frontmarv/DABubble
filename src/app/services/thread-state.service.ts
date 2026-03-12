@@ -13,7 +13,7 @@ export class ThreadStateService {
   parentContextName = signal<string>('');
   threadMessages = signal<Message[]>([]);
   users = signal<Record<string, User>>({});
-
+  completeDBPathOfThread = signal<string>('');
   private parentMsgPath = signal<string | null>(null);
   private unsubThread: Unsubscribe | null = null;
 
@@ -23,6 +23,7 @@ export class ThreadStateService {
     this.setThreadContext(message, msgPath, contextName);
     this.subscribeToThreadMessages(msgPath);
     this.isThreadVisible.set(true);
+    this.completeDBPathOfThread.set(msgPath);
   }
 
   setVisible(): void { this.isThreadVisible.set(true); }
@@ -59,7 +60,6 @@ export class ThreadStateService {
   private subscribeToThreadMessages(msgPath: string): void {
     this.unsubThread?.();
     this.threadMessages.set([]);
-
     const q = query(
       collection(this.firebaseService.firestore, msgPath, 'threads'),
       orderBy('createdAt', 'asc')
