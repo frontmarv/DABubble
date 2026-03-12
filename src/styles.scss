@@ -472,3 +472,22 @@ app-message-composer {
 .cursor-default {
     cursor: default !important;
 }
+
+@media (max-width: 1240px) {
+    .modal-backdrop {
+      align-items: flex-start; 
+      padding: 0;
+    }
+  
+    .modal {
+      width: 100% !important;   
+      height: 100vh !important; 
+      max-width: 100vw !important;
+      max-height: 100vh !important;      
+      padding: 24px 16px;       
+      gap: 20px;
+      overflow-y: auto; 
+      display: flex;
+      flex-direction: column;
+    } 
+  }
