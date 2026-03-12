@@ -78,7 +78,7 @@ export class MessageList {
 
   // --- REACTIONS & DM ---
 
-  toggleEmoji(itemId: string, emoji: string | number | symbol): void { this.chat.toggleReaction(itemId, emoji); }
+  toggleEmoji(itemId: string, emoji: string | number | symbol): void { this.chat.toggleReaction(itemId, emoji, 'mainChat'); }
 
   selectDm(user: any): void {
     this.mobileNavigation.emit();

@@ -94,6 +94,13 @@ h4 {
   z-index: 9999;
 }
 
+.left-sided {
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 30px;
+  right: 50%;
+  left: unset;
+}
+
 
 @media (max-width: 1240px) {
   .thread {
@@ -164,6 +171,7 @@ h4 {
 }
 
 @media (max-width: 480px) {
+
   .message-field-other,
   .message-field-user {
     padding: 10px 14px;

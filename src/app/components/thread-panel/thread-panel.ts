@@ -6,6 +6,7 @@ import { EmojiPicker } from '../emoji-picker/emoji-picker';
 import { EmojiPickerStateService } from '../../services/emoji-picker-serivce';
 import { MessageComposer } from '../chat/message-composer/message-composer';
 import { editOldMessageService } from '../../services/editOldMessage-service';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-thread-panel',
@@ -19,6 +20,7 @@ export class ThreadPanel {
   firebaseService = inject(FirebaseService);
   emojiPickerService = inject(EmojiPickerStateService);
   editOldMessageSerivce = inject(editOldMessageService);
+  chatSerivce = inject(ChatService);
   isEditMsgHoverd = false;
 
 
@@ -46,5 +48,9 @@ export class ThreadPanel {
     const globalUser = this.firebaseService.getAllUsers().find((u) => u.uid === uid);
     if (globalUser) return globalUser;
     return null;
+  }
+
+  toggleEmoji(messageId: string, emoji: string | number | symbol, typeOfChat: string) {
+    this.chatSerivce.toggleReaction(messageId, emoji, typeOfChat);
   }
 }
