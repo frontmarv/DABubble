@@ -38,7 +38,7 @@ export class MainChat {
   isCurrentUserMember = computed(() => {
     const channel = this.currentChannel();
     const uid = this.firebaseService.currentUser()?.uid;
-    return channel?.members?.includes(uid) ?? false;
+    return (uid && channel?.members?.includes(uid)) ?? false;
   });
 
   // --- MODAL SIGNALS ---
