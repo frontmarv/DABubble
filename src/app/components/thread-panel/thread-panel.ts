@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef, effect } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ThreadStateService } from '../../services/thread-state.service';
 import { FirebaseService } from '../../services/firebase.service';
@@ -24,6 +24,32 @@ export class ThreadPanel {
   chatSerivce = inject(ChatService);
   isEditMsgHoverd = false;
   dateSeperator = inject(DateSeperator);
+
+  @ViewChild('threadBottom') threadBottom!: ElementRef;
+
+  ngAfterViewInit() {
+    this.scrollToBottom();
+  }
+
+  lastMessageCount = 0;
+
+  constructor() {
+    effect(() => {
+      const messages = this.threadService.threadMessages();
+
+      if (messages.length > this.lastMessageCount && this.threadBottom) {
+        setTimeout(() => {
+          this.scrollToBottom();
+        });
+      }
+      this.lastMessageCount = messages.length;
+    });
+  }
+
+  scrollToBottom() {
+    this.threadBottom.nativeElement.scrollIntoView({ behavior: 'auto' });
+  }
+
 
   setEditMsgHoverdTrue(): void { this.isEditMsgHoverd = true; }
   setEditMsgHoverdFalse(): void { this.isEditMsgHoverd = false; }

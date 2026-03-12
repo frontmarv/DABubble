@@ -12,24 +12,15 @@
   margin: 0 1px;
   display: inline-block;
   transition: all var(--transition-fast) ease-in-out;
+  color: var(--color-black);
+  background-color: var(--color-white);
 
-  &.user-mention {
-    color: var(--color-black);
-    background-color: var(--color-white);
-
-    &:hover {
-      background-color: var(--color-purple1);
-      color: var(--color-white);
-      box-shadow: 0 2px 4px rgba(68, 77, 242, 0.2);
-    }
+  &:hover {
+    background-color: var(--color-purple1);
+    color: var(--color-white);
+    box-shadow: 0 2px 4px rgba(68, 77, 242, 0.2);
   }
 
-  &.channel-mention {
-    color: #ff9900;
-    background-color: rgba(255, 153, 0, 0.08);
-    border: 1px solid transparent;
-
-  }
 }
 
 .mention:active {
