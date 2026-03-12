@@ -7,6 +7,7 @@ import { EmojiPickerStateService } from '../../services/emoji-picker-serivce';
 import { MessageComposer } from '../chat/message-composer/message-composer';
 import { editOldMessageService } from '../../services/editOldMessage-service';
 import { ChatService } from '../../services/chat.service';
+import { DateSeperator } from '../../services/date-seperator.service';
 
 @Component({
   selector: 'app-thread-panel',
@@ -22,7 +23,7 @@ export class ThreadPanel {
   editOldMessageSerivce = inject(editOldMessageService);
   chatSerivce = inject(ChatService);
   isEditMsgHoverd = false;
-
+  dateSeperator = inject(DateSeperator);
 
   setEditMsgHoverdTrue(): void { this.isEditMsgHoverd = true; }
   setEditMsgHoverdFalse(): void { this.isEditMsgHoverd = false; }

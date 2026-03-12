@@ -1,11 +1,11 @@
 <div class="chat-container">
   <div class="messages">
     @for (item of chat.messages(); track item.id; let i = $index) {
-    @if (shouldShowDateSeparator(i)) {
+    @if (dateSeperator.shouldShowDateSeparator(i, false)) {
     <div class="time-seperator">
       <div class="line"></div>
       <div class="day">
-        {{ getDateSeparatorLabel(item.createdAt.toDate()) }}
+        {{ dateSeperator.getDateSeparatorLabel(item.createdAt.toDate()) }}
       </div>
     </div>
     }

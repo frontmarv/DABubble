@@ -15,8 +15,9 @@
             <h4>{{ this.chat.otherUser()?.firstName }} {{ this.chat.otherUser()?.lastName }}</h4>
         </div>
         }
-
-        @if (currentChannel()) {
+        @if(!isCurrentUserMember() && !this.chat.chatIsActive()){
+        <div style="height: 70px"></div>
+        }@else{@if (currentChannel()) {
         <div class="channel-header">
             <div class="channel-header__left">
                 <button class="channel-name-btn" type="button" (click)="openChannelInfo()">
@@ -24,6 +25,7 @@
                         style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg');"
                         aria-label="#"></span>
                     <span class="channel-name-text">{{ currentChannel()?.name }}</span>
+
                     <span class="channel-dropdown-arrow icon-mask"
                         style="-webkit-mask-image: url('/main-page/arrow_drop_down.svg'); mask-image: url('/main-page/arrow_drop_down.svg');"></span>
                 </button>
@@ -45,7 +47,9 @@
                 </button>
             </div>
         </div>
-        }
+        }}
+
+
     </header>
 
     @if (chat.activeConversation()?.mode === 'dm' || isCurrentUserMember()) {

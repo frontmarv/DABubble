@@ -447,7 +447,7 @@ input::placeholder {
 @media (max-width: 900px) {
   .main-chat {
     border-radius: 16px;
-    height: calc(100vh - 82px);
+    height: calc(100vh - 75px);
     min-width: 0;
   }
 
@@ -465,7 +465,6 @@ input::placeholder {
   .main-chat {
     flex: 1;
     width: 100%;
-    height: calc(100vh - 68px);
     border-radius: 0;
     min-width: 0;
   }
@@ -482,10 +481,6 @@ input::placeholder {
     padding: 28px;
   }
 
-  .main-chat {
-    height: calc(100vh - 60px);
-  }
-
   .main-chat__header {
     padding: 10px 12px;
   }
@@ -496,5 +491,9 @@ input::placeholder {
 
   .member-count {
     display: none;
+  }
+
+  .header__content {
+    padding: 0px 12px
   }
 }

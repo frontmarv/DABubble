@@ -10,6 +10,7 @@ import { ShowUserProfile } from '../../../services/showUserProfile';
 import { MessageFormatter } from '../message-formatter/message-formatter';
 import { Message } from '../../../models/message.class';
 import { editOldMessageService } from '../../../services/editOldMessage-service';
+import { DateSeperator } from '../../../services/date-seperator.service';
 
 @Component({
   selector: 'app-message-list',
@@ -26,6 +27,7 @@ export class MessageList {
   displayForeignUserService = inject(DisplayForeignUserService);
   showUserProfileService = inject(ShowUserProfile);
   editOldMessageSerivce = inject(editOldMessageService);
+  dateSeperator = inject(DateSeperator);
 
   @ViewChild('bottom') bottom!: ElementRef;
   @Output() mobileNavigation = new EventEmitter<void>();
@@ -90,44 +92,5 @@ export class MessageList {
     this.displayForeignUserService.toggle();
   }
 
-  shouldShowDateSeparator(index: number): boolean {
-    const messages = this.chat.messages();
-    const current = this.toDate(messages?.[index]?.createdAt);
-    if (!current) return false;
-    if (index === 0) return true;
-    const prev = this.toDate(messages?.[index - 1]?.createdAt);
-    return !prev || !this.isSameDay(prev, current);
-  }
 
-  getDateSeparatorLabel(date?: Date | null): string {
-    if (!date) return '';
-    const now = new Date();
-    if (this.isSameDay(date, now)) return 'Heute';
-    const yesterday = new Date(now);
-    yesterday.setDate(now.getDate() - 1);
-    if (this.isSameDay(date, yesterday)) return 'Gestern';
-    return this.formatFullDate(date);
-  }
-
-  private formatFullDate(date: Date): string {
-    const fmt = (opts: Intl.DateTimeFormatOptions) =>
-      new Intl.DateTimeFormat('de-DE', opts).format(date);
-    const weekday = fmt({ weekday: 'long' });
-    const day = fmt({ day: '2-digit' });
-    const month = fmt({ month: 'long' });
-    return `${weekday}, ${day}.${month.charAt(0).toUpperCase() + month.slice(1)}`;
-  }
-
-  private toDate(value: any): Date | null {
-    if (!value) return null;
-    if (typeof value?.toDate === 'function') return value.toDate();
-    if (value instanceof Date) return value;
-    return null;
-  }
-
-  private isSameDay(a: Date, b: Date): boolean {
-    return a.getFullYear() === b.getFullYear()
-      && a.getMonth() === b.getMonth()
-      && a.getDate() === b.getDate();
-  }
 }

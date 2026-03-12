@@ -16,11 +16,13 @@ export class ThreadStateService {
   completeDBPathOfThread = signal<string>('');
   private parentMsgPath = signal<string | null>(null);
   private unsubThread: Unsubscribe | null = null;
+  private unsubParent: Unsubscribe | null = null;
 
   openThread(message: Message, basePath: string, contextName: string): void {
     if (!message.id) return;
     const msgPath = `${basePath}/messages/${message.id}`;
     this.setThreadContext(message, msgPath, contextName);
+    this.subscribeToParentMessage(msgPath);
     this.subscribeToThreadMessages(msgPath);
     this.isThreadVisible.set(true);
     this.completeDBPathOfThread.set(msgPath);
@@ -39,6 +41,19 @@ export class ThreadStateService {
   destroy(): void {
     this.unsubThread?.();
     this.unsubThread = null;
+    this.unsubParent?.();
+    this.unsubParent = null;
+  }
+
+  private subscribeToParentMessage(msgPath: string): void {
+    this.unsubParent?.();
+    const parentRef = doc(this.firebaseService.firestore, msgPath);
+    this.unsubParent = onSnapshot(parentRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const updatedMessage = { id: docSnap.id, ...docSnap.data() } as Message;
+        this.parentMessage.set(updatedMessage);
+      }
+    });
   }
 
   private setThreadContext(message: Message, msgPath: string, contextName: string): void {

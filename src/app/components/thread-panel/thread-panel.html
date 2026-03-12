@@ -14,13 +14,18 @@
 
         @if (threadService.parentMessage(); as parent) {
         @let parentUser = getUserFor(parent.senderId);
-
+        <div class="time-seperator">
+            <div class="line"></div>
+            <div class="day">
+                {{ dateSeperator.getDateSeparatorLabel(threadService.parentMessage()!.createdAt.toDate()) }}
+            </div>
+        </div>
         <div [class]="isOwnMessage(parent.senderId) ? 'message-field-user' : 'message-field-other'">
             <span class="avatar">
                 <img [src]="parentUser?.avatar || '/shared/profile-pics/profile-pic1.svg'" alt="Profilbild"
                     class="avatar__img" />
             </span>
-            <div class="message-info-container">
+            <div class="message-info-container other">
                 <div class="message-info">
                     <p class="text--regular bold message-name">
                         @if (parentUser) {
@@ -38,9 +43,49 @@
                     </p>
                 </div>
                 <div class="message text--regular">{{ parent.text }}</div>
+                <div class="answer-container">
+                    @let reactions = parent.reactions;
+                    @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, parent.id!);
+                    @let hiddenCount = emojiPickerService.getHiddenReactionsCount(reactions, parent.id!);
+                    @let isExpanded = emojiPickerService.isReactionsExpanded(parent.id!);
+                    @for (reaction of (visibleReactions | keyvalue); track reaction.key) {
+                    <div class="reactions"
+                        (click)="toggleEmoji(parent.id!, reaction.key, 'mainChat'); $event.stopPropagation()">
+                        <div class="fast-emoji">
+                            <span class="emoji-symbol">{{ reaction.key }}</span>
+                            <div class="emoji-qantity">
+                                {{ reaction.value.length }}
+                            </div>
+
+                            @if(!emojiPickerService.isMobileActive()){
+                            <div class="userReaction">
+                                <span class="emoji-symbol">{{ reaction.key }}</span>
+                                <div>
+                                    <span class="text--regular bold">
+                                        {{ emojiPickerService.formatReactionUsers(reaction.value) }}
+                                    </span>
+                                    <span class="text--small">hat reagiert</span>
+                                </div>
+                            </div>
+                            }
+
+                        </div>
+                    </div>
+                    }
+                    @if (hiddenCount > 0) {
+                    <div class="reactions" (click)="emojiPickerService.toggleReactionsExpanded(parent.id!)">
+                        {{ hiddenCount }} weitere
+                    </div>
+                    }
+                    @if (isExpanded && hiddenCount === 0 && emojiPickerService.hasMoreThan15Reactions(reactions)) {
+                    <div class="reactions" (click)="emojiPickerService.toggleReactionsExpanded(parent.id!)">
+                        weniger anzeigen
+                    </div>
+                    }
+                </div>
             </div>
             <div [class]="isOwnMessage(parent.senderId) ? 'reaction-bar' : 'reaction-bar-other'">
-                <app-emoji-picker></app-emoji-picker>
+                <app-emoji-picker (emojiSelected)="toggleEmoji(parent.id!, $event, 'mainChat')"></app-emoji-picker>
             </div>
         </div>
         }
@@ -50,7 +95,15 @@
             <div class="separator__line"></div>
         </div>
 
-        @for (reply of threadService.threadMessages(); track reply.id) {
+        @for (reply of threadService.threadMessages(); track reply.id; let i = $index) {
+        @if (dateSeperator.shouldShowDateSeparator(i, true)) {
+        <div class="time-seperator">
+            <div class="line"></div>
+            <div class="day">
+                {{ dateSeperator.getDateSeparatorLabel(reply.createdAt.toDate()) }}
+            </div>
+        </div>
+        }
         @let replyUser = getUserFor(reply.senderId);
 
         @if (isOwnMessage(reply.senderId)) {
@@ -134,7 +187,7 @@
                 <img [src]="replyUser?.avatar || '/shared/profile-pics/profile-pic1.svg'" alt="Profilbild"
                     class="avatar__img" />
             </span>
-            <div class="message-info-container">
+            <div class="message-info-container other">
                 <div class="message-info">
                     <p class="text--regular bold message-name">
                         {{ replyUser?.firstName }} {{ replyUser?.lastName }}

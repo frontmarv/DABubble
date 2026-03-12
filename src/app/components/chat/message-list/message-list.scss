@@ -41,6 +41,7 @@
 }
 
 .message-name {
+
     // max-width: 200px;
     &:hover {
         color: var(--color-purple1);
@@ -77,10 +78,6 @@
         justify-content: flex-end;
         color: var(--color-text-grey);
     }
-}
-
-.other {
-    align-items: flex-start;
 }
 
 .reaction-container {
@@ -157,33 +154,9 @@
     flex-direction: column;
     justify-content: flex-end;
     min-height: 100%;
+    padding-top: 15px;
 }
 
-.time-seperator {
-    display: flex;
-    justify-content: center;
-    position: relative;
-    height: 35px;
-    .line {
-        position: absolute;
-        width: 90%;
-        border: 1px solid var(--color-light-purple-lines);
-        bottom: 17.5px;
-    }
-    .day {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: absolute;
-        background-color: var(--color-white);
-        height: 35px;
-        padding: 5px 15px 5px 15px;
-        width: fit-content;
-        border: 1px solid var(--color-light-purple-lines);
-        border-radius: 30px;
-        bottom: 0;
-    }
-}
 
 .reaction-bar {
     padding: 3px 15px 3px 20px;
@@ -240,7 +213,7 @@
         display: none;
     }
 
-    > div {
+    >div {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -271,7 +244,8 @@
     top: 20px;
     padding: 10px 20px;
     left: 30px;
-        @media screen and (max-width: 500px) {
+
+    @media screen and (max-width: 500px) {
         border-radius: 30px 0px 30px 30px;
         left: -154px;
         top: 34px;

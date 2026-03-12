@@ -473,21 +473,54 @@ app-message-composer {
     cursor: default !important;
 }
 
+
+.other {
+    align-items: flex-start !important;
+}
+
+.time-seperator {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    min-height: 35px;
+
+    .line {
+        position: absolute;
+        width: 90%;
+        border: 1px solid var(--color-light-purple-lines);
+        bottom: 17.5px;
+    }
+
+    .day {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        background-color: var(--color-white);
+        height: 35px;
+        padding: 5px 15px 5px 15px;
+        width: fit-content;
+        border: 1px solid var(--color-light-purple-lines);
+        border-radius: 30px;
+        bottom: 0;
+    }
+}
+
 @media (max-width: 1240px) {
     .modal-backdrop {
-      align-items: flex-start; 
-      padding: 0;
+        align-items: flex-start;
+        padding: 0;
     }
-  
+
     .modal {
-      width: 100% !important;   
-      height: 100vh !important; 
-      max-width: 100vw !important;
-      max-height: 100vh !important;      
-      padding: 24px 16px;       
-      gap: 20px;
-      overflow-y: auto; 
-      display: flex;
-      flex-direction: column;
-    } 
-  }
+        width: 100% !important;
+        height: 100vh !important;
+        max-width: 100vw !important;
+        max-height: 100vh !important;
+        padding: 24px 16px;
+        gap: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+}
