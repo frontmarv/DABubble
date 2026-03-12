@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { Firestore, collection, addDoc, onSnapshot, query, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, Unsubscribe, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, onSnapshot, query, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, Unsubscribe, getDocs, collectionGroup } from '@angular/fire/firestore';
 import { User } from '../models/user.class';
 import { Channel } from '../models/channel.class';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -13,10 +13,10 @@ export class FirebaseService {
   public firestore = inject(Firestore);
 
   currentUser = signal<User | null>(null);
-  channels = signal<any[]>([]);
+  channels = signal<Channel[]>([]);
   selectedChannelId = signal<string>('');
 
-  chats: any[] = [];
+  chats: Chat[] = [];
   currentChannelName: string = 'Allgemein';
   currentChatName: string = 'Allgemein';
   selectedChatId: string = '';
@@ -112,7 +112,7 @@ export class FirebaseService {
   }
 
   private updateChannelsState(snap: any): void {
-    const mappedChannels = snap.docs.map((d: any) => ({ id: d.id, ...d.data() }));
+    const mappedChannels = snap.docs.map((d: any) => new Channel({ id: d.id, ...d.data() }));
     this.channels.set(mappedChannels);
   }
 
@@ -164,34 +164,42 @@ export class FirebaseService {
   }
 
   async searchMessagesInChannels(term: string): Promise<{ channelId: string; channelName: string; messageId: string; text: string }[]> {
-    const results: { channelId: string; channelName: string; messageId: string; text: string }[] = [];
-    const lowerTerm = term.toLowerCase();
-    const currentChannels = this.channels();
+    try {
+      const snapshot = await this.fetchAllMessages();
+      return this.filterMessagesByTerm(snapshot, term.toLowerCase());
+    } catch (err) {
+      console.error('Fehler bei der globalen Suche:', err);
+      return [];
+    }
+  }
 
-    const searchPromises = currentChannels.map(async (channel) => {
-      try {
-        const messagesRef = collection(this.firestore, 'channels', channel.id, 'messages');
-        const snapshot = await getDocs(messagesRef);
+  private async fetchAllMessages() {
+    const q = query(collectionGroup(this.firestore, 'messages'));
+    return await getDocs(q);
+  }
 
-        snapshot.forEach((msgDoc) => {
-          const data = msgDoc.data();
-          const text: string = data['text'] ?? '';
-          if (text.toLowerCase().includes(lowerTerm)) {
-            results.push({
-              channelId: channel.id,
-              channelName: channel.name,
-              messageId: msgDoc.id,
-              text,
-            });
-          }
-        });
-      } catch (err) {
-        console.error(`Fehler beim Suchen in Channel ${channel.id}:`, err);
-      }
+  private filterMessagesByTerm(snapshot: any, lowerTerm: string) {
+    const results: any[] = [];
+    snapshot.forEach((doc: any) => {
+      const match = this.createMessageResult(doc, lowerTerm);
+      if (match) results.push(match);
     });
-
-    await Promise.all(searchPromises);
     return results;
+  }
+
+  private createMessageResult(doc: any, lowerTerm: string) {
+    const text = (doc.data()['text'] ?? '');
+    if (!text.toLowerCase().includes(lowerTerm)) return null;
+
+    const channel = this.findChannelForMessage(doc);
+    if (!channel) return null;
+
+    return { channelId: channel.id, channelName: channel.name, messageId: doc.id, text };
+  }
+
+  private findChannelForMessage(doc: any): Channel | undefined {
+    const parentChannelId = doc.ref.parent.parent?.id;
+    return this.channels().find(c => c.id === parentChannelId);
   }
 
   subChats(): void {
@@ -201,7 +209,7 @@ export class FirebaseService {
   }
 
   private updateChatsState(snap: any): void {
-    this.chats = snap.docs.map((d: any) => ({ id: d.id, ...d.data() }));
+    this.chats = snap.docs.map((d: any) => new Chat({ id: d.id, ...d.data() }));
   }
 
   async addChat(chat: Chat): Promise<void> {
