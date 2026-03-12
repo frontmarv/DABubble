@@ -69,9 +69,49 @@
                     </p>
                 </div>
                 <div class="message text--regular">{{ reply.text }}</div>
+                <div class="answer-container">
+                    @let reactions = reply.reactions;
+                    @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, reply.id!);
+                    @let hiddenCount = emojiPickerService.getHiddenReactionsCount(reactions, reply.id!);
+                    @let isExpanded = emojiPickerService.isReactionsExpanded(reply.id!);
+                    @for (reaction of (visibleReactions | keyvalue); track reaction.key) {
+                    <div class="reactions"
+                        (click)="toggleEmoji(reply.id!, reaction.key, 'thread'); $event.stopPropagation()">
+                        <div class="fast-emoji">
+                            <span class="emoji-symbol">{{ reaction.key }}</span>
+                            <div class="emoji-qantity">
+                                {{ reaction.value.length }}
+                            </div>
+
+                            @if(!emojiPickerService.isMobileActive()){
+                            <div class="userReaction">
+                                <span class="emoji-symbol">{{ reaction.key }}</span>
+                                <div>
+                                    <span class="text--regular bold">
+                                        {{ emojiPickerService.formatReactionUsers(reaction.value) }}
+                                    </span>
+                                    <span class="text--small">hat reagiert</span>
+                                </div>
+                            </div>
+                            }
+
+                        </div>
+                    </div>
+                    }
+                    @if (hiddenCount > 0) {
+                    <div class="reactions" (click)="emojiPickerService.toggleReactionsExpanded(reply.id!)">
+                        {{ hiddenCount }} weitere
+                    </div>
+                    }
+                    @if (isExpanded && hiddenCount === 0 && emojiPickerService.hasMoreThan15Reactions(reactions)) {
+                    <div class="reactions" (click)="emojiPickerService.toggleReactionsExpanded(reply.id!)">
+                        weniger anzeigen
+                    </div>
+                    }
+                </div>
             </div>
             <div class="reaction-bar">
-                <app-emoji-picker></app-emoji-picker>
+                <app-emoji-picker (emojiSelected)="toggleEmoji(reply.id!, $event, 'thread')"></app-emoji-picker>
                 <button class="icon-btn" type="button" aria-label="Sentiment" (mouseenter)="setEditMsgHoverdTrue()"
                     (mouseleave)="setEditMsgHoverdFalse()">
                     <img class="icon-btn__img" src="/chat-input/edit.svg" alt="" />
@@ -86,6 +126,7 @@
                     }
                 </button>
             </div>
+
         </div>
         } @else {
         <div class="message-field-other">
@@ -103,9 +144,49 @@
                     </p>
                 </div>
                 <div class="message text--regular">{{ reply.text }}</div>
+                <div class="answer-container">
+                    @let reactions = reply.reactions;
+                    @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, reply.id!);
+                    @let hiddenCount = emojiPickerService.getHiddenReactionsCount(reactions, reply.id!);
+                    @let isExpanded = emojiPickerService.isReactionsExpanded(reply.id!);
+                    @for (reaction of (visibleReactions | keyvalue); track reaction.key) {
+                    <div class="reactions"
+                        (click)="toggleEmoji(reply.id!, reaction.key, 'thread'); $event.stopPropagation()">
+                        <div class="fast-emoji">
+                            <span class="emoji-symbol">{{ reaction.key }}</span>
+                            <div class="emoji-qantity">
+                                {{ reaction.value.length }}
+                            </div>
+
+                            @if(!emojiPickerService.isMobileActive()){
+                            <div class="userReaction left-sided">
+                                <span class="emoji-symbol">{{ reaction.key }}</span>
+                                <div>
+                                    <span class="text--regular bold">
+                                        {{ emojiPickerService.formatReactionUsers(reaction.value) }}
+                                    </span>
+                                    <span class="text--small">hat reagiert</span>
+                                </div>
+                            </div>
+                            }
+
+                        </div>
+                    </div>
+                    }
+                    @if (hiddenCount > 0) {
+                    <div class="reactions" (click)="emojiPickerService.toggleReactionsExpanded(reply.id!)">
+                        {{ hiddenCount }} weitere
+                    </div>
+                    }
+                    @if (isExpanded && hiddenCount === 0 && emojiPickerService.hasMoreThan15Reactions(reactions)) {
+                    <div class="reactions" (click)="emojiPickerService.toggleReactionsExpanded(reply.id!)">
+                        weniger anzeigen
+                    </div>
+                    }
+                </div>
             </div>
             <div class="reaction-bar-other">
-                <app-emoji-picker></app-emoji-picker>
+                <app-emoji-picker (emojiSelected)="toggleEmoji(reply.id!, $event, 'thread')"></app-emoji-picker>
             </div>
         </div>
         }
