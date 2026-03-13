@@ -59,12 +59,13 @@ export class MessageComposer implements AfterViewInit {
   }
 
 
-  filteredResults = computed<ComposerSearchResult[]>(() => {
-    const type = this.searchType();
-    if (type === 'channel') return this.getChannelResults(this.searchQuery().toLowerCase());
-    if (type === 'user') return this.getUserResults(this.searchQuery().toLowerCase());
-    return [];
-  });
+filteredResults = computed<ComposerSearchResult[]>(() => {
+  const type = this.searchType();
+  let results: ComposerSearchResult[] = [];
+  if (type === 'channel') results = this.getChannelResults(this.searchQuery().toLowerCase());
+  if (type === 'user') results = this.getUserResults(this.searchQuery().toLowerCase());
+  return results.filter(item => !item.name.includes('(Du)'));
+});
 
   isRecipientDeleted(): boolean {
     if (this.mode === 'thread') return false;
