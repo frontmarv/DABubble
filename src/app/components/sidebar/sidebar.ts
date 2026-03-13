@@ -1,4 +1,4 @@
-import { Component, inject, Output, EventEmitter } from '@angular/core';
+import { Component, inject, Output, EventEmitter, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
@@ -17,6 +17,13 @@ export class Sidebar {
   firebaseService = inject(FirebaseService);
   displayForeignUserService = inject(DisplayForeignUserService);
 
+  // --- KOMMUNIKATION MIT CHAT-ROOM FÜR DIE SUCHE ---
+  @Input() searchQuery: string = '';
+  @Input() filteredResults: any[] = [];
+  @Input() showSearchDropdown: boolean = false;
+
+  @Output() searchInput = new EventEmitter<Event>();
+  @Output() resultSelect = new EventEmitter<any>();
   @Output() mobileNavigation = new EventEmitter<void>();
 
   // --- UI STATE ---

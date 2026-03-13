@@ -92,4 +92,13 @@
     @if (displayForeignUserService.showForeignUserProfile()) {
     <app-not-logged-in (close)="closeForeignUserProfile()"></app-not-logged-in>
     }
+
+    <app-sidebar 
+       [searchQuery]="searchQuery()"
+       [filteredResults]="filteredResults()"
+       [showSearchDropdown]="showSearchDropdown()"
+       (searchInput)="onSearchInput($event)"
+       (resultSelect)="selectResult($event)"
+       (mobileNavigation)="onMobileNavigation()">
+    </app-sidebar>
 </div>
