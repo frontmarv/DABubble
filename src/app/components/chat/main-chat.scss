@@ -210,6 +210,7 @@ app-message-list {
   }
 }
 
+/* Modal Content Styles */
 .members-list {
   display: flex;
   flex-direction: column;
@@ -232,6 +233,9 @@ app-message-list {
 
 .member-avatar-wrapper {
   position: relative;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
 
   .avatar__img {
     width: 100%;
@@ -239,10 +243,6 @@ app-message-list {
     border-radius: 50%;
     object-fit: cover;
   }
-
-  width: 50px;
-  height: 50px;
-  flex-shrink: 0;
 }
 
 .member-name {
@@ -269,7 +269,6 @@ app-message-list {
 
   &:hover {
     background-color: var(--color-background);
-
     span {
       color: var(--color-purple2);
     }
@@ -286,26 +285,16 @@ app-message-list {
   justify-content: center;
   flex-shrink: 0;
 
-  img,
-  span {
+  img, span {
     width: 24px;
     height: 24px;
   }
-}
-
-.add-people-modal {
-  width: 380px;
-  padding: 28px;
 }
 
 .channel-tag-label {
   display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.channel-tag-icon--purple {
-  background-color: var(--color-purple2);
 }
 
 .channel-tag-name {
@@ -318,10 +307,6 @@ app-message-list {
   flex-direction: column;
   gap: 12px;
   position: relative;
-}
-
-.add-people-input {
-  width: 100%;
 }
 
 .user-dropdown {
@@ -342,10 +327,6 @@ app-message-list {
 
   &:hover {
     background-color: var(--color-background);
-  }
-
-  span {
-    word-break: break-all;
   }
 }
 
@@ -370,7 +351,6 @@ app-message-list {
   border-radius: 30px;
   padding: 4px 10px 4px 6px;
   font-size: 0.875rem;
-  font-family: inherit;
 }
 
 .chip-avatar {
@@ -385,8 +365,6 @@ app-message-list {
   cursor: pointer;
   font-size: 0.75rem;
   color: var(--color-text-grey);
-  padding: 0;
-  line-height: 1;
   margin-left: 2px;
 
   &:hover {
@@ -396,7 +374,6 @@ app-message-list {
 
 .start_screen {
   cursor: default;
-
   &:hover {
     background: unset;
   }
@@ -419,10 +396,7 @@ input[type="text"]:focus {
   cursor: text;
 }
 
-input::placeholder {
-  font-size: 18px;
-}
-
+/* Responsive & Modals Positioning */
 @media (max-width: 1240px) {
   .member-avatars-btn {
     display: none;
@@ -448,12 +422,10 @@ input::placeholder {
   .main-chat {
     border-radius: 16px;
     height: calc(100vh - 75px);
-    min-width: 0;
   }
 
   .main-chat__header {
     padding: 16px;
-    border-radius: 16px 16px 0 0;
   }
 
   .channel-name-text {
@@ -461,26 +433,7 @@ input::placeholder {
   }
 }
 
-@media (max-width: 768px) {
-  .main-chat {
-    flex: 1;
-    width: 100%;
-    border-radius: 0;
-    min-width: 0;
-  }
-
-  .main-chat__header {
-    padding: 12px 16px;
-    border-radius: 0;
-  }
-}
-
 @media (max-width: 480px) {
-  .members-modal {
-    width: 320px;
-    padding: 28px;
-  }
-
   .main-chat__header {
     padding: 10px 12px;
   }
@@ -492,8 +445,107 @@ input::placeholder {
   .member-count {
     display: none;
   }
+}
 
-  .header__content {
-    padding: 0px 12px
+.members-modal, .add-people-modal {
+  position: relative !important; 
+  top: auto !important; 
+  right: auto !important;
+  margin: auto !important; 
+  
+  border-radius: 30px 0 30px 30px !important;
+  height: auto !important;
+  max-height: 85vh !important;
+  width: 380px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+  display: flex !important;
+  flex-direction: column !important;
+
+  @media (max-width: 1240px) {
+    width: calc(100% - 40px) !important;
+  }
+
+  .modal__header {
+    margin-bottom: 20px;
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-black);
+    }
+  }
+}
+
+.members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+
+  .member-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 15px;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+
+    &:hover {
+      background-color: var(--color-background);
+    }
+
+    .member-avatar-wrapper {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      .avatar__img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+      .status { position: absolute; bottom: 0; right: 0; width: 14px; height: 14px; border: 2px solid white; }
+    }
+    
+    .member-name { font-size: 18px; }
+  }
+}
+
+.add-member-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 15px;
+  border-radius: 100px;
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.1s ease;
+
+  &:hover {
+    background-color: var(--color-background);
+    .text--regular { color: var(--color-purple1); font-weight: 700; }
+    .add-member-icon-circle { background-color: var(--color-purple1); .icon-mask { background-color: white; } }
+  }
+
+  .add-member-icon-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--color-background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.add-people-modal {
+  .channel-tag-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    color: var(--color-purple1);
+    .hashtag-icon { background-color: var(--color-purple1); width: 20px; height: 20px; }
+  }
+
+  .add-people-search {
+    gap: 15px;
+    .user-dropdown { border-radius: 20px; margin-top: 5px; }
   }
 }

@@ -42,7 +42,9 @@
                         {{ parent.createdAt ? (parent.createdAt.toDate() | date:'HH:mm') : '' }} Uhr
                     </p>
                 </div>
-                <div class="message text--regular">{{ parent.text }}</div>
+                <div class="message text--regular">
+                    <app-message-formatter [text]="parent.text"></app-message-formatter>
+                </div>
                 <div class="answer-container">
                     @let reactions = parent.reactions;
                     @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, parent.id!);
@@ -121,7 +123,9 @@
                         {{ reply.createdAt ? (reply.createdAt.toDate() | date:'HH:mm') : '' }} Uhr
                     </p>
                 </div>
-                <div class="message text--regular">{{ reply.text }}</div>
+                <div class="message text--regular">
+                    <app-message-formatter [text]="reply.text"></app-message-formatter>
+                </div>
                 <div class="answer-container">
                     @let reactions = reply.reactions;
                     @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, reply.id!);
@@ -196,7 +200,9 @@
                         {{ reply.createdAt ? (reply.createdAt.toDate() | date:'HH:mm') : '' }} Uhr
                     </p>
                 </div>
-                <div class="message text--regular">{{ reply.text }}</div>
+                <div class="message text--regular">
+                    <app-message-formatter [text]="reply.text"></app-message-formatter>
+                </div>
                 <div class="answer-container">
                     @let reactions = reply.reactions;
                     @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, reply.id!);

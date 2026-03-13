@@ -8,11 +8,12 @@ import { MessageComposer } from '../chat/message-composer/message-composer';
 import { editOldMessageService } from '../../services/editOldMessage-service';
 import { ChatService } from '../../services/chat.service';
 import { DateSeperator } from '../../services/date-seperator.service';
+import { MessageFormatter } from '../chat/message-formatter/message-formatter';
 
 @Component({
   selector: 'app-thread-panel',
   standalone: true,
-  imports: [CommonModule, DatePipe, EmojiPicker, MessageComposer],
+  imports: [CommonModule, DatePipe, EmojiPicker, MessageComposer, MessageFormatter],
   templateUrl: './thread-panel.html',
   styleUrl: './thread-panel.scss',
 })

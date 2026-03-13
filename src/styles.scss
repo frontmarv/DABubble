@@ -336,7 +336,7 @@ app-message-composer {
 .modal {
     background-color: var(--color-white);
     padding: 40px;
-    border-radius: 30px;
+    border-radius: 30px 0 30px 30px;
     width: fit-content;
     max-width: 870px;
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);

@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MessageList } from './message-list/message-list';
 import { MessageComposer } from './message-composer/message-composer';
@@ -14,13 +14,27 @@ import { ChannelInfo } from '../channel-info/channel-info';
   templateUrl: './main-chat.html',
   styleUrl: './main-chat.scss',
 })
-export class MainChat {
+export class MainChat implements OnInit {
   chat = inject(ChatService);
   displayForeignUserService = inject(DisplayForeignUserService);
   firebaseService = inject(FirebaseService);
 
-  // --- COMPUTED STATE ---
+  // --- RESPONSIVE STATE ---
+  windowWidth = signal(typeof window !== 'undefined' ? window.innerWidth : 1300);
+  isMobile = computed(() => this.windowWidth() <= 1240);
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.windowWidth.set(window.innerWidth);
+  }
+
+  ngOnInit(): void {
+    if (typeof window !== 'undefined') {
+      this.windowWidth.set(window.innerWidth);
+    }
+  }
+
+  // --- COMPUTED STATE ---
   currentChannel = computed(() => {
     const id = this.firebaseService.selectedChannelId();
     if (!id) return null;
@@ -42,7 +56,6 @@ export class MainChat {
   });
 
   // --- MODAL SIGNALS ---
-
   showMembersModal = signal(false);
   showAddPeopleModal = signal(false);
   showChannelInfoModal = signal(false);
@@ -53,13 +66,15 @@ export class MainChat {
   selectedUsers = signal<any[]>([]);
 
   // --- VIEW HELPERS ---
-
   getVisibleMembers(): any[] { return this.channelMembers().slice(0, 3); }
   getMemberCount(): number { return this.channelMembers().length; }
 
   // --- MODAL MANAGEMENT ---
-
-  openMembersModal(): void { this.showMembersModal.set(true); this.showAddPeopleModal.set(false); }
+  openMembersModal(): void { 
+    this.showMembersModal.set(true); 
+    this.showAddPeopleModal.set(false); 
+  }
+  
   closeMembersModal(): void { this.showMembersModal.set(false); }
   openChannelInfo(): void { this.showChannelInfoModal.set(true); }
   closeChannelInfo(): void { this.showChannelInfoModal.set(false); }
@@ -87,7 +102,6 @@ export class MainChat {
   }
 
   // --- USER SEARCH ---
-
   filterUsers(): void {
     const search = this.addPersonSearch().toLowerCase().trim();
     this.filteredUsers.set(search ? this.getMatchingUsers(search) : []);
@@ -121,7 +135,6 @@ export class MainChat {
   }
 
   // --- MEMBER MANAGEMENT ---
-
   async addMembersToChannel(): Promise<void> {
     const channel = this.currentChannel();
     if (!channel || !this.selectedUsers().length) return;
