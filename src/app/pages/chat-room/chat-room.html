@@ -71,7 +71,15 @@
 
     <div class="layout" [class.layout--sidebar-closed]="!isSidebarOpen">
         <div class="sidebar-wrapper" [class.sidebar-wrapper--closed]="!isSidebarOpen">
-            <app-sidebar (mobileNavigation)="onMobileNavigation()"></app-sidebar>
+            
+            <app-sidebar 
+               [searchQuery]="searchQuery()"
+               [filteredResults]="filteredResults()"
+               [showSearchDropdown]="showSearchDropdown()"
+               (searchInput)="onSearchInput($event)"
+               (resultSelect)="selectResult($event)"
+               (mobileNavigation)="onMobileNavigation()">
+            </app-sidebar>
 
             <button class="sidebar-toggle" type="button" (click)="toggleSidebar()">
                 <span class="sidebar-toggle__text">
@@ -92,13 +100,4 @@
     @if (displayForeignUserService.showForeignUserProfile()) {
     <app-not-logged-in (close)="closeForeignUserProfile()"></app-not-logged-in>
     }
-
-    <app-sidebar 
-       [searchQuery]="searchQuery()"
-       [filteredResults]="filteredResults()"
-       [showSearchDropdown]="showSearchDropdown()"
-       (searchInput)="onSearchInput($event)"
-       (resultSelect)="selectResult($event)"
-       (mobileNavigation)="onMobileNavigation()">
-    </app-sidebar>
 </div>
