@@ -7,8 +7,10 @@
       <div class="workspace__name text--regular">Devspace</div>
     </div>
 
-    <button class="icon-btn" type="button" aria-label="Neue Nachricht">
-      <span class="icon-btn__img icon-mask" style="-webkit-mask-image: url('/main-page/edit_square.svg'); mask-image: url('/main-page/edit_square.svg');"></span>
+    <button class="icon-btn" type="button" aria-label="Neue Nachricht" (click)="createNewMessage()">
+      <span class="icon-btn__img icon-mask" 
+            style="-webkit-mask-image: url('/main-page/edit_square.svg'); mask-image: url('/main-page/edit_square.svg');">
+      </span>
     </button>
   </header>
 
