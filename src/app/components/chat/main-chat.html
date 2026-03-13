@@ -1,187 +1,185 @@
 @if (this.chat.chatIsActive() || currentChannel()) {
-<div class="main-chat">
-
-    <header class="main-chat__header">
-        @if (this.chat.otherUser()) {
-        <div class="header__content"
-            (click)="displayForeignUserService.setSelectedUser(this.chat.otherUser()); displayForeignUserService.toggle()">
-            <span class="avatar">
-                <img [src]="this.chat.otherUser()?.avatar" alt="" class="avatar__img"
-                    (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'" referrerpolicy="no-referrer" />
-                @if(this.chat.otherUser()?.status === 'online') {<span class="status status--online"
-                    aria-hidden="true"></span>}
-                @else{<span class="status status--offline" aria-hidden="true"></span>}
-            </span>
-            <h4>{{ this.chat.otherUser()?.firstName }} {{ this.chat.otherUser()?.lastName }}</h4>
-        </div>
-        }
-        @if(!isCurrentUserMember() && !this.chat.chatIsActive()){
-        <div style="height: 70px"></div>
-        }@else{@if (currentChannel()) {
-        <div class="channel-header">
-            <div class="channel-header__left">
-                <button class="channel-name-btn" type="button" (click)="openChannelInfo()">
-                    <span class="channel-tag-icon icon-mask"
-                        style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg');"
-                        aria-label="#"></span>
-                    <span class="channel-name-text">{{ currentChannel()?.name }}</span>
-
-                    <span class="channel-dropdown-arrow icon-mask"
-                        style="-webkit-mask-image: url('/main-page/arrow_drop_down.svg'); mask-image: url('/main-page/arrow_drop_down.svg');"></span>
-                </button>
-            </div>
-
-            <div class="channel-header__right">
-                <button class="member-avatars-btn" type="button" (click)="openMembersModal()">
-                    @for (member of getVisibleMembers(); track member.uid) {
-                    <img class="member-avatar-small" [src]="member.avatar || '/shared/profile-pics/profile-pic1.svg'"
-                        [alt]="member.firstName" referrerpolicy="no-referrer" />
-                    }
-                    <span class="member-count text--small bold">{{ getMemberCount() }}</span>
-                </button>
-
-                <button class="add-member-btn icon-btn" type="button" aria-label="Mitglied hinzufügen"
-                    (click)="openAddPeopleModal()">
-                    <span class="icon-btn__img icon-mask"
-                        style="-webkit-mask-image: url('/main-page/person_add.svg'); mask-image: url('/main-page/person_add.svg');"></span>
-                </button>
-            </div>
-        </div>
-        }}
-
-
-    </header>
-
-    @if (chat.activeConversation()?.mode === 'dm' || isCurrentUserMember()) {
-    <app-message-list></app-message-list>
-    <app-message-composer [composerType]="'mainChat'"></app-message-composer>
-    } @else {
-    <div class="channel-blocking-screen">
-        <div class="channel-blocking-screen__icon">🔒</div>
-        <h3>Du bist noch kein Mitglied in diesem Channel.</h3>
-        <p>Schau dich gerne um oder tritt dem Channel bei, um mitzulesen und zu schreiben.</p>
-        <button class="btn--primary" (click)="joinCurrentChannel()">Beitreten</button>
-    </div>
-    }
-</div>
-
-@if (showMembersModal()) {
-<div class="modal-backdrop" (click)="closeMembersModal()">
-    <div class="modal members-modal" (click)="$event.stopPropagation()">
-        <div class="modal__header">
-            <h2>Mitglieder</h2>
-            <button class="icon-btn" type="button" (click)="closeMembersModal()">
-                <span class="icon-btn__img icon-mask"
-                    style="-webkit-mask-image: url('/main-page/close-button.svg'); mask-image: url('/main-page/close-button.svg');"
-                    aria-label="Schließen"></span>
-            </button>
-        </div>
-
-        <div class="members-list">
-            @for (member of channelMembers(); track member.uid) {
-            <div class="member-item"
-                (click)="displayForeignUserService.setSelectedUser(member); displayForeignUserService.toggle(); closeMembersModal()">
-                <span class="avatar member-avatar-wrapper">
-                    <img [src]="member.avatar || '/shared/profile-pics/profile-pic1.svg'" [alt]="member.firstName"
-                        class="avatar__img" referrerpolicy="no-referrer" />
-                    @if (member.status === 'online') {
-                    <span class="status status--online" aria-hidden="true"></span>
-                    } @else {
-                    <span class="status status--offline" aria-hidden="true"></span>
-                    }
+    <div class="main-chat">
+    
+        <header class="main-chat__header">
+            @if (this.chat.otherUser()) {
+            <div class="header__content"
+                (click)="displayForeignUserService.setSelectedUser(this.chat.otherUser()); displayForeignUserService.toggle()">
+                <span class="avatar">
+                    <img [src]="this.chat.otherUser()?.avatar" alt="" class="avatar__img"
+                        (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'" referrerpolicy="no-referrer" />
+                    @if(this.chat.otherUser()?.status === 'online') {<span class="status status--online"
+                        aria-hidden="true"></span>}
+                    @else{<span class="status status--offline" aria-hidden="true"></span>}
                 </span>
-                <span class="text--regular member-name">
-                    {{ member.firstName }} {{ member.lastName }}
-                    @if (member.uid === firebaseService.currentUser()?.uid) {
-                    <span class="member-you">(Du)</span>
-                    }
-                </span>
+                <h4>{{ this.chat.otherUser()?.firstName }} {{ this.chat.otherUser()?.lastName }}</h4>
             </div>
             }
+            @if(!isCurrentUserMember() && !this.chat.chatIsActive()){
+            <div style="height: 70px"></div>
+            }@else{@if (currentChannel()) {
+            <div class="channel-header">
+                <div class="channel-header__left">
+                    <button class="channel-name-btn" type="button" (click)="openChannelInfo()">
+                        <span class="channel-tag-icon icon-mask"
+                            style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg');"
+                            aria-label="#"></span>
+                        <span class="channel-name-text">{{ currentChannel()?.name }}</span>
+    
+                        <span class="channel-dropdown-arrow icon-mask"
+                            style="-webkit-mask-image: url('/main-page/arrow_drop_down.svg'); mask-image: url('/main-page/arrow_drop_down.svg');"></span>
+                    </button>
+                </div>
+    
+                <div class="channel-header__right">
+                    <button class="member-avatars-btn" type="button" (click)="openMembersModal()">
+                        @for (member of getVisibleMembers(); track member.uid) {
+                        <img class="member-avatar-small" [src]="member.avatar || '/shared/profile-pics/profile-pic1.svg'"
+                            [alt]="member.firstName" referrerpolicy="no-referrer" />
+                        }
+                        <span class="member-count text--small bold">{{ getMemberCount() }}</span>
+                    </button>
+    
+                    <button class="add-member-btn icon-btn" type="button" aria-label="Mitglied hinzufügen"
+                        (click)="isMobile() ? openMembersModal() : openAddPeopleModal()">
+                        <span class="icon-btn__img icon-mask"
+                            style="-webkit-mask-image: url('/main-page/person_add.svg'); mask-image: url('/main-page/person_add.svg');"></span>
+                    </button>
+                </div>
+            </div>
+            }}
+        </header>
+    
+        @if (chat.activeConversation()?.mode === 'dm' || isCurrentUserMember()) {
+        <app-message-list></app-message-list>
+        <app-message-composer [composerType]="'mainChat'"></app-message-composer>
+        } @else {
+        <div class="channel-blocking-screen">
+            <div class="channel-blocking-screen__icon">🔒</div>
+            <h3>Du bist noch kein Mitglied in diesem Channel.</h3>
+            <p>Schau dich gerne um oder tritt dem Channel bei, um mitzulesen und zu schreiben.</p>
+            <button class="btn--primary" (click)="joinCurrentChannel()">Beitreten</button>
         </div>
-
-        <button class="add-member-row" type="button" (click)="switchToAddPeople()">
-            <span class="add-member-icon-circle">
-                <span class="icon-mask"
-                    style="-webkit-mask-image: url('/main-page/person_add.svg'); mask-image: url('/main-page/person_add.svg');"
-                    aria-label="+"></span>
-            </span>
-            <span class="text--regular">Mitglieder hinzufügen</span>
-        </button>
+        }
     </div>
-</div>
-}
-
-@if (showAddPeopleModal()) {
-<div class="modal-backdrop" (click)="closeAddPeopleModal()">
-    <div class="modal add-people-modal" (click)="$event.stopPropagation()">
-        <div class="modal__header">
-            <h2>Leute hinzufügen</h2>
-            <button class="icon-btn" type="button" (click)="closeAddPeopleModal()">
-                <span class="icon-btn__img icon-mask"
-                    style="-webkit-mask-image: url('/main-page/close-button.svg'); mask-image: url('/main-page/close-button.svg');"
-                    aria-label="Schließen"></span>
-            </button>
-        </div>
-
-        <div class="channel-tag-label">
-            <span class="channel-tag-icon icon-mask hashtag-icon"
-                style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg');"
-                aria-label="#"></span>
-            <span class="text--small bold channel-tag-name">{{ currentChannel()?.name }}</span>
-        </div>
-
-        <div class="add-people-search">
-            <input class="inputfield--dialogs add-people-input" type="text" placeholder="Name eingeben"
-                [ngModel]="addPersonSearch()" (ngModelChange)="addPersonSearch.set($event); filterUsers()" />
-            @if (filteredUsers().length > 0 && addPersonSearch()) {
-            <div class="user-dropdown">
-                @for (user of filteredUsers(); track user.uid) {
-                <div class="user-dropdown-item" (click)="selectUser(user)">
-                    <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="user-dropdown-avatar"
-                        alt="" referrerpolicy="no-referrer" />
-                    <span class="text--regular">{{ user.firstName }} {{ user.lastName }}</span>
+    
+    @if (showMembersModal()) {
+    <div class="modal-backdrop" (click)="closeMembersModal()">
+        <div class="modal members-modal" (click)="$event.stopPropagation()">
+            <div class="modal__header">
+                <h2>Mitglieder</h2>
+                <button class="icon-btn" type="button" (click)="closeMembersModal()">
+                    <span class="icon-btn__img icon-mask"
+                        style="-webkit-mask-image: url('/main-page/close-button.svg'); mask-image: url('/main-page/close-button.svg');"
+                        aria-label="Schließen"></span>
+                </button>
+            </div>
+    
+            <div class="members-list">
+                @for (member of channelMembers(); track member.uid) {
+                <div class="member-item"
+                    (click)="displayForeignUserService.setSelectedUser(member); displayForeignUserService.toggle(); closeMembersModal()">
+                    <span class="avatar member-avatar-wrapper">
+                        <img [src]="member.avatar || '/shared/profile-pics/profile-pic1.svg'" [alt]="member.firstName"
+                            class="avatar__img" referrerpolicy="no-referrer" />
+                        @if (member.status === 'online') {
+                        <span class="status status--online" aria-hidden="true"></span>
+                        } @else {
+                        <span class="status status--offline" aria-hidden="true"></span>
+                        }
+                    </span>
+                    <span class="text--regular member-name">
+                        {{ member.firstName }} {{ member.lastName }}
+                        @if (member.uid === firebaseService.currentUser()?.uid) {
+                        <span class="member-you">(Du)</span>
+                        }
+                    </span>
                 </div>
                 }
             </div>
-            }
-            @if (selectedUsers().length > 0) {
-            <div class="selected-chips">
-                @for (user of selectedUsers(); track user.uid) {
-                <span class="chip">
-                    <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="chip-avatar" alt=""
-                        referrerpolicy="no-referrer" />
-                    {{ user.firstName }} {{ user.lastName }}
-                    <button class="chip-remove" type="button" (click)="removeSelectedUser(user)">✕</button>
+    
+            <button class="add-member-row" type="button" (click)="switchToAddPeople()">
+                <span class="add-member-icon-circle">
+                    <span class="icon-mask"
+                        style="-webkit-mask-image: url('/main-page/person_add.svg'); mask-image: url('/main-page/person_add.svg');"
+                        aria-label="+"></span>
                 </span>
-                }
-            </div>
-            }
-        </div>
-
-        <div class="modal__footer">
-            <button class="btn--primary" type="button" [disabled]="selectedUsers().length === 0 || isAddingMembers()"
-                (click)="addMembersToChannel()">
-                Hinzufügen
+                <span class="text--regular">Mitglieder hinzufügen</span>
             </button>
         </div>
     </div>
-</div>
-}
-
-@if (showChannelInfoModal()) {
-<app-channel-info [channel]="currentChannel()" (close)="closeChannelInfo()">
-</app-channel-info>
-}
-
-} @else {
-<div class="main-chat">
-    <header class="main-chat__header">
-        <div class="header__content start_screen">
-            <h4>Neue Nachricht</h4>
+    }
+    
+    @if (showAddPeopleModal()) {
+    <div class="modal-backdrop" (click)="closeAddPeopleModal()">
+        <div class="modal add-people-modal" (click)="$event.stopPropagation()">
+            <div class="modal__header">
+                <h2>Leute hinzufügen</h2>
+                <button class="icon-btn" type="button" (click)="closeAddPeopleModal()">
+                    <span class="icon-btn__img icon-mask"
+                        style="-webkit-mask-image: url('/main-page/close-button.svg'); mask-image: url('/main-page/close-button.svg');"
+                        aria-label="Schließen"></span>
+                </button>
+            </div>
+    
+            <div class="channel-tag-label">
+                <span class="channel-tag-icon icon-mask hashtag-icon"
+                    style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg');"
+                    aria-label="#"></span>
+                <span class="text--small bold channel-tag-name">{{ currentChannel()?.name }}</span>
+            </div>
+    
+            <div class="add-people-search">
+                <input class="inputfield--dialogs add-people-input" type="text" placeholder="Name eingeben"
+                    [ngModel]="addPersonSearch()" (ngModelChange)="addPersonSearch.set($event); filterUsers()" />
+                @if (filteredUsers().length > 0 && addPersonSearch()) {
+                <div class="user-dropdown">
+                    @for (user of filteredUsers(); track user.uid) {
+                    <div class="user-dropdown-item" (click)="selectUser(user)">
+                        <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="user-dropdown-avatar"
+                            alt="" referrerpolicy="no-referrer" />
+                        <span class="text--regular">{{ user.firstName }} {{ user.lastName }}</span>
+                    </div>
+                    }
+                </div>
+                }
+                @if (selectedUsers().length > 0) {
+                <div class="selected-chips">
+                    @for (user of selectedUsers(); track user.uid) {
+                    <span class="chip">
+                        <img [src]="user.avatar || '/shared/profile-pics/profile-pic1.svg'" class="chip-avatar" alt=""
+                            referrerpolicy="no-referrer" />
+                        {{ user.firstName }} {{ user.lastName }}
+                        <button class="chip-remove" type="button" (click)="removeSelectedUser(user)">✕</button>
+                    </span>
+                    }
+                </div>
+                }
+            </div>
+    
+            <div class="modal__footer">
+                <button class="btn--primary" type="button" [disabled]="selectedUsers().length === 0 || isAddingMembers()"
+                    (click)="addMembersToChannel()">
+                    Hinzufügen
+                </button>
+            </div>
         </div>
-        <input type="text" name="" id="" placeholder="An: #channel, oder @jemand oder E-Mail Adresse">
-    </header>
-    <app-message-composer [composerType]="'mainChat'" class="new-message-composer"></app-message-composer>
-</div>
-}
+    </div>
+    }
+    
+    @if (showChannelInfoModal()) {
+    <app-channel-info [channel]="currentChannel()" (close)="closeChannelInfo()">
+    </app-channel-info>
+    }
+    
+    } @else {
+    <div class="main-chat">
+        <header class="main-chat__header">
+            <div class="header__content start_screen">
+                <h4>Neue Nachricht</h4>
+            </div>
+            <input type="text" name="" id="" placeholder="An: #channel, oder @jemand oder E-Mail Adresse">
+        </header>
+        <app-message-composer [composerType]="'mainChat'" class="new-message-composer"></app-message-composer>
+    </div>
+    }
