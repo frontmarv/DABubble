@@ -30,7 +30,7 @@
         </div>
         <div class="answer-container">
 
-          <p class="thread-answer">
+          <p class="thread-answer" (click)="openThread(item)">
             @if(item.replyCount > 0){<span class="answers">
               {{item.replyCount}} Antworten
             </span>}
@@ -129,7 +129,7 @@
 
         <div class="answer-container">
 
-          <p class="thread-answer">
+          <p class="thread-answer" (click)="openThread(item)">
             @if(item.replyCount > 0){<span class="answers">
               {{item.replyCount}} Antworten
             </span>}
