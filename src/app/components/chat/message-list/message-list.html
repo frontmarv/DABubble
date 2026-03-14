@@ -29,6 +29,16 @@
           <app-message-formatter [text]="item.text"></app-message-formatter>
         </div>
         <div class="answer-container">
+
+          <p class="thread-answer">
+            @if(item.replyCount > 0){<span class="answers">
+              {{item.replyCount}} Antworten
+            </span>}
+            @if(item.lastReplyAt !== null){
+            <span class="time">Letzte Anwort {{ item.lastReplyAt.toDate()| date: 'dd/MM/yyyy, hh:mm a'}}</span>
+            }
+          </p>
+
           @let reactions = item.reactions;
           @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, item.id!);
           @let hiddenCount = emojiPickerService.getHiddenReactionsCount(reactions, item.id!);
@@ -76,7 +86,7 @@
           <img src="/chat-input/thumb-emoji.svg" alt="">
         </div>
         <app-emoji-picker (emojiSelected)="toggleEmoji(item.id!, $event)"></app-emoji-picker>
-        <button class="icon-btn" type="button" aria-label="Sentiment">
+        <button class="icon-btn" type="button" aria-label="Sentiment" (click)="openThread(item)">
           <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
         </button>
         <button class="icon-btn" type="button" aria-label="Sentiment" (mouseenter)="setEditMsgHoverdTrue()"
@@ -98,7 +108,8 @@
     } @else {
 
     <div class="message-field-other">
-      <span class="avatar" (click)="displayForeignUserService.setSelectedUser(chat.users()[item.senderId]); displayForeignUserService.toggle();">
+      <span class="avatar"
+        (click)="displayForeignUserService.setSelectedUser(chat.users()[item.senderId]); displayForeignUserService.toggle();">
         <img [src]="chat.users()[item.senderId]?.avatar" alt="Profilbild" class="avatar__img" />
       </span>
 
@@ -117,12 +128,19 @@
         </div>
 
         <div class="answer-container">
-          <div class="thread-answer">
-            <p (click)="openThread(item)" class="answers">2 Antworten</p>
-            <p class="time">Letzte Antwort 14:56</p>
-          </div>
-          @let reactions = item.reactions;
 
+          <p class="thread-answer">
+            @if(item.replyCount > 0){<span class="answers">
+              {{item.replyCount}} Antworten
+            </span>}
+            @if(item.lastReplyAt !== null){
+            <span class="time">Letzte Anwort {{ item.lastReplyAt.toDate()| date: 'dd/MM/yyyy, hh:mm a'}}</span>
+            }
+          </p>
+
+
+
+          @let reactions = item.reactions;
           @for (reaction of (reactions | keyvalue); track reaction.key) {
           <div class="reactions" (click)="toggleEmoji(item.id!, reaction.key); $event.stopPropagation()">
             <div class="fast-emoji">
@@ -155,14 +173,15 @@
           <img src="/chat-input/thumb-emoji.svg" alt="">
         </div>
         <app-emoji-picker (emojiSelected)="toggleEmoji(item.id!, $event)"></app-emoji-picker>
-        <button class="icon-btn" type="button" aria-label="Sentiment">
+        <button class="icon-btn" type="button" aria-label="Sentiment" (click)="openThread(item)">
           <img class="icon-btn__img" src="/chat-input/comment.svg" alt="" />
         </button>
       </div>
     </div>
     }
     } @empty {
-    @if (this.chat.otherUser()?.uid !== this.firebaseService.currentUser()?.uid && !this.firebaseService.selectedChannelId()){
+    @if (this.chat.otherUser()?.uid !== this.firebaseService.currentUser()?.uid &&
+    !this.firebaseService.selectedChannelId()){
     <div class="empty-chat-info">
       <div class="user-info">
         <span class="avatar" (click)="clickOnUser()">
@@ -178,18 +197,19 @@
     </div>
     }
     @else {
-      @if(this.firebaseService.selectedChannelId()){
-            <div class="empty-chat-info">
+    @if(this.firebaseService.selectedChannelId()){
+    <div class="empty-chat-info">
       <div>
         <h4 class="cursor-default">
           # {{ this.firebaseService.currentChannelName }}
         </h4>
       </div>
-      <p>Dieser Channel wurde neu erstellt. Das ist der Anfang des Channels #{{this.firebaseService.currentChannelName}}</p>
+      <p>Dieser Channel wurde neu erstellt. Das ist der Anfang des Channels #{{this.firebaseService.currentChannelName}}
+      </p>
     </div>
-      }
-      @else {
-            <div class="empty-chat-info">
+    }
+    @else {
+    <div class="empty-chat-info">
       <div class="user-info">
         <span class="avatar" (click)="this.showUserProfileService.setToTrue()">
           <img [src]="this.firebaseService.currentUser()?.avatar" alt="" class="avatar__img"
@@ -202,7 +222,7 @@
       <p>Dieser Raum ist nur für dich da. Mache dir Notizen, liste deine To-dos auf oder bewahre Links griffbereit auf.
         Du kannst hier auch gerne Dinge mit dir selbst besprechen.</p>
     </div>
-      }
+    }
     }
     }
     <div #bottom></div>

@@ -34,7 +34,6 @@ export class MessageList {
 
   isEditMsgHoverd = false;
 
-
   setEditMsgHoverdTrue(): void { this.isEditMsgHoverd = true; }
   setEditMsgHoverdFalse(): void { this.isEditMsgHoverd = false; }
 
@@ -47,7 +46,6 @@ export class MessageList {
   constructor() {
     effect(() => {
       const messages = this.chat.messages();
-
       if (messages.length > this.lastMessageCount && this.bottom) {
         setTimeout(() => {
           this.scrollToBottom();

@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch, Unsubscribe } from '@angular/fire/firestore';
+import { collection, getCountFromServer, increment, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch, Unsubscribe } from '@angular/fire/firestore';
 import { FirebaseService } from './firebase.service';
 import { Message } from '../models/message.class';
 import { User } from '../models/user.class';
@@ -17,6 +17,25 @@ export class ThreadStateService {
   private parentMsgPath = signal<string | null>(null);
   private unsubThread: Unsubscribe | null = null;
   private unsubParent: Unsubscribe | null = null;
+
+  getThreadAnswersAndTime() { }
+
+  async doesThreadAlreadyExist(message: Message, basePath: string | null): Promise<{ exists: boolean, count: number }> {
+    const msgPath = `${basePath}/messages/${message.id}`;
+    const threadsRef = collection(this.firebaseService.firestore, `${msgPath}/threads`);
+
+    try {
+      const snapshot = await getCountFromServer(threadsRef);
+      const count = snapshot.data().count;
+      return {
+        exists: count > 0,
+        count: count
+      };
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Thread-Anzahl:', error);
+      return { exists: false, count: 0 };
+    }
+  }
 
   openThread(message: Message, basePath: string, contextName: string): void {
     if (!message.id) return;
@@ -66,9 +85,16 @@ export class ThreadStateService {
     const batch = writeBatch(this.firebaseService.firestore);
     const parentRef = doc(this.firebaseService.firestore, msgPath);
     const replyRef = doc(collection(this.firebaseService.firestore, msgPath, 'threads'));
-
-    batch.set(replyRef, { senderId: uid, text, createdAt: serverTimestamp(), reactions: {} });
-    batch.update(parentRef, { lastReplyAt: serverTimestamp() });
+    batch.set(replyRef, {
+      senderId: uid,
+      text,
+      createdAt: serverTimestamp(),
+      reactions: {}
+    });
+    batch.update(parentRef, {
+      lastReplyAt: serverTimestamp(),
+      replyCount: increment(1)
+    });
     await batch.commit();
   }
 
