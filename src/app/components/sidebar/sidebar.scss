@@ -257,6 +257,44 @@
   display: none;
 }
 
+.user-dropdown-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover; 
+  flex-shrink: 0;
+}
+.user-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+.selected-chips {
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--color-background);
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  margin: 10px;
+}
+
+.chip-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 @media (max-width: 1240px) {
   .workspace {
     display: none;

@@ -39,6 +39,15 @@
         </div>
         <a [href]="'mailto:' + user?.email" class="email-link">{{ user?.email }}</a>
       </div>
+
+      @if (firebaseService.currentUser()?.uid !== user?.uid) {
+        <div class="profile-actions">
+          <button class="btn--primary" (click)="onMessageUser()">
+            <img src="/main-page/account_circle.svg" alt="" style="filter: brightness(0) invert(1);">
+            Nachricht
+          </button>
+        </div>
+      }
     </ng-container>
 
     <ng-container *ngIf="isEditing">
@@ -68,15 +77,17 @@
             </svg>
             <span class="bold">Vollständiger Name</span>
           </div>
-          <input type="text" [(ngModel)]="fullName" class="inputfield--dialogs"
+          <input type="text" [(ngModel)]="fullName" (input)="validateFullName(fullName)" class="inputfield--dialogs"
             placeholder="Vor- und Nachname eingeben">
         </div>
-        <p class="error-message">{{errorMessage}}</p>
+        @if (errorMessage) {
+          <p class="error-message">{{ errorMessage }}</p>
+        }
       </div>
 
       <div class="edit-actions">
         <button class="btn--secondary" (click)="cancelEdit()">Abbrechen</button>
-        <button class="btn--primary" (click)="saveProfile()">Speichern</button>
+        <button class="btn--primary" (click)="saveProfile()" [disabled]="!isInputValid">Speichern</button>
       </div>
     </ng-container>
 
