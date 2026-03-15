@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, ElementRef, Output, EventEmitter, effect } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef, Output, EventEmitter, effect, AfterViewInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ThreadStateService } from '../../../services/thread-state.service';
 import { ChatService } from '../../../services/chat.service';
@@ -19,7 +19,7 @@ import { DateSeperator } from '../../../services/date-seperator.service';
   templateUrl: './message-list.html',
   styleUrl: './message-list.scss',
 })
-export class MessageList {
+export class MessageList implements AfterViewInit {
   emojiPickerService = inject(EmojiPickerStateService);
   threadService = inject(ThreadStateService);
   chat = inject(ChatService);
@@ -33,60 +33,102 @@ export class MessageList {
   @Output() mobileNavigation = new EventEmitter<void>();
 
   isEditMsgHoverd = false;
-
-  setEditMsgHoverdTrue(): void { this.isEditMsgHoverd = true; }
-  setEditMsgHoverdFalse(): void { this.isEditMsgHoverd = false; }
-
-  ngAfterViewInit() {
-    this.scrollToBottom();
-  }
-
   lastMessageCount = 0;
 
+  /**
+   * Initializes an effect to observe message changes and trigger auto-scroll.
+   */
   constructor() {
     effect(() => {
-      const messages = this.chat.messages();
-      if (messages.length > this.lastMessageCount && this.bottom) {
-        setTimeout(() => {
-          this.scrollToBottom();
-        });
-      }
-      this.lastMessageCount = messages.length;
+      this.handleAutoScrollOnNewMessage();
     });
   }
 
-  scrollToBottom() {
-    this.bottom.nativeElement.scrollIntoView({ behavior: 'auto' });
+  /**
+   * Focuses the bottom of the list after the view is initialized.
+   */
+  ngAfterViewInit(): void {
+    this.scrollToBottom();
   }
 
+  /**
+   * Checks if new messages arrived and scrolls to the bottom if the element exists.
+   */
+  private handleAutoScrollOnNewMessage(): void {
+    const messages = this.chat.messages();
+    if (messages.length > this.lastMessageCount && this.bottom) {
+      setTimeout(() => this.scrollToBottom(), 0);
+    }
+    this.lastMessageCount = messages.length;
+  }
+
+  /**
+   * Scrolls the message list container to its lowest point.
+   */
+  scrollToBottom(): void {
+    if (this.bottom) {
+      this.bottom.nativeElement.scrollIntoView({ behavior: 'auto' });
+    }
+  }
+
+  /**
+   * Opens the thread panel for a specific message.
+   * @param message - The selected message object.
+   */
   openThread(message: Message): void {
     const basePath = this.chat.basePath();
     if (!basePath || !message.id) return;
     this.threadService.openThread(message, basePath, this.resolveContextName());
   }
 
+  /**
+   * Resolves the name of the current chat context (Channel name or User name).
+   * @returns A string representing the current context.
+   */
   private resolveContextName(): string {
     const channelId = this.firebaseService.selectedChannelId();
     if (channelId) return this.findChannelName(channelId);
+    
     const other = this.chat.otherUser();
     return other ? `${other.firstName} ${other.lastName}` : 'Direktnachricht';
   }
 
+  /**
+   * Finds the name of a channel by its ID.
+   * @param channelId - The UID of the channel.
+   * @returns The channel name or a fallback string.
+   */
   private findChannelName(channelId: string): string {
-    return this.firebaseService.channels().find((c: any) => c.id === channelId)?.name ?? 'Channel';
+    const channels = this.firebaseService.channels();
+    return channels.find((c: any) => c.id === channelId)?.name ?? 'Channel';
   }
 
-  // --- REACTIONS & DM ---
+  /**
+   * Toggles an emoji reaction for a specific message in the main chat.
+   * @param itemId - The ID of the message.
+   * @param emoji - The emoji character or symbol.
+   */
+  toggleEmoji(itemId: string, emoji: string | number | symbol): void {
+    this.chat.toggleReaction(itemId, emoji, 'mainChat');
+  }
 
-  toggleEmoji(itemId: string, emoji: string | number | symbol): void { this.chat.toggleReaction(itemId, emoji, 'mainChat'); }
-
+  /**
+   * Navigates to a direct message room and closes mobile sidebar if active.
+   * @param user - The user object to chat with.
+   */
   selectDm(user: any): void {
     this.mobileNavigation.emit();
     this.chat.openChatRoom(user);
   }
 
+  /**
+   * Opens the profile view for the current chat partner.
+   */
   clickOnUser(): void {
     this.displayForeignUserService.setSelectedUser(this.chat.otherUser());
     this.displayForeignUserService.toggle();
   }
+
+  setEditMsgHoverdTrue(): void { this.isEditMsgHoverd = true; }
+  setEditMsgHoverdFalse(): void { this.isEditMsgHoverd = false; }
 }

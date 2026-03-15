@@ -13,6 +13,9 @@ import { ShowUserProfile } from '../../services/showUserProfile';
 import { ChatService } from '../../services/chat.service';
 import { ThreadStateService } from '../../services/thread-state.service';
 
+/**
+ * Interface representing a search result item found via global search.
+ */
 interface SearchResult {
   type: 'channel' | 'user' | 'message';
   name: string;
@@ -46,11 +49,14 @@ export class ChatRoom implements OnInit {
 
   searchQuery = signal<string>('');
   showSearchDropdown = signal<boolean>(false);
-
   filteredResults = signal<SearchResult[]>([]);
 
   private searchDebounceTimer: any = null;
 
+  /**
+   * Closes search dropdown and profile menu when clicking anywhere outside the component element.
+   * @param {Event} event - The DOM click event.
+   */
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     if (!this.elementRef.nativeElement.contains(event.target)) {
@@ -59,16 +65,26 @@ export class ChatRoom implements OnInit {
     }
   }
 
+  /**
+   * Initializes component state. Ensures sidebar visibility logic for mobile on start.
+   */
   ngOnInit() {
     if (this.isMobile()) this.isSidebarOpen = true;
   }
 
+  /**
+   * Updates state signals on window resize and adjusts sidebar visibility.
+   */
   @HostListener('window:resize')
   onResize() {
     this.windowWidth.set(window.innerWidth);
     if (!this.isMobile()) this.isSidebarOpen = true;
   }
 
+  /**
+   * Handles user input in the search field with a debounce mechanism to limit API/DB calls.
+   * @param {Event} event - The input event.
+   */
   onSearchInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.searchQuery.set(value);
@@ -86,6 +102,11 @@ export class ChatRoom implements OnInit {
     }, 300);
   }
 
+  /**
+   * Orchestrates the global search logic, routing queries based on prefix (@ or #) or full-text keywords.
+   * @param {string} rawQuery - The unformatted search string.
+   * @returns {Promise<void>}
+   */
   private async runSearch(rawQuery: string): Promise<void> {
     const query = rawQuery.toLowerCase().trim();
     if (!query) return;
@@ -106,12 +127,22 @@ export class ChatRoom implements OnInit {
     this.filteredResults.set(results);
   }
 
+  /**
+   * Filters available channels from the Firebase state based on search term.
+   * @param {string} term - Search query.
+   * @returns {SearchResult[]} Array of matching channel results.
+   */
   private getChannelResults(term: string): SearchResult[] {
     return this.firebaseService.channels()
       .filter((c) => (c.name || '').toLowerCase().includes(term))
       .map((c) => ({ type: 'channel' as const, name: c.name || 'Unbenannt', id: c.id, avatar: null }));
   }
 
+  /**
+   * Filters all users from the Firebase state and maps them to SearchResult objects.
+   * @param {string} term - Search query.
+   * @returns {SearchResult[]} Sorted array of matching user results.
+   */
   private getUserResults(term: string): SearchResult[] {
     const currentUid = this.firebaseService.currentUser()?.uid;
     return this.firebaseService.getAllUsers()
@@ -124,6 +155,11 @@ export class ChatRoom implements OnInit {
       .sort((a) => (a.name.endsWith('(Du)') ? -1 : 1));
   }
 
+  /**
+   * Searches through channel messages for a specific term using the Firebase service.
+   * @param {string} term - Search query.
+   * @returns {Promise<SearchResult[]>} Array of matching message results.
+   */
   private async getMessageResults(term: string): Promise<SearchResult[]> {
     const hits = await this.firebaseService.searchMessagesInChannels(term);
 
@@ -136,6 +172,12 @@ export class ChatRoom implements OnInit {
     }));
   }
 
+  /**
+   * Maps a raw user object to a standardized SearchResult object.
+   * @param {any} u - User object from DB.
+   * @param {string} currentUid - UID of the currently logged-in user.
+   * @returns {SearchResult}
+   */
   private mapUserToSearchResult(u: any, currentUid?: string): SearchResult {
     const isMe = u.uid === currentUid;
     return {
@@ -147,6 +189,10 @@ export class ChatRoom implements OnInit {
     };
   }
 
+  /**
+   * Triggers navigation or chat room opening based on the type of search result selected.
+   * @param {SearchResult} item - The selected result item.
+   */
   selectResult(item: SearchResult) {
     if (item.type === 'user') {
       const user = this.firebaseService.getAllUsers().find((u) => u.uid === item.id);
@@ -165,6 +211,9 @@ export class ChatRoom implements OnInit {
     this.resetSearch();
   }
 
+  /**
+   * Clears search query and resets UI visibility states.
+   */
   private resetSearch() {
     this.searchQuery.set('');
     this.filteredResults.set([]);
@@ -172,8 +221,15 @@ export class ChatRoom implements OnInit {
   }
 
   toggleSidebar() { this.isSidebarOpen = !this.isSidebarOpen; }
+  
+  /**
+   * Closes sidebar on mobile after navigating.
+   */
   onMobileNavigation() { if (this.isMobile()) this.isSidebarOpen = false; }
   
+  /**
+   * Forces sidebar back into focus on mobile and hides active threads.
+   */
   goBackToSidebar() { 
     this.isSidebarOpen = true; 
     this.threadService.setHidden();
@@ -181,8 +237,17 @@ export class ChatRoom implements OnInit {
   
   toggleProfileMenu() { this.isProfileMenuOpen = !this.isProfileMenuOpen; }
   closeForeignUserProfile() { this.displayForeignUserService.setToFalse(); }
+  
+  /**
+   * Executes logout sequence via AuthService.
+   */
   async logOut() { await this.authService.logout(); }
 
+  /**
+   * Sanitizes avatar URLs. Handles external links, local fallbacks, and internal path stripping.
+   * @param {string | null} avatar - Raw avatar path/link.
+   * @returns {string} Sanitized URL.
+   */
   getAvatarUrl(avatar?: string | null): string {
     const fallback = '/shared/profile-pics/profile-pic1.svg';
     if (!avatar) return fallback;
