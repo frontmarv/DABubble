@@ -30,14 +30,14 @@
         </div>
         <div class="answer-container">
 
-          <p class="thread-answer" (click)="openThread(item)">
-            @if(item.replyCount > 0){<span class="answers">
+          @if(item.replyCount > 0){ <p class="thread-answer" (click)="openThread(item)">
+            <span class="answers">
               {{item.replyCount}} Antworten
-            </span>}
+            </span>
             @if(item.lastReplyAt !== null){
             <span class="time">Letzte Anwort {{ item.lastReplyAt.toDate()| date: 'dd/MM/yyyy, hh:mm a'}}</span>
             }
-          </p>
+          </p>}
 
           @let reactions = item.reactions;
           @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, item.id!);
@@ -128,26 +128,28 @@
         </div>
 
         <div class="answer-container">
-
+          @if(item.replyCount > 0){
           <p class="thread-answer" (click)="openThread(item)">
-            @if(item.replyCount > 0){<span class="answers">
+            <span class="answers">
               {{item.replyCount}} Antworten
-            </span>}
+            </span>
             @if(item.lastReplyAt !== null){
             <span class="time">Letzte Anwort {{ item.lastReplyAt.toDate()| date: 'dd/MM/yyyy, hh:mm a'}}</span>
             }
-          </p>
-
-
+          </p>}
 
           @let reactions = item.reactions;
-          @for (reaction of (reactions | keyvalue); track reaction.key) {
+          @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, item.id!);
+          @let hiddenCount = emojiPickerService.getHiddenReactionsCount(reactions, item.id!);
+          @let isExpanded = emojiPickerService.isReactionsExpanded(item.id!);
+          @for (reaction of (visibleReactions | keyvalue); track reaction.key) {
           <div class="reactions" (click)="toggleEmoji(item.id!, reaction.key); $event.stopPropagation()">
             <div class="fast-emoji">
               <span class="emoji-symbol">{{ reaction.key }}</span>
               <div class="emoji-qantity">
                 {{ reaction.value.length }}
               </div>
+
               @if(!emojiPickerService.isMobileActive()){
               <div class="userReaction">
                 <span class="emoji-symbol">{{ reaction.key }}</span>
@@ -159,7 +161,18 @@
                 </div>
               </div>
               }
+
             </div>
+          </div>
+          }
+          @if (hiddenCount > 0) {
+          <div class="reactions" (click)="emojiPickerService.toggleReactionsExpanded(item.id!)">
+            {{ hiddenCount }} weitere
+          </div>
+          }
+          @if (isExpanded && hiddenCount === 0 && emojiPickerService.hasMoreThan15Reactions(reactions)) {
+          <div class="reactions" (click)="emojiPickerService.toggleReactionsExpanded(item.id!)">
+            weniger anzeigen
           </div>
           }
         </div>

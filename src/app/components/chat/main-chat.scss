@@ -74,6 +74,7 @@
 .channel-name-text {
   font-size: 1.25rem;
   font-weight: 700;
+  word-break: break-all;
 }
 
 .channel-dropdown-arrow {
@@ -351,6 +352,7 @@ app-message-list {
   border-radius: 30px;
   padding: 4px 10px 4px 6px;
   font-size: 0.875rem;
+  word-break: break-all;
 }
 
 .chip-avatar {

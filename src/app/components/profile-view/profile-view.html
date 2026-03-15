@@ -16,9 +16,11 @@
       <div class="profile-name-section">
         <div class="name-row">
           <h2>{{ user?.firstName }} {{ user?.lastName }}</h2>
-          @if (firebaseService.currentUser()?.uid === user?.uid && firebaseService.currentUser()?.firstName !== "Gast") {
-            <span class="edit-btn" (click)="editProfile()">Bearbeiten</span>
-          }
+          @if(firebaseService.currentUser()?.firstName !== "Gast") {
+          <span class="edit-btn" (click)="editProfile()">Bearbeiten</span>
+          <button class="edit-btn--mobile" type="button" (click)="editProfile()">
+            <img src="/main-page/edit-with-backgroundcolor.svg" alt="">
+          </button>}
         </div>
         <div class="status-row">
           <span class="statusicon online"></span>
@@ -61,7 +63,8 @@
       </header>
 
       <div class="profile-avatar">
-        <img [src]="getAvatarUrl(user?.avatar)" referrerpolicy="no-referrer" (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'">
+        <img [src]="getAvatarUrl(user?.avatar)" referrerpolicy="no-referrer"
+          (error)="$event.target.src='/shared/profile-pics/unkown-user.svg'">
       </div>
 
       <div class="edit-form" *ngIf="user">
