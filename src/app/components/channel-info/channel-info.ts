@@ -67,7 +67,6 @@ export class ChannelInfo {
     }
   }
 
-
   /**
    * Toggles the edit mode for the channel name or saves the changes.
    */
@@ -78,7 +77,6 @@ export class ChannelInfo {
       this.enterEditNameMode();
     }
   }
-
 
   /**
    * Prepares the state signals to enter name editing mode.
@@ -101,7 +99,6 @@ export class ChannelInfo {
     }
   }
 
-
   /**
    * Prepares the state signals to enter description editing mode.
    */
@@ -112,20 +109,24 @@ export class ChannelInfo {
     this.editChannelDescMode.set(true);
   }
 
-
-  /**
+ /**
    * Validates and saves the new channel name to Firebase.
    */
-  async saveChannelName(): Promise<void> {
-    const newName = this.editChannelNameInput().trim();
-    if (this.isNameUpdateRequired(newName)) {
-      await this.processNameUpdate(newName);
-    } else {
-      this.editChannelNameMode.set(false);
-    }
+ async saveChannelName(): Promise<void> {
+  const newName = this.editChannelNameInput().trim();
+  
+  // NEU: TypeScript Limit-Check zur Sicherheit
+  if (newName.length > 30) {
+    this.channelNameError.set('Der Name darf maximal 30 Zeichen lang sein.');
+    return;
   }
 
-
+  if (this.isNameUpdateRequired(newName)) {
+    await this.processNameUpdate(newName);
+  } else {
+    this.editChannelNameMode.set(false);
+  }
+}
   /**
    * Checks if the name has changed and is valid.
    * @param newName - The trimmed input name.
@@ -133,7 +134,6 @@ export class ChannelInfo {
   private isNameUpdateRequired(newName: string): boolean {
     return !!(this.channel && newName.length > 0 && newName !== this.channel.name);
   }
-
 
   /**
    * Performs the actual Firebase update after checking for duplicates.
@@ -148,7 +148,6 @@ export class ChannelInfo {
     this.editChannelNameMode.set(false);
   }
 
-
   /**
    * Checks if a channel with the given name already exists.
    * @param name - Name to check.
@@ -158,7 +157,6 @@ export class ChannelInfo {
       (c: any) => c.name.toLowerCase() === name.toLowerCase()
     );
   }
-
 
   /**
    * Direct Firebase call to update the name field.
@@ -172,7 +170,6 @@ export class ChannelInfo {
     }
   }
 
-
   /**
    * Saves the new channel description to Firebase.
    */
@@ -183,7 +180,6 @@ export class ChannelInfo {
     }
     this.editChannelDescMode.set(false);
   }
-
 
   /**
    * Direct Firebase call to update the description field.
