@@ -20,84 +20,179 @@ export class ChannelInfo {
   editChannelDescMode = signal(false);
   editChannelNameInput = signal('');
   editChannelDescInput = signal('');
-  channelNameError = signal(''); 
+  channelNameError = signal('');
 
-  closeModal() {
+  /**
+   * Emits the close event to hide the modal.
+   */
+  closeModal(): void {
     this.close.emit();
   }
 
-  getMember(uid: string) {
+
+  /**
+   * Retrieves a user object from the database by their UID.
+   * @param uid - The unique identifier of the user.
+   * @returns The user object if found, otherwise null.
+   */
+  getMember(uid: string): any | null {
     const users = this.firebaseService.getAllUsers();
     if (!users) return null;
     return users.find(u => u.uid === uid) || null;
   }
 
-  async leaveChannel() {
+
+  /**
+   * Removes the current user from the active channel and closes the modal.
+   */
+  async leaveChannel(): Promise<void> {
     const currentUid = this.firebaseService.currentUser()?.uid;
     if (this.channel?.id && currentUid) {
-      try {
-        await this.firebaseService.removeMemberFromChannel(this.channel.id, currentUid);
-      } catch (error) {
-        console.error('Fehler beim Verlassen des Channels:', error);
-      }
+      await this.executeLeaveProcess(this.channel.id, currentUid);
     }
     this.closeModal();
   }
 
-  toggleEditChannelName() {
+
+  /**
+   * Internal helper to handle the Firebase removal process.
+   * @param channelId - ID of the channel to leave.
+   * @param uid - UID of the member to remove.
+   */
+  private async executeLeaveProcess(channelId: string, uid: string): Promise<void> {
+    try {
+      await this.firebaseService.removeMemberFromChannel(channelId, uid);
+    } catch (error) {
+      console.error('Error leaving channel:', error);
+    }
+  }
+
+
+  /**
+   * Toggles the edit mode for the channel name or saves the changes.
+   */
+  toggleEditChannelName(): void {
     if (this.editChannelNameMode()) {
       this.saveChannelName();
     } else {
-      this.channelNameError.set(''); 
-      this.editChannelNameInput.set(this.channel?.name || '');
-      this.editChannelNameMode.set(true);
+      this.enterEditNameMode();
     }
   }
 
-  toggleEditChannelDesc() {
+
+  /**
+   * Prepares the state signals to enter name editing mode.
+   */
+  private enterEditNameMode(): void {
+    this.channelNameError.set('');
+    this.editChannelNameInput.set(this.channel?.name || '');
+    this.editChannelNameMode.set(true);
+  }
+
+
+  /**
+   * Toggles the edit mode for the channel description or saves the changes.
+   */
+  toggleEditChannelDesc(): void {
     if (this.editChannelDescMode()) {
       this.saveChannelDesc();
     } else {
-      const currentDesc = this.channel?.description || 
-        'Dieser Channel ist für alles rund um dieses Thema. Hier kannst du zusammen mit deinem Team Meetings abhalten, Dokumente teilen und Entscheidungen treffen.';
-      this.editChannelDescInput.set(currentDesc);
-      this.editChannelDescMode.set(true);
+      this.enterEditDescMode();
     }
   }
 
-  async saveChannelName() {
+
+  /**
+   * Prepares the state signals to enter description editing mode.
+   */
+  private enterEditDescMode(): void {
+    const defaultDesc = 'Dieser Channel ist für alles rund um dieses Thema...';
+    const currentDesc = this.channel?.description || defaultDesc;
+    this.editChannelDescInput.set(currentDesc);
+    this.editChannelDescMode.set(true);
+  }
+
+
+  /**
+   * Validates and saves the new channel name to Firebase.
+   */
+  async saveChannelName(): Promise<void> {
     const newName = this.editChannelNameInput().trim();
-    if (this.channel && newName.length > 0) {
-      if (newName === this.channel.name) {
-        this.editChannelNameMode.set(false);
-        return;
-      }
-      const nameExists = this.firebaseService.channels().some(
-        (c: any) => c.name.toLowerCase() === newName.toLowerCase()
-      );
-      if (nameExists) {
-        this.channelNameError.set('Dieser Channel existiert bereits.');
-        return; 
-      }
-      this.channelNameError.set(''); 
-      try {
-        await this.firebaseService.updateChannel(this.channel.id, { name: newName });
-      } catch (e) {
-        console.error(e);
-      }
+    if (this.isNameUpdateRequired(newName)) {
+      await this.processNameUpdate(newName);
+    } else {
+      this.editChannelNameMode.set(false);
     }
+  }
+
+
+  /**
+   * Checks if the name has changed and is valid.
+   * @param newName - The trimmed input name.
+   */
+  private isNameUpdateRequired(newName: string): boolean {
+    return !!(this.channel && newName.length > 0 && newName !== this.channel.name);
+  }
+
+
+  /**
+   * Performs the actual Firebase update after checking for duplicates.
+   * @param newName - The validated new channel name.
+   */
+  private async processNameUpdate(newName: string): Promise<void> {
+    if (this.isChannelNameDuplicate(newName)) {
+      this.channelNameError.set('Dieser Channel existiert bereits.');
+      return;
+    }
+    await this.updateChannelNameInFirebase(newName);
     this.editChannelNameMode.set(false);
   }
 
-  async saveChannelDesc() {
+
+  /**
+   * Checks if a channel with the given name already exists.
+   * @param name - Name to check.
+   */
+  private isChannelNameDuplicate(name: string): boolean {
+    return this.firebaseService.channels().some(
+      (c: any) => c.name.toLowerCase() === name.toLowerCase()
+    );
+  }
+
+
+  /**
+   * Direct Firebase call to update the name field.
+   */
+  private async updateChannelNameInFirebase(name: string): Promise<void> {
+    try {
+      await this.firebaseService.updateChannel(this.channel.id, { name: name });
+      this.channelNameError.set('');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+
+  /**
+   * Saves the new channel description to Firebase.
+   */
+  async saveChannelDesc(): Promise<void> {
     const newDesc = this.editChannelDescInput().trim();
     if (this.channel && newDesc !== this.channel.description) {
-      try {
-        await this.firebaseService.updateChannel(this.channel.id, { description: newDesc });
-      } catch (e) {
-        console.error(e);
-      }
+      await this.updateChannelDescInFirebase(newDesc);
     }
     this.editChannelDescMode.set(false);
+  }
+
+
+  /**
+   * Direct Firebase call to update the description field.
+   */
+  private async updateChannelDescInFirebase(description: string): Promise<void> {
+    try {
+      await this.firebaseService.updateChannel(this.channel.id, { description });
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

@@ -89,6 +89,4 @@ export class MessageList {
     this.displayForeignUserService.setSelectedUser(this.chat.otherUser());
     this.displayForeignUserService.toggle();
   }
-
-
 }

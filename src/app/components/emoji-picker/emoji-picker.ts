@@ -1,61 +1,92 @@
-import { Component, Output, EventEmitter, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
 import { PickerModule } from "@ctrl/ngx-emoji-mart";
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-emoji-picker',
+  standalone: true,
   imports: [PickerModule, OverlayModule],
   templateUrl: './emoji-picker.html',
   styleUrl: './emoji-picker.scss',
 })
 export class EmojiPicker {
-
   firebaseService = inject(FirebaseService);
+  private breakpointObserver = inject(BreakpointObserver);
+
   @Output() emojiSelected = new EventEmitter<string>();
+
   isOpen = false;
   positions: ConnectedPosition[] = [];
 
-  desktopPositions: ConnectedPosition[] = [
+  private readonly mobileQuery = '(max-width: 767px)';
+
+  private desktopPositions: ConnectedPosition[] = [
     { originX: 'start', originY: 'top', overlayX: 'end', overlayY: 'bottom', offsetY: -5, offsetX: 70 },
     { originX: 'start', originY: 'bottom', overlayX: 'end', overlayY: 'top', offsetY: 5, offsetX: 70 }
   ];
 
-
-  mobilePositions: ConnectedPosition[] = [
+  private mobilePositions: ConnectedPosition[] = [
     { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top', offsetY: 5 },
     { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetY: -5 }
   ];
 
-  breakpointObserver = inject(BreakpointObserver);
 
+  /**
+   * Initializes the responsive listener for overlay positioning.
+   */
   constructor() {
-    this.breakpointObserver
-      .observe(['(max-width: 767px)'])
-      .pipe(takeUntilDestroyed())
-      .subscribe(result => {
-        if (result.matches) {
-          this.positions = this.mobilePositions;
-        } else {
-          this.positions = this.desktopPositions;
-        }
-      });
+    this.initResponsivePositions();
   }
 
-  toggleEmojiPicker() {
+
+  /**
+   * Sets up the breakpoint observer to toggle between mobile and desktop positions.
+   */
+  private initResponsivePositions(): void {
+    this.breakpointObserver
+      .observe([this.mobileQuery])
+      .pipe(takeUntilDestroyed())
+      .subscribe(result => this.updateOverlayPositions(result.matches));
+  }
+
+
+  /**
+   * Updates the active positions array based on the current screen width.
+   * @param isMobile - Boolean indicating if the mobile breakpoint is active.
+   */
+  private updateOverlayPositions(isMobile: boolean): void {
+    this.positions = isMobile ? this.mobilePositions : this.desktopPositions;
+  }
+
+
+  /**
+   * Toggles the visibility state of the emoji picker.
+   */
+  toggleEmojiPicker(): void {
     this.isOpen = !this.isOpen;
   }
 
-  setHiddenEmojiPicker() {
+
+  /**
+   * Explicitly closes the emoji picker.
+   */
+  setHiddenEmojiPicker(): void {
     this.isOpen = false;
   }
 
-  handleSelection(event: any) {
-    this.emojiSelected.emit(event.emoji.native);
+
+  /**
+   * Processes the selected emoji and emits the native character.
+   * @param event - The selection event from the emoji-mart picker.
+   */
+  handleSelection(event: any): void {
+    if (event?.emoji?.native) {
+      this.emojiSelected.emit(event.emoji.native);
+    }
     this.setHiddenEmojiPicker();
   }
-
 }
