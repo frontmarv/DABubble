@@ -49,15 +49,32 @@ export class Sidebar {
 
   /**
    * Resolves the display name for a user, handling deleted or unknown users.
+   * Avoids trailing spaces if no last name is provided.
    * @param user - The user object to resolve the name for.
    * @returns {string} The formatted user name.
    */
   getUserName(user: any): string {
     if (!user) return 'Unknown User';
-    if (!user.firstName || user.firstName === 'Gelöschter') {
-      return 'Deleted User';
-    }
-    return `${user.firstName} ${user.lastName || ''}`.trim();
+    if (user.firstName === 'Gelöschter') return 'Deleted User';
+    
+    const first = user.firstName || '';
+    const last = user.lastName || '';
+    return [first, last].filter(Boolean).join(' ');
+  }
+
+  /**
+   * Resolves and sanitizes the avatar URL for users in the sidebar search or selection.
+   * @param avatar - The raw path or URL from the database.
+   */
+  getMemberAvatar(avatar?: string | null): string {
+    if (!avatar) return '/shared/profile-pics/profile-pic1.svg';
+    if (avatar.startsWith('http')) return avatar;
+
+    const cleanPath = avatar
+      .replace(/^\/?shared\/profile-pics\//, '')
+      .replace(/^profile-pics\//, '');
+
+    return `/shared/profile-pics/${cleanPath}`;
   }
 
   /**
@@ -101,22 +118,31 @@ export class Sidebar {
   closeAddPeople(): void { this.resetCreationState(); }
 
   /**
-   * Validates the channel name and proceeds to the member assignment step.
-   * Checks for name uniqueness before continuing.
+   * Validates the channel name length and uniqueness before proceeding.
    */
   proceedToAddMembers(): void {
     const name = this.channelName?.trim();
     if (!name) return;
-
+    if (name.length > 30) {
+      this.channelNameError = 'Der Name darf maximal 30 Zeichen lang sein.';
+      return;
+    }
     const nameExists = this.firebaseService.channels().some(
       (c: any) => c.name.toLowerCase() === name.toLowerCase()
     );
 
     if (nameExists) {
-      this.channelNameError = 'This channel already exists.';
+      this.channelNameError = 'Dieser Channel existiert bereits.';
       return; 
     }
+    this.executeProceed(name);
+  }
 
+  /**
+   * Internal helper to transition to the next modal step.
+   * @param name - The validated channel name.
+   */
+  private executeProceed(name: string): void {
     this.channelNameError = ''; 
     this.tempChannelName = name;
     this.tempChannelDescription = this.channelDescription;
