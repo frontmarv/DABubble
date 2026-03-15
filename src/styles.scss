@@ -49,6 +49,7 @@ a {
 }
 
 .icon-mask {
+    min-width: 24px;
     display: inline-block;
     background-color: var(--color-black);
     -webkit-mask-repeat: no-repeat;

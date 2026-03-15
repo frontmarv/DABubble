@@ -15,7 +15,7 @@ export class EmojiPickerStateService {
    * @returns {number} 7 for mobile devices, 15 for desktop.
    */
   get REACTION_LIMIT(): number {
-    return typeof window !== 'undefined' && window.innerWidth < 700 ? 7 : 15;
+    return typeof window !== 'undefined' && window.innerWidth < 700 ? 5 : 10;
   }
 
   /** Set of message IDs that currently have their reactions list expanded. */
@@ -76,7 +76,7 @@ export class EmojiPickerStateService {
     if (!reactions) return {};
     const entries = Object.entries(reactions);
     const isExpanded = this.isReactionsExpanded(messageId);
-    
+
     if (!isExpanded && entries.length > this.REACTION_LIMIT) {
       return Object.fromEntries(entries.slice(0, this.REACTION_LIMIT));
     }
@@ -103,7 +103,7 @@ export class EmojiPickerStateService {
    */
   hasMoreThan15Reactions(reactions: any): boolean {
     if (!reactions) return false;
-    return Object.keys(reactions).length > 15;
+    return Object.keys(reactions).length > 10;
   }
 
   /**
@@ -116,10 +116,10 @@ export class EmojiPickerStateService {
     if (userIds.length === 0) return '';
     const currentUserId = this.firebaseService.currentUser()?.uid;
     const allUsers = this.firebaseService.getAllUsers();
-    
+
     const names = userIds.map(uid => this.resolveName(uid, currentUserId, allUsers));
-    
-    if (names.length === 1) return names[0]; 
+
+    if (names.length === 1) return names[0];
     const allButLast = names.slice(0, -1).join(', ');
     return `${allButLast} und ${names[names.length - 1]}`;
   }
