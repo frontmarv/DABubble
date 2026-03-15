@@ -20,7 +20,7 @@
                 (input)="onSearchInput($event)" />
             <img src="/main-page/search.svg" alt="Suche" />
 
-            @if (showSearchDropdown() && filteredResults().length > 0) {
+            @if (!isMobile() && showSearchDropdown() && filteredResults().length > 0) {
             <div class="search-dropdown">
                 @for (item of filteredResults(); track item.id) {
                 <div class="search-item" (click)="selectResult(item)">
@@ -47,6 +47,7 @@
             </div>
             }
         </div>
+       
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
             <span class="user-name">{{ firebaseService.currentUser()?.firstName }} {{
                 firebaseService.currentUser()?.lastName }}</span>
@@ -75,7 +76,7 @@
             <app-sidebar 
                [searchQuery]="searchQuery()"
                [filteredResults]="filteredResults()"
-               [showSearchDropdown]="showSearchDropdown()"
+               [showSearchDropdown]="isMobile() ? showSearchDropdown() : false"
                (searchInput)="onSearchInput($event)"
                (resultSelect)="selectResult($event)"
                (mobileNavigation)="onMobileNavigation()">

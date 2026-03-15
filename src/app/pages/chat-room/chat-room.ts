@@ -11,7 +11,7 @@ import { FirebaseService } from '../../services/firebase.service';
 import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 import { ShowUserProfile } from '../../services/showUserProfile';
 import { ChatService } from '../../services/chat.service';
-import { ThreadStateService } from '../../services/thread-state.service'; // HINZUGEFÜGT
+import { ThreadStateService } from '../../services/thread-state.service';
 
 interface SearchResult {
   type: 'channel' | 'user' | 'message';
@@ -37,7 +37,7 @@ export class ChatRoom implements OnInit {
   firebaseService = inject(FirebaseService);
   showUserProfileService = inject(ShowUserProfile);
   chatService = inject(ChatService);
-  threadService = inject(ThreadStateService); // HINZUGEFÜGT
+  threadService = inject(ThreadStateService);
 
   isSidebarOpen = true;
   isProfileMenuOpen = false;
@@ -151,8 +151,10 @@ export class ChatRoom implements OnInit {
     if (item.type === 'user') {
       const user = this.firebaseService.getAllUsers().find((u) => u.uid === item.id);
       if (user) {
-        this.displayForeignUserService.setSelectedUser(user);
-        this.displayForeignUserService.toggle();
+        this.displayForeignUserService.setToFalse(); 
+        this.firebaseService.setSelectedChannel(''); 
+        this.chatService.activeConversation.set(null);
+        this.chatService.openChatRoom(user);
       }
     } else if (item.type === 'message' || item.type === 'channel') {
       const targetId = item.channelId || item.id;
