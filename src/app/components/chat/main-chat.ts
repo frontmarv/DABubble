@@ -19,9 +19,11 @@ export class MainChat implements OnInit {
   displayForeignUserService = inject(DisplayForeignUserService);
   firebaseService = inject(FirebaseService);
 
-  // --- RESPONSIVE STATE ---
   windowWidth = signal(typeof window !== 'undefined' ? window.innerWidth : 1300);
   isMobile = computed(() => this.windowWidth() <= 1240);
+
+  newMessageSearch = signal('');
+  newMessageResults = signal<any[]>([]);
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
@@ -34,7 +36,6 @@ export class MainChat implements OnInit {
     }
   }
 
-  // --- COMPUTED STATE ---
   currentChannel = computed(() => {
     const id = this.firebaseService.selectedChannelId();
     if (!id) return null;
@@ -54,6 +55,51 @@ export class MainChat implements OnInit {
     const uid = this.firebaseService.currentUser()?.uid;
     return (uid && channel?.members?.includes(uid)) ?? false;
   });
+
+  onNewMessageSearch(term: string) {
+    this.newMessageSearch.set(term);
+    const search = term.toLowerCase().trim();
+
+    if (!search) {
+      this.newMessageResults.set([]);
+      return;
+    }
+
+    if (search.startsWith('@')) {
+      const query = search.slice(1);
+      this.newMessageResults.set(
+        this.firebaseService.getAllUsers()
+          .filter((u: any) => (u.firstName + ' ' + u.lastName).toLowerCase().includes(query))
+          .map(u => ({ ...u, type: 'user' }))
+      );
+    } else if (search.startsWith('#')) {
+      const query = search.slice(1);
+      this.newMessageResults.set(
+        this.firebaseService.channels()
+          .filter((c: any) => c.name.toLowerCase().includes(query))
+          .map(c => ({ ...c, type: 'channel' }))
+      );
+    } else {
+      const users = this.firebaseService.getAllUsers()
+        .filter((u: any) => (u.firstName + ' ' + u.lastName).toLowerCase().includes(search))
+        .map(u => ({ ...u, type: 'user' }));
+      const channels = this.firebaseService.channels()
+        .filter((c: any) => c.name.toLowerCase().includes(search))
+        .map(c => ({ ...c, type: 'channel' }));
+      this.newMessageResults.set([...users, ...channels]);
+    }
+  }
+
+  selectSearchResult(item: any) {
+    if (item.type === 'user') {
+      this.chat.openChatRoom(item);
+    } else {
+      this.firebaseService.setSelectedChannel(item.id);
+      this.chat.openChannel(item.id);
+    }
+    this.newMessageSearch.set('');
+    this.newMessageResults.set([]);
+  }
 
   // --- MODAL SIGNALS ---
   showMembersModal = signal(false);
