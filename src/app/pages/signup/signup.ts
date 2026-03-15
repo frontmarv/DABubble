@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject, ChangeDetectorRef } from '@angular/core'; 
+import { Component, ElementRef, ViewChild, EventEmitter, Output, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -17,6 +17,7 @@ export class SignupComponent {
 
   @Output() close = new EventEmitter<void>();
   @Output() success = new EventEmitter<void>();
+  @ViewChild('errormsg') errormsg!: ElementRef;
 
   signupStep: number = 1;
   errorMessage: string = '';
@@ -52,7 +53,7 @@ export class SignupComponent {
     const name = this.fullName.trim();
     if (!name) return this.setValidationError('isNameValid', 'Bitte Name eingeben');
     if (name.length > 30) return this.setValidationError('isNameValid', 'Name darf max. 30 Zeichen enthalten');
-    
+
     this.clearValidationError('isNameValid');
   }
 
@@ -68,7 +69,7 @@ export class SignupComponent {
     if (mail.length > 50) {
       return this.setValidationError('isEmailValid', 'E-mail-Adresse darf max. 50 Zeichen enthalten');
     }
-    
+
     this.clearValidationError('isEmailValid');
   }
 
@@ -160,7 +161,7 @@ export class SignupComponent {
   async finishSignup(): Promise<void> {
     this.prepareForSubmission();
     const { firstName, lastName } = this.extractNames();
-    
+
     const result = await this.authService.signup(
       this.email, this.password, firstName, lastName, this.selectedAvatar, 'offline'
     );
@@ -200,6 +201,13 @@ export class SignupComponent {
     } else {
       this.errorMessage = result.error || 'Registrierung fehlgeschlagen.';
       this.changeDetectorRef.markForCheck();
+      setTimeout(() => {
+      this.scrollToErrorMsg();
+    }, 5);
     }
+  }
+
+  scrollToErrorMsg(): void {
+    this.errormsg.nativeElement.scrollIntoView({ behavior: 'auto' });
   }
 }
