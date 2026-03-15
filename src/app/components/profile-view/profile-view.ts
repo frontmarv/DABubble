@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../models/user.class';
 import { FirebaseService } from '../../services/firebase.service';
+import { ChatService } from '../../services/chat.service';
+import { ThreadStateService } from '../../services/thread-state.service';
 
 @Component({
   selector: 'app-profile-view',
@@ -13,6 +15,8 @@ import { FirebaseService } from '../../services/firebase.service';
 })
 export class ProfileView implements OnChanges {
   firebaseService = inject(FirebaseService);
+  chatService = inject(ChatService);
+  threadService = inject(ThreadStateService);
 
   @Input() user: User | null = null;
   @Output() close = new EventEmitter<void>();
@@ -30,6 +34,17 @@ export class ProfileView implements OnChanges {
     if (changes['user'] && this.user && !this.isEditing) {
       this.resetProfileView();
     }
+  }
+
+  /**
+   * Closes the profile view, shuts down any active threads, 
+   * and opens a direct chat with the current profile user.
+   */
+  async onMessageUser(): Promise<void> {
+    if (!this.user) return;
+    this.threadService.setHidden();
+    this.closeProfile();
+    await this.chatService.openChatRoom(this.user);
   }
 
   /**
@@ -57,6 +72,7 @@ export class ProfileView implements OnChanges {
   cancelEdit(): void {
     this.resetProfileView();
     this.isEditing = false;
+    this.errorMessage = '';
   }
 
   /**
@@ -104,12 +120,12 @@ export class ProfileView implements OnChanges {
    * @param length - The length of the trimmed input string.
    */
   private setValidationMessage(length: number): void {
-    if (length < 2) {
+    if (length === 0) {
       this.errorMessage = 'Bitte Name eingeben';
     } else if (length > 30) {
       this.errorMessage = 'Name darf maximal 30 Zeichen haben';
     } else {
-      this.errorMessage = '';
+      this.errorMessage = ''; 
     }
   }
 
