@@ -181,7 +181,8 @@ h4 {
 .text--big {
     font-size: 1.25rem;
     font-weight: 400;
-    word-break: break-all;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .text--regular {
@@ -444,6 +445,26 @@ app-message-composer {
     gap: 8px;
 }
 
+.edit-btn {
+    display: inline;
+    background: transparent;
+    color: var(--color-purple3);
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 18px;
+    transition: color var(--transition-fast);
+
+    &:hover {
+        color: var(--color-purple1);
+        font-weight: 800;
+    }
+}
+
+.edit-btn--mobile {
+    display: none;
+    background: transparent;
+}
+
 .reactions {
     display: flex;
     justify-content: center;
@@ -522,5 +543,13 @@ app-message-composer {
         overflow-y: auto;
         display: flex;
         flex-direction: column;
+    }
+
+    .edit-btn {
+        display: none;
+    }
+
+    .edit-btn--mobile {
+        display: inline;
     }
 }
