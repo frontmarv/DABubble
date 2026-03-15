@@ -11,6 +11,7 @@ import { FirebaseService } from '../../services/firebase.service';
 import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 import { ShowUserProfile } from '../../services/showUserProfile';
 import { ChatService } from '../../services/chat.service';
+import { ThreadStateService } from '../../services/thread-state.service'; // HINZUGEFÜGT
 
 interface SearchResult {
   type: 'channel' | 'user' | 'message';
@@ -36,6 +37,7 @@ export class ChatRoom implements OnInit {
   firebaseService = inject(FirebaseService);
   showUserProfileService = inject(ShowUserProfile);
   chatService = inject(ChatService);
+  threadService = inject(ThreadStateService); // HINZUGEFÜGT
 
   isSidebarOpen = true;
   isProfileMenuOpen = false;
@@ -160,6 +162,7 @@ export class ChatRoom implements OnInit {
     }
     this.resetSearch();
   }
+
   private resetSearch() {
     this.searchQuery.set('');
     this.filteredResults.set([]);
@@ -168,7 +171,12 @@ export class ChatRoom implements OnInit {
 
   toggleSidebar() { this.isSidebarOpen = !this.isSidebarOpen; }
   onMobileNavigation() { if (this.isMobile()) this.isSidebarOpen = false; }
-  goBackToSidebar() { this.isSidebarOpen = true; }
+  
+  goBackToSidebar() { 
+    this.isSidebarOpen = true; 
+    this.threadService.setHidden();
+  }
+  
   toggleProfileMenu() { this.isProfileMenuOpen = !this.isProfileMenuOpen; }
   closeForeignUserProfile() { this.displayForeignUserService.setToFalse(); }
   async logOut() { await this.authService.logout(); }
