@@ -26,9 +26,14 @@ export class ChannelInfo {
     this.close.emit();
   }
 
+  getMember(uid: string) {
+    const users = this.firebaseService.getAllUsers();
+    if (!users) return null;
+    return users.find(u => u.uid === uid) || null;
+  }
+
   async leaveChannel() {
     const currentUid = this.firebaseService.currentUser()?.uid;
-    
     if (this.channel?.id && currentUid) {
       try {
         await this.firebaseService.removeMemberFromChannel(this.channel.id, currentUid);
@@ -53,7 +58,9 @@ export class ChannelInfo {
     if (this.editChannelDescMode()) {
       this.saveChannelDesc();
     } else {
-      this.editChannelDescInput.set(this.channel?.description || '');
+      const currentDesc = this.channel?.description || 
+        'Dieser Channel ist für alles rund um dieses Thema. Hier kannst du zusammen mit deinem Team Meetings abhalten, Dokumente teilen und Entscheidungen treffen.';
+      this.editChannelDescInput.set(currentDesc);
       this.editChannelDescMode.set(true);
     }
   }
@@ -65,16 +72,13 @@ export class ChannelInfo {
         this.editChannelNameMode.set(false);
         return;
       }
-
       const nameExists = this.firebaseService.channels().some(
         (c: any) => c.name.toLowerCase() === newName.toLowerCase()
       );
-
       if (nameExists) {
         this.channelNameError.set('Dieser Channel existiert bereits.');
         return; 
       }
-
       this.channelNameError.set(''); 
       try {
         await this.firebaseService.updateChannel(this.channel.id, { name: newName });

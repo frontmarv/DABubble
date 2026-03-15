@@ -115,6 +115,44 @@
     font-size: 1.125rem;
 }
 
+.members-card {
+    display: none !important;
+  }
+  
+  @media (max-width: 1240px) {
+    .members-card {
+      display: block !important;
+      margin-top: 20px;
+    }
+  
+    .members-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding-top: 10px;
+    }
+  
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 0;
+  
+      .member-avatar-img {
+        width: 36px;  
+        height: 36px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      
+      span {
+        font-size: 18px;
+      }
+    }
+  }
+
 @media (max-width: 1240px) {
     .edit-btn {
         display: none;
@@ -123,6 +161,10 @@
     .edit-btn--mobile {
         display: inline;
     }
+
+    .members-list {
+        max-height: 200px;
+      }
 }
 
 @media (max-width: 768px) {

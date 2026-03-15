@@ -1,5 +1,6 @@
 <div class="modal-backdrop" (click)="closeModal()">
     <div class="modal channel-info-modal" (click)="$event.stopPropagation()">
+        
         <div class="modal__header">
             <div class="channel-title">
                 <span class="icon-mask"
@@ -14,36 +15,30 @@
         </div>
 
         <div class="channel-info-content">
+            
             <div class="info-card">
                 <div class="info-card__header">
                     <span class="text--regular bold">Channel-Name</span>
                     <button class="edit-btn text--regular" type="button" (click)="toggleEditChannelName()">
                         {{ editChannelNameMode() ? 'Speichern' : 'Bearbeiten' }}
                     </button>
-                    @if (editChannelNameMode()) {
                     <button class="edit-btn--mobile" type="button" (click)="toggleEditChannelName()">
-                        <img src="/main-page/save-with-backgroundcolor.svg" alt="Speichern">
+                        <img [src]="editChannelNameMode() ? '/main-page/save-with-backgroundcolor.svg' : '/main-page/edit-with-backgroundcolor.svg'" alt="">
                     </button>
-                    } @else {
-                    <button class="edit-btn--mobile" type="button" (click)="toggleEditChannelName()">
-                        <img src="/main-page/edit-with-backgroundcolor.svg" alt="Bearbeiten">
-                    </button>
-                    }
                 </div>
                 <div class="info-card__body channel-name-display">
                     @if (!editChannelNameMode()) {
-                    <span class="icon-mask hashtag-icon"
-                        style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg'); width: 20px; height: 20px; background-color: var(--color-black);"></span>
-                    <span class="text--regular">{{ channel?.name }}</span>
+                        <span class="icon-mask hashtag-icon"
+                            style="-webkit-mask-image: url('/main-page/tag1.svg'); mask-image: url('/main-page/tag1.svg'); width: 20px; height: 20px; background-color: var(--color-black);"></span>
+                        <span class="text--regular">{{ channel?.name }}</span>
                     } @else {
-                    <div style="width: 100%; display: flex; flex-direction: column; gap: 4px;">
-                        <input class="inputfield--dialogs edit-input" type="text" placeholder="z.B. Entwicklerteam"
-                            [ngModel]="editChannelNameInput()" (ngModelChange)="editChannelNameInput.set($event); channelNameError.set('')" />
-                        
-                        @if (channelNameError()) {
-                        <div class="error-message"><span>{{ channelNameError() }}</span></div>
-                        }
-                    </div>
+                        <div style="width: 100%; display: flex; flex-direction: column; gap: 4px;">
+                            <input class="inputfield--dialogs edit-input" type="text"
+                                [ngModel]="editChannelNameInput()" (ngModelChange)="editChannelNameInput.set($event); channelNameError.set('')" />
+                            @if (channelNameError()) {
+                                <div class="error-message"><span>{{ channelNameError() }}</span></div>
+                            }
+                        </div>
                     }
                 </div>
             </div>
@@ -54,31 +49,41 @@
                     <button class="edit-btn text--regular" type="button" (click)="toggleEditChannelDesc()">
                         {{ editChannelDescMode() ? 'Speichern' : 'Bearbeiten' }}
                     </button>
-                    @if (editChannelDescMode()) {
                     <button class="edit-btn--mobile" type="button" (click)="toggleEditChannelDesc()">
-                        <img src="/main-page/save-with-backgroundcolor.svg" alt="Speichern">
+                        <img [src]="editChannelDescMode() ? '/main-page/save-with-backgroundcolor.svg' : '/main-page/edit-with-backgroundcolor.svg'" alt="">
                     </button>
-                    } @else {
-                    <button class="edit-btn--mobile" type="button" (click)="toggleEditChannelDesc()">
-                        <img src="/main-page/edit-with-backgroundcolor.svg" alt="Bearbeiten">
-                    </button>
-                    }
                 </div>
                 <div class="info-card__body">
                     @if (!editChannelDescMode()) {
-                    <p class="text--regular">
-                        {{ channel?.description || 'Dieser Channel ist für alles rund um dieses Thema. Hier kannst du zusammen mit deinem Team Meetings abhalten, Dokumente teilen und Entscheidungen treffen.' }}
-                    </p>
+                        <p class="text--regular">
+                            {{ channel?.description || 'Dieser Channel ist für alles rund um dieses Thema.' }}
+                        </p>
                     } @else {
-                    <textarea class="inputfield--dialogs edit-textarea text--regular" rows="4"
-                        placeholder="Dein Text hier..." [ngModel]="editChannelDescInput()"
-                        (ngModelChange)="editChannelDescInput.set($event)"></textarea>
+                        <textarea class="inputfield--dialogs edit-textarea text--regular" rows="4"
+                            [ngModel]="editChannelDescInput()" (ngModelChange)="editChannelDescInput.set($event)"></textarea>
                     }
                 </div>
                 <hr class="info-card__divider" />
                 <div class="info-card__footer">
                     <span class="text--regular bold">Erstellt von</span>
                     <span class="creator-name text--regular">{{ channel?.creatorName || 'Noah Braun' }}</span>
+                </div>
+            </div>
+
+            <div class="info-card members-card hide-on-desktop">
+                <div class="info-card__header">
+                    <span class="text--regular bold">Mitglieder</span>
+                </div>
+                <div class="info-card__body members-list">
+                    @for (memberId of channel?.members; track memberId) {
+                        @let member = getMember(memberId);
+                        @if (member) {
+                            <div class="member-item">
+                                <img [src]="member.avatar || '/shared/profile-pics/profile-pic1.svg'" class="member-avatar-img">
+                                <span class="text--regular">{{ member.firstName }} {{ member.lastName }}</span>
+                            </div>
+                        }
+                    }
                 </div>
             </div>
         </div>
