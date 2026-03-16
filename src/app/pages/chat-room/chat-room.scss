@@ -432,20 +432,22 @@ app-chat {
     padding: 0;
     position: relative;
     overflow: hidden;
-    height: auto; 
     flex: 1;
     min-height: 0;
+    height: 100%;       
+    max-height: none;    
   }
 
   .sidebar-wrapper {
-    position: absolute;
-    top: 0;
+    position: fixed;                     
+    top: 75px;                           
     left: 0;
     width: 100% !important;
-    height: 100%;
+    height: calc(100vh - 75px);         
     z-index: 50;
     transform: translateX(0);
     transition: transform var(--transition-slow) cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
   }
 
   .sidebar-wrapper--closed {
