@@ -110,13 +110,13 @@
 
         @if (isOwnMessage(reply.senderId)) {
         <div class="message-field-user">
-            <span class="avatar">
+            <span class="avatar" (click)="showUserProfileService.setToTrue()">
                 <img [src]="replyUser?.avatar || '/shared/profile-pics/profile-pic1.svg'" alt="Profilbild"
                     class="avatar__img" />
             </span>
             <div class="message-info-container">
                 <div class="message-info">
-                    <p class="text--regular bold message-name">
+                    <p class="text--regular bold message-name" (click)="showUserProfileService.setToTrue()">
                         {{ replyUser?.firstName }} {{ replyUser?.lastName }}
                     </p>
                     <p class="time">
@@ -187,13 +187,15 @@
         </div>
         } @else {
         <div class="message-field-other">
-            <span class="avatar">
+            <span class="avatar"
+                (click)="displayForeignUserService.setSelectedUser(replyUser); displayForeignUserService.toggle();">
                 <img [src]="replyUser?.avatar || '/shared/profile-pics/profile-pic1.svg'" alt="Profilbild"
                     class="avatar__img" />
             </span>
             <div class="message-info-container other">
                 <div class="message-info">
-                    <p class="text--regular bold message-name">
+                    <p class="text--regular bold message-name"
+                        (click)="displayForeignUserService.setSelectedUser(replyUser); displayForeignUserService.toggle();">
                         {{ replyUser?.firstName }} {{ replyUser?.lastName }}
                     </p>
                     <p class="time">
