@@ -200,7 +200,7 @@ export class AuthService {
    */
   sendResetEmail(email: string) {
     return sendPasswordResetEmail(this.auth, email, { 
-      url: 'http://localhost:4200/new-pw', 
+      url: 'https://dabubble-2491.developerakademie.net/new-pw', 
       handleCodeInApp: true 
     });
   }

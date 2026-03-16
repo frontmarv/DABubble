@@ -239,6 +239,7 @@ header {
   flex: 1;
   gap: 20px;
   padding: 0 20px 20px 20px;
+  max-height: calc(100vh - 90px);
 }
 
 .sidebar-wrapper {

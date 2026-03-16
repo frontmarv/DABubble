@@ -25,7 +25,7 @@
                 <img [src]="parentUser?.avatar || '/shared/profile-pics/profile-pic1.svg'" alt="Profilbild"
                     class="avatar__img" />
             </span>
-            <div class="message-info-container other">
+            <div [class]="isOwnMessage(parent.senderId) ? 'message-info-container' : 'message-info-container other'">
                 <div class="message-info">
                     <p class="text--regular bold message-name">
                         @if (parentUser) {
@@ -45,7 +45,7 @@
                 <div class="message text--regular">
                     <app-message-formatter [text]="parent.text"></app-message-formatter>
                 </div>
-                <div class="answer-container --thread">
+                <div [class]="isOwnMessage(parent.senderId) ? 'answer-container --right' : 'answer-container --left'">
                     @let reactions = parent.reactions;
                     @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, parent.id!);
                     @let hiddenCount = emojiPickerService.getHiddenReactionsCount(reactions, parent.id!);
@@ -126,7 +126,7 @@
                 <div class="message text--regular">
                     <app-message-formatter [text]="reply.text"></app-message-formatter>
                 </div>
-                <div class="answer-container --thread">
+                <div class="answer-container --right">
                     @let reactions = reply.reactions;
                     @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, reply.id!);
                     @let hiddenCount = emojiPickerService.getHiddenReactionsCount(reactions, reply.id!);
@@ -203,7 +203,7 @@
                 <div class="message text--regular">
                     <app-message-formatter [text]="reply.text"></app-message-formatter>
                 </div>
-                <div class="answer-container --thread">
+                <div class="answer-container --left">
                     @let reactions = reply.reactions;
                     @let visibleReactions = emojiPickerService.getVisibleReactions(reactions, reply.id!);
                     @let hiddenCount = emojiPickerService.getHiddenReactionsCount(reactions, reply.id!);

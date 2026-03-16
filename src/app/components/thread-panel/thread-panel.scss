@@ -101,8 +101,12 @@ h4 {
   left: unset;
 }
 
-.--thread {
+.--left {
   padding-right: 50px;
+}
+
+.--right{
+  justify-content: flex-end;
 }
 
 @media (max-width: 1240px) {
