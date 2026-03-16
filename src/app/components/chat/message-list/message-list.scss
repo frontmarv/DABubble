@@ -93,6 +93,7 @@
     width: 100px;
     color: var(--color-purple3);
     cursor: pointer;
+    min-width: fit-content;
 
     &:hover {
         font-weight: 700;
