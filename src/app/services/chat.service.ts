@@ -64,6 +64,7 @@ export class ChatService {
   async openChatRoom(user: any): Promise<void> {
     this.firebaseService.setSelectedChannel('');
     this.editOldMessageSerivce.clearEditMessage();
+    this.threadService.setHidden(); 
     await this.loadOtherUser(user);
     const chatId = this.buildChatId();
     if (!chatId) return;
