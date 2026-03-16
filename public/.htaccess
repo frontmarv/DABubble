@@ -1,0 +1,6 @@
+RewriteEngine On
+# Wenn die angefragte Datei oder der Ordner wirklich existiert (z.B. Bilder), lade sie
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# Wenn nicht, leite alles an die index.html von Angular weiter
+RewriteRule ^ index.html [L]
