@@ -22,5 +22,6 @@ export class DisplayForeignUserService {
 
     setSelectedUser(user: any) {
         this.selectedUser.set(user);
+        console.log(user)
     }
 }

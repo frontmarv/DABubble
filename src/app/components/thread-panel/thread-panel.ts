@@ -9,6 +9,8 @@ import { editOldMessageService } from '../../services/editOldMessage-service';
 import { ChatService } from '../../services/chat.service';
 import { DateSeperator } from '../../services/date-seperator.service';
 import { MessageFormatter } from '../chat/message-formatter/message-formatter';
+import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
+import { ShowUserProfile } from '../../services/showUserProfile';
 
 @Component({
   selector: 'app-thread-panel',
@@ -20,10 +22,12 @@ import { MessageFormatter } from '../chat/message-formatter/message-formatter';
 export class ThreadPanel implements AfterViewInit {
   threadService = inject(ThreadStateService);
   firebaseService = inject(FirebaseService);
+  displayForeignUserService = inject(DisplayForeignUserService);
   emojiPickerService = inject(EmojiPickerStateService);
   editOldMessageSerivce = inject(editOldMessageService);
   chatSerivce = inject(ChatService);
   dateSeperator = inject(DateSeperator);
+  showUserProfileService = inject(ShowUserProfile);
 
   @ViewChild('threadBottom') threadBottom!: ElementRef;
 
