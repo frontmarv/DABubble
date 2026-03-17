@@ -68,7 +68,7 @@
         </button>
       </div>
 
-      <nav class="list" [class.collapsed]="!channelsOpen" aria-label="Channel Liste">
+      <nav class="list collapsible-container" [class.expanded]="channelsOpen" aria-label="Channel Liste">
         @for (channel of firebaseService.channels(); track channel.id) {
         <div class="list__item" (click)="selectChannel(channel.id)"
           [class.list__item--active]="channel.id === firebaseService.selectedChannelId()">
@@ -93,7 +93,7 @@
         </div>
       </div>
 
-      <nav class="list" [class.collapsed]="!dmOpen" aria-label="Direktnachrichten Liste">
+      <nav class="list collapsible-container" [class.expanded]="dmOpen" aria-label="Direktnachrichten Liste">
         @for (user of displayAllUsersSidebar(); track user.uid) {
         <a class="list__item" (click)="selectDm(user)" [class.list__item--active]="isDmActive(user)">
           <span class="avatar">
