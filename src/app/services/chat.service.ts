@@ -79,6 +79,7 @@ export class ChatService {
   openChannel(channelId: string): void {
     this.otherUser.set(null);
     this.activate({ mode: 'channel', id: channelId });
+    this.threadService.setHidden();
   }
 
   /**

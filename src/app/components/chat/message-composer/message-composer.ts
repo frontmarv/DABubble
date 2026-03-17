@@ -131,16 +131,29 @@ export class MessageComposer implements AfterViewInit {
 
   // --- SEARCH RESULTS ---
 
-  /**
-   * Filters channels from Firebase based on a query string.
-   * @param {string} query - The search term.
-   * @returns {ComposerSearchResult[]} Formatted channel results.
-   */
-  private getChannelResults(query: string): ComposerSearchResult[] {
-    return this.firebaseService.channels()
-      .filter((c) => c.name.toLowerCase().includes(query))
-      .map((c) => ({ type: 'channel' as const, name: c.name, id: c.id, avatar: null }));
-  }
+ /**
+ * Filters channels based on search query and verifies current user membership.
+ * @param {string} query - The search term (already lowercased).
+ * @returns {ComposerSearchResult[]} Formatted channel results.
+ */
+private getChannelResults(query: string): ComposerSearchResult[] {
+  const currentUser = this.firebaseService.currentUser();
+  const currentUserId = currentUser?.uid;
+  if (!currentUserId) return [];
+
+  return this.firebaseService.channels()
+    .filter((channel) => {
+      const matchesQuery = channel.name.toLowerCase().includes(query);
+      const isMember = channel.members?.includes(currentUserId);
+      return matchesQuery && isMember;
+    })
+    .map((channel) => ({
+      type: 'channel' as const,
+      name: channel.name,
+      id: channel.id,
+      avatar: null,
+    }));
+}
 
   /**
    * Filters users from Firebase based on a query string.
