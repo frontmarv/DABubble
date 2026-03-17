@@ -112,8 +112,6 @@
     background-color: var(--color-black);
   }
 
-
-
   .input-icon {
     width: 24px;
     height: 24px;
@@ -145,7 +143,6 @@
     }
   }
 }
-
 
 .list__item--add {
   margin-top: 10px;
@@ -184,8 +181,24 @@
   cursor: pointer;
   transition: color var(--transition-fast);
 
+  .icon-mask {
+    background-color: var(--color-black); 
+    display: inline-block;
+    transition: background-color var(--transition-fast);
+  }
+
+  .input-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
   &:hover {
     color: var(--color-purple1);
+    
+    .icon-mask {
+      background-color: var(--color-purple1);
+    }
   }
 }
 
