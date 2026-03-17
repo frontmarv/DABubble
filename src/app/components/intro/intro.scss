@@ -35,6 +35,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
+  transform-origin: top left;
 
   img.intro-logo {
     height: 70px;
@@ -42,10 +43,12 @@
   }
 
   &.move-to-corner {
-    animation: moveLogoDesktop 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    @media (min-width: 1025px) {
+      animation: moveLogoDesktop 1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    }
 
-    @media (max-width: 1240px) {
-      animation: moveLogoMobile 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+    @media (max-width: 1024px) {
+      animation: moveLogoMobile 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards !important;
     }
   }
 }
@@ -93,7 +96,7 @@
   }
   to {
     top: 50px;
-    left: clamp(16px, 4vw, 40px);
+    left: 40px;
     transform: translate(0, 0);
   }
 }
@@ -106,7 +109,7 @@
   }
   to {
     top: 20px;
-    left: clamp(16px, 15vw, 40px);
+    left: 38px;
     transform: translate(0, 0);
   }
 }

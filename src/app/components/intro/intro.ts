@@ -29,9 +29,9 @@ export class Intro implements OnInit {
    * Orchestrates the timing for each animation phase.
    */
   private startAnimationSequence(): void {
-    this.schedulePhase(() => this.introPhase1 = true, 400);
-    this.schedulePhase(() => this.introPhase2 = true, 1200);
-    this.schedulePhase(() => this.introFadeOut = true, 2000);
+    this.schedulePhase(() => this.introPhase1 = true, 600);
+    this.schedulePhase(() => this.introPhase2 = true, 1600);
+    this.schedulePhase(() => this.introFadeOut = true, 2500);
     this.scheduleFinish(2800);
   }
 
