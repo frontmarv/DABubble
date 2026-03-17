@@ -3,17 +3,17 @@
         <div class="backdrop" [class.show]="isProfileMenuOpen" (click)="isProfileMenuOpen=false"></div>
         <div class="header-left">
             @if (isMobile() && !isSidebarOpen) {
-                <div class="mobile-back-btn" (click)="goBackToSidebar()">
-                    <img src="login-imgs/arrow-back.svg" alt="Zurück">
-                </div>
-                <img class="logo" src="/main-page/workspace-logo.svg" alt="Devspace">
-                <h2 class="logo-text">Devspace</h2>
-            } 
-            @else {
-                <img class="logo" src="/shared/dabubble-logo.svg" alt="DABubble">
-                <h2 class="logo-text">DABubble</h2>
+            <div class="mobile-back-btn" (click)="goBackToSidebar()">
+                <img src="login-imgs/arrow-back.svg" alt="Zurück">
+            </div>
+            <img class="logo" src="/main-page/workspace-logo.svg" alt="Devspace">
+            <h2 class="logo-text">Devspace</h2>
             }
-         </div>
+            @else {
+            <img class="logo" src="/shared/dabubble-logo.svg" alt="DABubble">
+            <h2 class="logo-text">DABubble</h2>
+            }
+        </div>
 
         <div class="search-bar hide-on-mobile">
             <input type="text" placeholder="Devspace durchsuchen Nutze # oder @" [value]="searchQuery()"
@@ -47,7 +47,7 @@
             </div>
             }
         </div>
-       
+
         <div class="user-profile" [class.open]="isProfileMenuOpen" (click)="toggleProfileMenu()">
             <span class="user-name">{{ firebaseService.currentUser()?.firstName }} {{
                 firebaseService.currentUser()?.lastName }}</span>
@@ -72,14 +72,10 @@
 
     <div class="layout" [class.layout--sidebar-closed]="!isSidebarOpen">
         <div class="sidebar-wrapper" [class.sidebar-wrapper--closed]="!isSidebarOpen">
-            
-            <app-sidebar 
-               [searchQuery]="searchQuery()"
-               [filteredResults]="filteredResults()"
-               [showSearchDropdown]="isMobile() ? showSearchDropdown() : false"
-               (searchInput)="onSearchInput($event)"
-               (resultSelect)="selectResult($event)"
-               (mobileNavigation)="onMobileNavigation()">
+
+            <app-sidebar [searchQuery]="searchQuery()" [filteredResults]="filteredResults()"
+                [showSearchDropdown]="isMobile() ? showSearchDropdown() : false" (searchInput)="onSearchInput($event)"
+                (resultSelect)="selectResult($event)" (mobileNavigation)="onMobileNavigation()">
             </app-sidebar>
 
             <button class="sidebar-toggle" type="button" (click)="toggleSidebar()">

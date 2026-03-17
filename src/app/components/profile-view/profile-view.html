@@ -41,12 +41,12 @@
       </div>
 
       @if (firebaseService.currentUser()?.uid !== user?.uid) {
-        <div class="profile-actions">
-          <button class="btn--primary" (click)="onMessageUser()">
-            <img src="/main-page/account_circle.svg" alt="" style="filter: brightness(0) invert(1);">
-            Nachricht
-          </button>
-        </div>
+      <div class="profile-actions">
+        <button class="btn--primary" (click)="onMessageUser()">
+          <img src="/main-page/account_circle.svg" alt="" style="filter: brightness(0) invert(1);">
+          Nachricht
+        </button>
+      </div>
       }
     </ng-container>
 
@@ -80,9 +80,7 @@
           <input type="text" [(ngModel)]="fullName" (input)="validateFullName(fullName)" class="inputfield--dialogs"
             placeholder="Vor- und Nachname eingeben">
         </div>
-        @if (errorMessage) {
-          <p class="error-message">{{ errorMessage }}</p>
-        }
+        <p [class]="errorMessage ? 'error-message' : 'invisible'">{{ errorMessage }}</p>
       </div>
 
       <div class="edit-actions">

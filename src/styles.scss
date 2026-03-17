@@ -32,14 +32,12 @@ body {
     --color-purple3: #535af1;
     --color-menu-color: #42526E;
     --color-online-green: #92c83e;
-    --color-rosa-error: #ed1e79;
+    --color-rosa-error: #ce041f;
 }
 
 a {
     text-decoration: none;
     color: var(--color-purple2);
-    word-break: break-all;
-
     &:hover {
         cursor: pointer;
     }
@@ -158,7 +156,6 @@ h1,
 h2,
 h3,
 h4 {
-    word-break: break-all;
     font-weight: bold;
 }
 
@@ -190,13 +187,11 @@ h4 {
 .text--regular {
     font-size: 1.125rem;
     font-weight: 400;
-    word-break: break-all;
 }
 
 .text--small {
     font-size: 1rem;
     font-weight: 400;
-    word-break: break-all;
 }
 
 .bold {

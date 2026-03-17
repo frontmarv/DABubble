@@ -36,6 +36,9 @@ li {
     text-wrap-mode: wrap;
 }
 
+a{
+    word-break: break-all;
+}
 
 
 h3 {
@@ -82,6 +85,9 @@ main {
 }
 
 @media screen and (max-width: 500px) {
+    h2{
+        font-size: 28px;
+    }
     main {
         padding: 32px 16px;
         border-radius: unset;

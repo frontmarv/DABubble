@@ -27,6 +27,7 @@
     border: 1px solid var(--color-light-purple-lines);
     border-radius: 20px;
     padding: 24px;
+    padding-bottom: 8px;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -149,4 +150,11 @@
         width: 100%;
         border-radius: 0;
     }
+
+    @media (max-width: 500px) {
+        .channel-info-modal {
+            padding: 16px;
+        }
+    }
+
 }

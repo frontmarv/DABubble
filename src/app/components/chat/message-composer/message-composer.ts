@@ -1,4 +1,4 @@
-import { Component, input, inject, signal, computed, AfterViewInit, ViewChild, ElementRef, HostListener, Input, effect } from '@angular/core';
+import { Component, input, inject, signal, computed, AfterViewInit, viewChild, ElementRef, HostListener, Input, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChatService } from '../../../services/chat.service';
 import { ThreadStateService } from '../../../services/thread-state.service';
@@ -26,7 +26,7 @@ interface ComposerSearchResult {
   styleUrl: './message-composer.scss',
 })
 export class MessageComposer implements AfterViewInit {
-  @ViewChild('message') textarea!: ElementRef<HTMLTextAreaElement>;
+  textarea = viewChild<ElementRef<HTMLTextAreaElement>>('message');
   @Input() mode: 'chat' | 'thread' = 'chat';
   @Input() placeholder = 'Nachricht an.....';
 
@@ -36,7 +36,7 @@ export class MessageComposer implements AfterViewInit {
   firebaseService = inject(FirebaseService);
   emojiPickerService = inject(EmojiPickerStateService);
   editOldMessageSerivce = inject(editOldMessageService);
-  
+
   composerType = input<string>('mainChat');
   searchQuery = signal<string>('');
   searchType = signal<'user' | 'channel' | null>(null);
@@ -60,18 +60,50 @@ export class MessageComposer implements AfterViewInit {
     effect(() => {
       const textToEdit = this.editOldMessageSerivce.currentMessageText();
       const currentChat = this.editOldMessageSerivce.currentChat();
-      if (textToEdit && this.composerType() === currentChat) {
-        this.textarea.nativeElement.value = textToEdit;
-        this.textarea.nativeElement.focus();
+      const textAreaRef = this.textarea(); // Signal-Value extrahieren
+
+      if (textToEdit && this.composerType() === currentChat && textAreaRef) {
+        // Text setzen
+        textAreaRef.nativeElement.value = textToEdit;
+
+        // Fokus setzen (kurzer Timeout hilft, falls die Textarea gerade erst eingeblendet wurde)
+        setTimeout(() => {
+          textAreaRef.nativeElement.focus();
+        }, 0);
+      }
+    });
+
+    effect(() => {
+      const type = this.composerType();
+      const isThreadOpen = this.threadService.isThreadVisible();
+      const channelId = this.firebaseService.selectedChannelId();
+      const activeChat = this.chatService.activeConversation();
+      const textAreaRef = this.textarea();
+      if (!textAreaRef) return;
+      if (type === 'thread') {
+        if (isThreadOpen) {
+          this.setFocus(textAreaRef);
+        }
+      }
+      if (type === 'mainChat') {
+        if (!isThreadOpen) {
+          this.setFocus(textAreaRef);
+        }
       }
     });
   }
 
   /**
-   * Focuses the textarea after initial view render.
+   * Hilfsmethode für den Fokus mit kurzem Timeout
    */
+  private setFocus(textAreaRef: ElementRef<HTMLTextAreaElement>) {
+    setTimeout(() => {
+      textAreaRef.nativeElement.focus();
+    }, 50);
+  }
+
   ngAfterViewInit(): void {
-    this.textarea.nativeElement.focus();
+    this.textarea()?.nativeElement.focus();
   }
 
   /**
@@ -178,7 +210,7 @@ export class MessageComposer implements AfterViewInit {
    * Selects an item from the dropdown and replaces the trigger symbol/query in text.
    */
   selectItem(item: ComposerSearchResult): void {
-    const textarea = this.textarea.nativeElement;
+    const textarea = this.textarea()!.nativeElement;
     textarea.value = this.buildReplacedText(textarea.value, textarea.selectionStart, item);
     this.resetSearchState();
     textarea.focus();
@@ -243,7 +275,7 @@ export class MessageComposer implements AfterViewInit {
    * Inserts an emoji at the current cursor position.
    */
   insertEmoji(emoji: string): void {
-    const textarea = this.textarea.nativeElement;
+    const textarea = this.textarea()!.nativeElement;
     const { selectionStart, selectionEnd, value } = textarea;
     textarea.value = value.slice(0, selectionStart) + emoji + value.slice(selectionEnd);
     textarea.selectionStart = textarea.selectionEnd = selectionStart + emoji.length;

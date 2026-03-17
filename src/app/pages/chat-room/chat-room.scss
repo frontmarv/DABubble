@@ -47,7 +47,7 @@ header {
     padding: 16px 20px;
     display: flex;
     align-items: center;
-  
+
     input {
       width: 100%;
       outline: none;
@@ -55,7 +55,7 @@ header {
       background: transparent;
       border: none;
     }
-  
+
     .search-dropdown {
       position: absolute;
       top: calc(100% + 15px);
@@ -66,7 +66,7 @@ header {
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       z-index: 1000;
       padding: 15px 0;
-  
+
       .search-item {
         padding: 10px 25px;
         display: flex;
@@ -74,36 +74,39 @@ header {
         gap: 15px;
         cursor: pointer;
         transition: background-color 0.1s ease;
-  
+
         &:hover {
           background-color: var(--color-background);
-          .name { color: var(--color-purple1); }
+
+          .name {
+            color: var(--color-purple1);
+          }
         }
-  
+
         .search-item-left {
           width: 45px;
           display: flex;
           justify-content: center;
           align-items: center;
         }
-  
+
         .prefix {
           font-weight: 700;
           color: var(--color-purple2);
           font-size: 1.5rem;
         }
-  
+
         .search-avatar-container {
           position: relative;
           display: flex;
-  
+
           .search-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
           }
-  
+
           .status {
             width: 12px;
             height: 12px;
@@ -112,7 +115,7 @@ header {
             bottom: 0;
           }
         }
-  
+
         .name {
           font-size: 1.125rem;
           color: var(--color-black);
@@ -189,10 +192,10 @@ header {
       gap: 10px;
       text-align: center;
 
-      > div.menu-item {
+      >div.menu-item {
         display: flex;
         align-items: center;
-        justify-content: center; 
+        justify-content: center;
         gap: 0;
         font-size: 24px;
         font-weight: 600;
@@ -201,11 +204,11 @@ header {
         transition: background-color var(--transition-fast) ease, color var(--transition-fast) ease;
 
         img {
-          display: none; 
+          display: none;
         }
       }
 
-      > div.menu-item:hover {
+      >div.menu-item:hover {
         background-color: var(--color-background);
         color: var(--color-purple1);
         font-weight: 700;
@@ -256,7 +259,8 @@ header {
 .sidebar-toggle {
   position: absolute;
   left: -20px;
-  top: 550px;
+  top: 60%;
+  transform: translate(0px, -50%);
   background: var(--color-white);
   cursor: pointer;
   padding: 20px 15px;
@@ -268,10 +272,6 @@ header {
   gap: 8px;
   box-shadow: 4px 4px 7px 0px #00000033;
   z-index: 5;
-}
-
-.sidebar-toggle:hover {
-  transform: translateX(-2px);
 }
 
 .sidebar-toggle__text {
@@ -324,7 +324,7 @@ app-chat {
       order: 1;
       display: flex;
       align-items: center;
-      gap: 15px; 
+      gap: 15px;
 
       .mobile-back-btn {
         display: flex;
@@ -333,9 +333,9 @@ app-chat {
         width: 30px;
         height: 30px;
         cursor: pointer;
-        
+
         img {
-          width: 24px; 
+          width: 24px;
           height: auto;
         }
       }
@@ -343,10 +343,10 @@ app-chat {
       img.logo {
         width: 36px;
         height: 36px;
-        border-radius: 8px; 
+        border-radius: 8px;
         object-fit: cover;
       }
-      
+
       h2.logo-text {
         display: block;
         font-size: 1.3rem;
@@ -357,20 +357,20 @@ app-chat {
     }
 
     .search-bar {
-      display: none !important; 
+      display: none !important;
     }
 
     .user-profile {
-      order: 2; 
+      order: 2;
       flex-shrink: 0;
-      margin-left: auto; 
+      margin-left: auto;
       gap: 0;
-      
-      .user-name, 
+
+      .user-name,
       .dropdown-arrow {
         display: none;
       }
-      
+
       img.avatar {
         width: 44px;
         height: 44px;
@@ -387,37 +387,37 @@ app-chat {
         width: 100%;
         background-color: var(--color-white);
         border-radius: 30px 30px 0 0;
-        padding: 15px 30px 40px 30px; 
+        padding: 15px 30px 40px 30px;
         box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
         z-index: 101;
         flex-direction: column;
-        text-align: left; 
+        text-align: left;
 
         &::before {
           content: "";
           display: block;
           width: 62px;
           height: 6px;
-          background-color: var(--color-light-purple-lines); 
+          background-color: var(--color-light-purple-lines);
           border-radius: 99px;
           margin: 0 auto 30px auto;
         }
 
-        > div.menu-item {
+        >div.menu-item {
           display: flex;
           align-items: center;
-          justify-content: flex-start; 
-          gap: 20px; 
+          justify-content: flex-start;
+          gap: 20px;
           padding: 12px 0;
           border-radius: 99px;
 
           img {
-            display: block; 
+            display: block;
             width: 30px;
             height: 30px;
             object-fit: contain;
           }
-          
+
           &:hover {
             color: var(--color-purple1);
           }
@@ -434,16 +434,16 @@ app-chat {
     overflow: hidden;
     flex: 1;
     min-height: 0;
-    height: 100%;       
-    max-height: none;    
+    height: 100%;
+    max-height: none;
   }
 
   .sidebar-wrapper {
-    position: fixed;                     
-    top: 75px;                           
+    position: fixed;
+    top: 75px;
     left: 0;
     width: 100% !important;
-    height: calc(100vh - 75px);         
+    height: calc(100vh - 75px);
     z-index: 50;
     transform: translateX(0);
     transition: transform var(--transition-slow) cubic-bezier(0.4, 0, 0.2, 1);
@@ -467,7 +467,7 @@ app-chat {
 
     .search-bar {
       padding: 10px 16px;
-      border-radius: 99px; 
+      border-radius: 99px;
     }
   }
 }
