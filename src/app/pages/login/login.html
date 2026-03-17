@@ -76,9 +76,11 @@
                         Anmelden mit Google
                     </button>
                     <div class="action-buttons">
-                        <button type="submit" class="btn--primary large-btn" [disabled]="isLoading">
-                            <span *ngIf="!isLoading">Anmelden</span>
-                            <span *ngIf="isLoading">Wird geladen...</span>
+                        <button type="submit" 
+                               class="btn--primary large-btn" 
+                               [disabled]="isLoading || !isLoginValid()">
+                           <span *ngIf="!isLoading">Anmelden</span>
+                           <span *ngIf="isLoading">Wird geladen...</span>
                         </button>
                         <button type="button" (click)="guestLogin()" class="btn--secondary large-btn" [disabled]="isLoading">
                             Gäste-Login

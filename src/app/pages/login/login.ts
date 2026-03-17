@@ -42,6 +42,14 @@ export class Login implements OnInit {
   }
 
   /**
+   * Prüft, ob die Login-Eingaben vorhanden sind.
+   * @returns {boolean} True, wenn E-Mail und Passwort Text enthalten.
+   */
+  isLoginValid(): boolean {
+    return this.loginEmail.trim().length > 0 && this.loginPassword.trim().length > 0;
+  }
+
+  /**
    * Sets the intro flag in session storage and hides the intro component 
    * once the animation finishes.
    */
