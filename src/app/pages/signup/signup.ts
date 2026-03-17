@@ -20,8 +20,14 @@ export class SignupComponent {
   @ViewChild('errormsg') errormsg!: ElementRef;
 
   signupStep: number = 1;
-  errorMessage: string = '';
   isLoading: boolean = false;
+
+  // --- NEU: Aufgeteilte Fehlermeldungen ---
+  errorMessage: string = '';       // Für globale/Firebase Fehler (z.B. E-Mail schon vergeben)
+  nameErrorMsg: string = '';
+  emailErrorMsg: string = '';
+  passwordErrorMsg: string = '';
+  // ----------------------------------------
 
   fullName: string = '';
   email: string = '';
@@ -47,60 +53,56 @@ export class SignupComponent {
 
   /**
    * Validates the full name input field.
-   * Checks for presence and character limit (30).
+   * Checks for presence and character limit (30) and sets specific error messages.
    */
   validateName(): void {
     const name = this.fullName.trim();
-    if (!name) return this.setValidationError('isNameValid', 'Bitte Name eingeben');
-    if (name.length > 30) return this.setValidationError('isNameValid', 'Name darf max. 30 Zeichen enthalten');
-
-    this.clearValidationError('isNameValid');
+    if (!name) {
+      this.isNameValid = false;
+      this.nameErrorMsg = 'Bitte Name eingeben';
+      return;
+    }
+    if (name.length > 30) {
+      this.isNameValid = false;
+      this.nameErrorMsg = 'Name darf max. 30 Zeichen enthalten';
+      return;
+    }
+    this.isNameValid = true;
+    this.nameErrorMsg = '';
   }
 
   /**
    * Validates the email input field.
-   * Checks format via regex and character limit (50).
+   * Checks format via regex, character limit (50) and sets specific error messages.
    */
   validateEmail(): void {
     const mail = this.email.trim();
     if (!mail || !this.isValidEmailFormat(mail)) {
-      return this.setValidationError('isEmailValid', 'Bitte gültige E-Mail-Adresse eingeben');
+      this.isEmailValid = false;
+      this.emailErrorMsg = 'Bitte gültige E-Mail-Adresse eingeben';
+      return;
     }
     if (mail.length > 50) {
-      return this.setValidationError('isEmailValid', 'E-mail-Adresse darf max. 50 Zeichen enthalten');
+      this.isEmailValid = false;
+      this.emailErrorMsg = 'E-mail-Adresse darf max. 50 Zeichen enthalten';
+      return;
     }
-
-    this.clearValidationError('isEmailValid');
+    this.isEmailValid = true;
+    this.emailErrorMsg = '';
   }
 
   /**
    * Validates the password input field.
-   * Checks for minimum length of 6 characters.
+   * Checks for minimum length of 6 characters and sets specific error messages.
    */
   validatePassword(): void {
     if (!this.password || this.password.length < 6) {
-      return this.setValidationError('isPasswordValid', 'Passwort muss min. 6 Zeichen enthalten');
+      this.isPasswordValid = false;
+      this.passwordErrorMsg = 'Passwort muss min. 6 Zeichen enthalten';
+      return;
     }
-    this.clearValidationError('isPasswordValid');
-  }
-
-  /**
-   * Internal helper to set a validation error for a specific field.
-   * @param field - The validation boolean flag.
-   * @param msg - The error message to display.
-   */
-  private setValidationError(field: 'isNameValid' | 'isEmailValid' | 'isPasswordValid', msg: string): void {
-    this[field] = false;
-    this.errorMessage = msg;
-  }
-
-  /**
-   * Internal helper to clear validation errors for a specific field.
-   * @param field - The validation boolean flag.
-   */
-  private clearValidationError(field: 'isNameValid' | 'isEmailValid' | 'isPasswordValid'): void {
-    this[field] = true;
-    this.errorMessage = '';
+    this.isPasswordValid = true;
+    this.passwordErrorMsg = '';
   }
 
   /**
@@ -125,13 +127,16 @@ export class SignupComponent {
 
   /**
    * Advances the signup process to the second step (Avatar selection).
+   * Forces validation check just in case the user didn't trigger blur events.
    */
   nextStep(): void {
+    this.validateName();
+    this.validateEmail();
+    this.validatePassword();
+
     if (this.isFormValid()) {
       this.signupStep = 2;
       this.errorMessage = '';
-    } else {
-      this.errorMessage = 'Bitte alle Felder korrekt ausfüllen';
     }
   }
 
@@ -202,12 +207,17 @@ export class SignupComponent {
       this.errorMessage = result.error || 'Registrierung fehlgeschlagen.';
       this.changeDetectorRef.markForCheck();
       setTimeout(() => {
-      this.scrollToErrorMsg();
-    }, 5);
+        this.scrollToErrorMsg();
+      }, 5);
     }
   }
 
+  /**
+   * Scrolls the viewport to the global error message element.
+   */
   scrollToErrorMsg(): void {
-    this.errormsg.nativeElement.scrollIntoView({ behavior: 'auto' });
+    if (this.errormsg) {
+      this.errormsg.nativeElement.scrollIntoView({ behavior: 'auto' });
+    }
   }
 }

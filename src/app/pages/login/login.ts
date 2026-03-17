@@ -24,7 +24,9 @@ export class Login implements OnInit {
 
   showSignup: boolean = false;
   showSuccessMessage: boolean = false;
-  errorMessage: string = '';
+  errorMessage: string = '';       
+  emailErrorMsg: string = '';      
+  passwordErrorMsg: string = '';   
   isLoading: boolean = false;
   showIntro: boolean = true;
 
@@ -47,8 +49,6 @@ export class Login implements OnInit {
     sessionStorage.setItem('loginIntroPlayed', 'true');
     this.showIntro = false;
   }
-
-  // --- LOGIN METHODS ---
 
   /**
    * Orchestrates the standard email and password login flow.
@@ -100,15 +100,26 @@ export class Login implements OnInit {
 
   /**
    * Validates that both email and password fields are populated.
+   * NEU: Zeigt Fehler jetzt spezifisch an den betroffenen Feldern an.
    * @returns {boolean} True if inputs are valid.
    */
   private validateInputs(): boolean {
-    this.errorMessage = '';
-    if (!this.loginEmail || !this.loginPassword) {
-      this.errorMessage = 'Please enter email and password.';
-      return false;
+    this.emailErrorMsg = '';
+    this.passwordErrorMsg = '';
+    this.errorMessage = ''; // Globalen Fehler sicherheitshalber auch leeren
+    
+    let isValid = true;
+
+    if (!this.loginEmail) {
+      this.emailErrorMsg = 'Bitte E-Mail eingeben.';
+      isValid = false;
     }
-    return true;
+    if (!this.loginPassword) {
+      this.passwordErrorMsg = 'Bitte Passwort eingeben.';
+      isValid = false;
+    }
+    
+    return isValid;
   }
 
   /**
@@ -128,6 +139,8 @@ export class Login implements OnInit {
    */
   private resetErrorAndSetLoading(): void {
     this.errorMessage = '';
+    this.emailErrorMsg = '';
+    this.passwordErrorMsg = '';
     this.isLoading = true;
   }
 
@@ -153,14 +166,14 @@ export class Login implements OnInit {
     }
   }
 
-  // --- SIGNUP LOGIC ---
-
   /**
    * Toggles the visibility of the signup component and clears errors.
    */
   toggleSignup(): void { 
     this.showSignup = !this.showSignup; 
     this.errorMessage = ''; 
+    this.emailErrorMsg = '';
+    this.passwordErrorMsg = '';
   }
 
   /**
