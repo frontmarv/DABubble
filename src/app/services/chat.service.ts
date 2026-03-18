@@ -37,8 +37,20 @@ export class ChatService {
   messages = signal<Message[]>([]);
   /** Local cache for user objects to avoid redundant database lookups. */
   users = signal<Record<string, User>>({});
-  /** Signal holding the chat partner's user object in DM mode. */
-  otherUser = signal<User | null>(null);
+
+  /**
+   * Computed: Leitet den Chat-Partner live aus getAllUsers() ab,
+   * damit Namensänderungen sofort in Header und leerer Chat-Ansicht sichtbar sind.
+   */
+  readonly otherUser = computed<User | null>(() => {
+    const conv = this.activeConversation();
+    if (!conv || conv.mode !== 'dm') return null;
+    const currentUid = this.firebaseService.currentUser()?.uid;
+    if (!currentUid) return null;
+    const otherUid = conv.id.split('_').find((id: string) => id !== currentUid) ?? null;
+    if (!otherUid) return null;
+    return this.firebaseService.getAllUsers().find(u => u.uid === otherUid) ?? null;
+  });
 
   private chat = new Chat();
   private unsubMessages: Unsubscribe | null = null;
@@ -57,18 +69,27 @@ export class ChatService {
   readonly chatIsActive = computed<boolean>(() => this.activeConversation() !== null);
 
   /**
-   * Opens a direct message room. Initializes user data, builds the chat ID,
+   * Löst einen User live aus getAllUsers() auf, mit lokalem Cache als Fallback.
+   * Dadurch werden Namensänderungen in Nachrichten sofort reflektiert.
+   * @param uid - Die UID des gesuchten Nutzers.
+   */
+  getUserById(uid: string): User | undefined {
+    return this.firebaseService.getAllUsers().find(u => u.uid === uid)
+      ?? this.users()[uid];
+  }
+
+  /**
+   * Opens a direct message room. Builds the chat ID from the target UID,
    * ensures the document exists, and activates the message listener.
    * @param user - The target user object for the DM.
    */
   async openChatRoom(user: any): Promise<void> {
     this.firebaseService.setSelectedChannel('');
     this.editOldMessageSerivce.clearEditMessage();
-    this.threadService.setHidden(); 
-    await this.loadOtherUser(user);
-    const chatId = this.buildChatId();
+    this.threadService.setHidden();
+    const chatId = this.buildChatId(user.uid);
     if (!chatId) return;
-    if (!this.chatExists(chatId)) await this.createChatDocument(chatId);
+    if (!this.chatExists(chatId)) await this.createChatDocumentForUid(chatId, user.uid);
     this.activate({ mode: 'dm', id: chatId });
   }
 
@@ -77,7 +98,6 @@ export class ChatService {
    * @param channelId - Unique ID of the channel.
    */
   openChannel(channelId: string): void {
-    this.otherUser.set(null);
     this.activate({ mode: 'channel', id: channelId });
     this.threadService.setHidden();
   }
@@ -206,20 +226,14 @@ export class ChatService {
     return reactions;
   }
 
-  /** Fetches specific user data for the DM chat partner. */
-  private async loadOtherUser(user: any): Promise<void> {
-    const userData = await this.firebaseService.getSingleUser(user.uid);
-    this.otherUser.set(userData);
-  }
-
   /**
    * Generates a sorted, deterministic ID for private chats based on both UIDs.
+   * @param otherUid - Die UID des Chat-Partners.
    */
-  private buildChatId(): string {
-    const other = this.otherUser();
+  private buildChatId(otherUid: string): string {
     const currentUid = this.firebaseService.currentUser()?.uid;
-    if (!other || !currentUid) return '';
-    const id = [currentUid, other.uid].sort().join('_');
+    if (!otherUid || !currentUid) return '';
+    const id = [currentUid, otherUid].sort().join('_');
     this.chat.id = id;
     return id;
   }
@@ -229,14 +243,17 @@ export class ChatService {
     return !!this.firebaseService.chats.find((c) => c.id === id);
   }
 
-  /** Creates a new 'chat' document in Firestore for a DM room. */
-  private async createChatDocument(chatId: string): Promise<void> {
+  /**
+   * Creates a new 'chat' document in Firestore for a DM room.
+   * @param chatId - Die generierte Chat-ID.
+   * @param otherUid - Die UID des Chat-Partners.
+   */
+  private async createChatDocumentForUid(chatId: string, otherUid: string): Promise<void> {
     const currentUid = this.firebaseService.currentUser()?.uid;
-    const other = this.otherUser();
-    if (!currentUid || !other) return;
+    if (!currentUid || !otherUid) return;
     await this.firebaseService.addChat(new Chat({
       id: chatId,
-      participants: [currentUid, other.uid],
+      participants: [currentUid, otherUid],
       createdAt: new Date(),
       lastMessage: '',
     }));

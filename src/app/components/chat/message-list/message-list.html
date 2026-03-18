@@ -13,14 +13,14 @@
 
     <div class="message-field-user">
       <span class="avatar" (click)="showUserProfileService.setToTrue()">
-        <img [src]="chat.users()[item.senderId]?.avatar" alt="Profilbild" class="avatar__img" />
+        <img [src]="chat.getUserById(item.senderId)?.avatar" alt="Profilbild" class="avatar__img" />
       </span>
 
       <div class="message-info-container">
         <div class="message-info">
           <p class="text--regular bold message-name" (click)="showUserProfileService.setToTrue()">
-            {{ chat.users()[item.senderId]?.firstName }}
-            {{ chat.users()[item.senderId]?.lastName }}
+            {{ chat.getUserById(item.senderId)?.firstName }}
+            {{ chat.getUserById(item.senderId)?.lastName }}
           </p>
           <p class="time">{{ item.createdAt ? (item.createdAt.toDate() | date:'HH:mm') : '' }} Uhr</p>
         </div>
@@ -109,16 +109,16 @@
 
     <div class="message-field-other">
       <span class="avatar"
-        (click)="displayForeignUserService.setSelectedUser(chat.users()[item.senderId]); displayForeignUserService.toggle();">
-        <img [src]="chat.users()[item.senderId]?.avatar" alt="Profilbild" class="avatar__img" />
+        (click)="displayForeignUserService.setSelectedUser(chat.getUserById(item.senderId)); displayForeignUserService.toggle();">
+        <img [src]="chat.getUserById(item.senderId)?.avatar" alt="Profilbild" class="avatar__img" />
       </span>
 
       <div class="message-info-container other">
         <div class="message-info">
           <p class="text--regular bold message-name"
-            (click)="displayForeignUserService.setSelectedUser(chat.users()[item.senderId]); displayForeignUserService.toggle();">
-            {{ chat.users()[item.senderId]?.firstName }}
-            {{ chat.users()[item.senderId]?.lastName }}
+            (click)="displayForeignUserService.setSelectedUser(chat.getUserById(item.senderId)); displayForeignUserService.toggle();">
+            {{ chat.getUserById(item.senderId)?.firstName }}
+            {{ chat.getUserById(item.senderId)?.lastName }}
           </p>
           <p class="time">{{ item.createdAt ? (item.createdAt.toDate() | date:'HH:mm') : '' }} Uhr</p>
         </div>

@@ -97,15 +97,18 @@ export class ThreadPanel implements AfterViewInit {
   }
 
   /**
-   * Resolves a user object by UID, checking cache and global lists.
-   * @param uid - The unique identifier of the user.
+   * Löst einen User auf: getAllUsers() hat Priorität (live, reagiert auf Namensänderungen),
+   * lokaler Cache dient als Fallback für noch nicht geladene Nutzer.
+   * @param uid - Die UID des gesuchten Nutzers.
    */
   getUserFor(uid: string): any | null {
+    const liveUser = this.findGlobalUser(uid);
+    if (liveUser) return liveUser;
+
     const cachedUser = this.threadService.users()[uid];
-    if (cachedUser && cachedUser.firstName !== 'Gelöschter') {
-      return cachedUser;
-    }
-    return this.findGlobalUser(uid);
+    if (cachedUser && cachedUser.firstName !== 'Gelöschter') return cachedUser;
+
+    return null;
   }
 
   /**
