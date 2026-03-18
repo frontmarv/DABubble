@@ -103,7 +103,7 @@ export class ChannelInfo {
    * Prepares the state signals to enter description editing mode.
    */
   private enterEditDescMode(): void {
-    const defaultDesc = 'Dieser Channel ist für alles rund um dieses Thema...';
+    const defaultDesc = '';
     const currentDesc = this.channel?.description || defaultDesc;
     this.editChannelDescInput.set(currentDesc);
     this.editChannelDescMode.set(true);

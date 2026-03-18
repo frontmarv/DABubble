@@ -62,7 +62,7 @@
                 <div class="info-card__body">
                     @if (!editChannelDescMode()) {
                     <p class="text--regular">
-                        {{ channel?.description || 'Dieser Channel ist für alles rund um dieses Thema.' }}
+                        {{ channel?.description || '' }}
                     </p>
                     } @else {
                     <textarea class="inputfield--dialogs edit-textarea text--regular" rows="4"
