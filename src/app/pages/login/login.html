@@ -6,7 +6,7 @@
             <h2 class="logo-text">DABubble</h2>
         </div>
 
-        <div class="signup-call" *ngIf="!showSignup">
+        <div class="signup-call" *ngIf="!showSignup()">
             <span class="text--big bold">Neu bei DABubble?</span>
             <a (click)="toggleSignup()" class="link-blue text--big bold pointer">Konto erstellen</a>
         </div>
@@ -15,9 +15,9 @@
     <main class="login-main">
         <section class="login-card">
 
-            <ng-container *ngIf="!showSignup">
+            <ng-container *ngIf="!showSignup()">
                 <header class="card-header">
-                    <h1>Anmeldung</h1>
+                    <h1 #scrollAnchor>Anmeldung</h1>
                     <p class="text--big center-text">Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der
                         Arbeit verwendest.</p>
                 </header>
@@ -111,12 +111,13 @@
                 </form>
             </ng-container>
 
-            <app-signup *ngIf="showSignup" (close)="toggleSignup()" (success)="onSignupSuccess()">
-            </app-signup>
+            @if (showSignup()) {
+            <app-signup (close)="toggleSignup()" (success)="onSignupSuccess()" />
+            }
 
         </section>
 
-        <div class="signup-call signup-call--mobile" *ngIf="!showSignup">
+        <div class="signup-call signup-call--mobile" *ngIf="!showSignup()">
             <span class="text--big bold">Neu bei DABubble?</span>
             <a (click)="toggleSignup()" class="link-blue text--big bold pointer">Konto erstellen</a>
         </div>
@@ -127,7 +128,7 @@
         <a routerLink="/privacy-policy" class="text--regular link-grey">Datenschutz</a>
     </footer>
 
-    <div class="success-message" *ngIf="showSuccessMessage">
+    <div class="success-message" *ngIf="showSuccessMessage()">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#00D26A"
             stroke-width="2">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />

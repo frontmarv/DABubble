@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, afterNextRender, Output, signal, viewChild, ElementRef, EventEmitter, inject, Injector, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -21,15 +21,16 @@ export class Login implements OnInit {
   private changeDetectorRef = inject(ChangeDetectorRef);
   private chatService = inject(ChatService);
   private firebaseService = inject(FirebaseService);
-
-  showSignup: boolean = false;
-  showSuccessMessage: boolean = false;
+  @Output() close = new EventEmitter<void>();
+  private injector = inject(Injector);
+  showSuccessMessage = signal(false);
+  showSignup = signal(false);
   errorMessage: string = '';
   emailErrorMsg: string = '';
   passwordErrorMsg: string = '';
   isLoading: boolean = false;
   showIntro: boolean = true;
-
+  scrollAnchor = viewChild<ElementRef>('scrollAnchor');
   loginEmail: string = '';
   loginPassword: string = '';
 
@@ -121,14 +122,14 @@ export class Login implements OnInit {
       this.emailErrorMsg = 'Bitte E-Mail eingeben.';
       isValid = false;
     } else if (!emailRegex.test(this.loginEmail)) {
-      this.emailErrorMsg = 'Bitte eine gültige E-Mail-Adresse eingeben.';
+      this.emailErrorMsg = 'Bitte gültige E-Mail-Adresse eingeben';
       isValid = false;
     }
     if (!this.loginPassword || this.loginPassword.trim() === '') {
-      this.passwordErrorMsg = 'Bitte Passwort eingeben.';
+      this.passwordErrorMsg = 'Bitte Passwort eingeben';
       isValid = false;
-    } else if (this.loginPassword.length <= 6) {
-      this.passwordErrorMsg = 'Das Passwort muss länger als 6 Zeichen sein.';
+    } else if (this.loginPassword.length < 6) {
+      this.passwordErrorMsg = 'Passwort muss min. 6 Zeichen enthalten';
       isValid = false;
     }
 
@@ -183,7 +184,7 @@ export class Login implements OnInit {
    * Toggles the visibility of the signup component and clears errors.
    */
   toggleSignup(): void {
-    this.showSignup = !this.showSignup;
+    this.showSignup.update(value => !value);
     this.errorMessage = '';
     this.emailErrorMsg = '';
     this.passwordErrorMsg = '';
@@ -194,18 +195,17 @@ export class Login implements OnInit {
    * completion of the signup flow after a delay.
    */
   onSignupSuccess(): void {
-    this.showSuccessMessage = true;
-    setTimeout(() => this.completeSignupFlow(), 2500);
+    this.showSuccessMessage.set(true);
+    setTimeout(() => {
+      this.showSuccessMessage.set(false);
+      this.showSignup.set(false);
+      afterNextRender(() => {
+        const element = this.scrollAnchor()?.nativeElement;
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, { injector: this.injector });
+    }, 2500);
   }
 
-  /**
-   * Finalizes the signup process by navigating to the main view and 
-   * resetting the signup state.
-   */
-  private completeSignupFlow(): void {
-    this.showSuccessMessage = false;
-    this.router.navigate(['/main']).then(() => {
-      this.showSignup = false;
-    });
-  }
 }

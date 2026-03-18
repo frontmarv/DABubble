@@ -257,10 +257,10 @@ header {
 }
 
 .sidebar-toggle {
-  position: absolute;
-  left: -20px;
+  position: fixed;
   top: 60%;
   transform: translate(0px, -50%);
+  left: 0px;
   background: var(--color-white);
   cursor: pointer;
   padding: 20px 15px;

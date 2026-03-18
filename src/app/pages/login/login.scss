@@ -116,6 +116,10 @@
   border-radius: 8px;
   width: 100%;
 
+  @media screen and (max-width: 400px) {
+    min-height: 58px;
+  }
+
   span {
     font-size: 14px;
     font-weight: 500;
@@ -125,6 +129,10 @@
 .invisible-error {
   opacity: 0;
   min-height: 44px;
+
+  @media screen and (max-width: 400px) {
+    min-height: 58px;
+  }
 }
 
 .login-form {
@@ -161,6 +169,10 @@
 
     &:focus {
       border-color: var(--color-purple1);
+    }
+
+    @media screen and (max-width: 360px) {
+      font-size: 13px;
     }
   }
 }
@@ -245,8 +257,17 @@
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
   z-index: 100;
   font-size: 1.2rem;
-
   animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+
+  @media screen and (max-width: 500px) {
+    width: 80vw;
+    left: 50%;
+    transform: translate(-50%, 0px);
+
+    >svg {
+      min-width: 35px;
+    }
+  }
 }
 
 @keyframes slideUp {
@@ -308,7 +329,7 @@
 
 @media screen and (max-width: 1024px) {
   .login-card {
-    gap: 4px;
+    gap: 8px;
   }
 
 }
@@ -333,6 +354,10 @@
     color: var(--color-rosa-error, #ed1e79);
     font-size: 14px;
     font-weight: 500;
+
+    @media screen and (max-width: 400px) {
+      min-height: 38px;
+    }
   }
 
   &.show {

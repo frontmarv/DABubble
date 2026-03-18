@@ -29,13 +29,17 @@
         position: relative;
         top: auto;
         right: auto;
-        margin: 0 20px;
+        width: 90vw;
         border-radius: 30px;
         transform-origin: center;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 380px) {
         padding: 30px 20px;
+        margin: unset;
+        border-radius: unset !important;
+        height: 100vh;
+        width: 100%;
     }
 }
 

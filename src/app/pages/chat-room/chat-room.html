@@ -70,6 +70,14 @@
         </div>
     </header>
 
+    <button class="sidebar-toggle" type="button" (click)="toggleSidebar()">
+        <span class="sidebar-toggle__text">
+            {{ isSidebarOpen ? 'Workspace-Menü schließen' : 'Workspace-Menü öffnen' }}
+        </span>
+        <img class="sidebar-toggle__icon" [class.sidebar-toggle__icon--closed]="!isSidebarOpen"
+            src="/main-page/Group 2.svg" alt="" />
+    </button>
+
     <div class="layout" [class.layout--sidebar-closed]="!isSidebarOpen">
         <div class="sidebar-wrapper" [class.sidebar-wrapper--closed]="!isSidebarOpen">
 
@@ -77,14 +85,6 @@
                 [showSearchDropdown]="isMobile() ? showSearchDropdown() : false" (searchInput)="onSearchInput($event)"
                 (resultSelect)="selectResult($event)" (mobileNavigation)="onMobileNavigation()">
             </app-sidebar>
-
-            <button class="sidebar-toggle" type="button" (click)="toggleSidebar()">
-                <span class="sidebar-toggle__text">
-                    {{ isSidebarOpen ? 'Workspace-Menü schließen' : 'Workspace-Menü öffnen' }}
-                </span>
-                <img class="sidebar-toggle__icon" [class.sidebar-toggle__icon--closed]="!isSidebarOpen"
-                    src="/main-page/Group 2.svg" alt="" />
-            </button>
         </div>
         <app-chat></app-chat>
         <app-thread-panel></app-thread-panel>
