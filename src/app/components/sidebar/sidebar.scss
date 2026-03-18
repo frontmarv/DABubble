@@ -202,6 +202,23 @@
   }
 }
 
+.error-message {
+  min-height: 25px; 
+  
+  span {
+    color: var(--color-rosa-error, #ed1e79); 
+    font-size: 0.875rem;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+  }
+
+  &.show-error span {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
 .section__label {
   font-weight: 700;
   font-size: 1.125rem;
