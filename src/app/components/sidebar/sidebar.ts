@@ -1,10 +1,13 @@
-import { Component, inject, Output, EventEmitter, Input } from '@angular/core';
+import { Component, inject, Output, EventEmitter, Input, NgZone } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 import { Channel } from '../../models/channel.class';
 import { DisplayForeignUserService } from '../../services/display-foreign-user.service';
 import { ChatService } from '../../services/chat.service';
 
+/**
+ * Sidebar component managing navigation, search, and channel/DM creation.
+ */
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -16,6 +19,9 @@ export class Sidebar {
   chat = inject(ChatService);
   firebaseService = inject(FirebaseService);
   displayForeignUserService = inject(DisplayForeignUserService);
+  
+  // NgZone is crucial here to force UI updates after async Firebase calls.
+  private zone = inject(NgZone); 
 
   // --- COMMUNICATION WITH CHAT-ROOM FOR SEARCH ---
   @Input() searchQuery: string = '';
@@ -26,14 +32,13 @@ export class Sidebar {
   @Output() resultSelect = new EventEmitter<any>();
   @Output() mobileNavigation = new EventEmitter<void>();
 
-  // --- UI STATE ---
+  // --- UI & FORM STATE ---
   channelsOpen = false;
   dmOpen = true;
   isCreateChannelOpen = false;
   isAddPeopleOpen = false;
   isCreating = false;
 
-  // --- FORM STATE ---
   channelName = '';
   channelDescription = '';
   channelNameError = ''; 
@@ -47,11 +52,10 @@ export class Sidebar {
 
   displayAllUsersSidebar = this.firebaseService.getAllUsers;
 
+  // --- UTILITY METHODS ---
+
   /**
-   * Resolves the display name for a user, handling deleted or unknown users.
-   * Avoids trailing spaces if no last name is provided.
-   * @param user - The user object to resolve the name for.
-   * @returns {string} The formatted user name.
+   * Formats the user's name, handling deleted or missing names.
    */
   getUserName(user: any): string {
     if (!user) return 'Unknown User';
@@ -63,23 +67,20 @@ export class Sidebar {
   }
 
   /**
-   * Resolves and sanitizes the avatar URL for users in the sidebar search or selection.
-   * @param avatar - The raw path or URL from the database.
+   * Cleans up the avatar path for correct rendering.
    */
   getMemberAvatar(avatar?: string | null): string {
     if (!avatar) return '/shared/profile-pics/profile-pic1.svg';
     if (avatar.startsWith('http')) return avatar;
-
-    const cleanPath = avatar
-      .replace(/^\/?shared\/profile-pics\//, '')
-      .replace(/^profile-pics\//, '');
-
+    
+    const cleanPath = avatar.replace(/^\/?shared\/profile-pics\//, '').replace(/^profile-pics\//, '');
     return `/shared/profile-pics/${cleanPath}`;
   }
 
+  // --- NAVIGATION METHODS ---
+
   /**
-   * Selects a channel and updates the application state to open the respective chat.
-   * @param {string} channelId - The unique identifier of the channel.
+   * Opens the selected channel in the main chat area.
    */
   selectChannel(channelId: string): void {
     this.chat.activeConversation.set(null); 
@@ -89,7 +90,7 @@ export class Sidebar {
   }
 
   /**
-   * Resets selection states to prepare the UI for creating a brand new message.
+   * Clears current selections to start a new, empty message view.
    */
   createNewMessage(): void {
     this.firebaseService.setSelectedChannel('');
@@ -98,9 +99,7 @@ export class Sidebar {
   }
 
   /**
-   * Opens a direct message room with a specific user.
-   * @param {any} user - The user object to start a DM with.
-   * @returns {Promise<void>}
+   * Opens a direct message conversation with a specific user.
    */
   async selectDm(user: any): Promise<void> {
     this.firebaseService.setSelectedChannel(''); 
@@ -113,34 +112,50 @@ export class Sidebar {
   toggleDm(): void { this.dmOpen = !this.dmOpen; }
 
   // --- MODAL MANAGEMENT ---
+
   openCreateChannel(): void { this.isCreateChannelOpen = true; }
   closeCreateChannel(): void { this.resetCreationState(); }
   closeAddPeople(): void { this.resetCreationState(); }
 
   /**
-   * Validates the channel name length and uniqueness before proceeding.
+   * Validates channel name and moves to the "Add Members" step if successful.
    */
   proceedToAddMembers(): void {
     const name = this.channelName?.trim();
-    if (!name) return;
-    if (name.length > 30) {
-      this.channelNameError = 'Der Name darf maximal 30 Zeichen lang sein.';
-      return;
-    }
-    const nameExists = this.firebaseService.channels().some(
-      (c: any) => c.name.toLowerCase() === name.toLowerCase()
-    );
+    if (!this.isValidName(name)) return;
 
-    if (nameExists) {
-      this.channelNameError = 'Dieser Channel existiert bereits.';
-      return; 
-    }
     this.executeProceed(name);
   }
 
   /**
-   * Internal helper to transition to the next modal step.
-   * @param name - The validated channel name.
+   * Checks if the channel name is provided, within length limits, and unique.
+   */
+  private isValidName(name: string | undefined): boolean {
+    if (!name) return false;
+    
+    if (name.length > 30) {
+      this.channelNameError = 'Der Name darf maximal 30 Zeichen lang sein.';
+      return false;
+    }
+    
+    if (this.isNameDuplicate(name)) {
+      this.channelNameError = 'Dieser Channel existiert bereits.';
+      return false; 
+    }
+    return true;
+  }
+
+  /**
+   * Verifies if the proposed channel name already exists in the database.
+   */
+  private isNameDuplicate(name: string): boolean {
+    return this.firebaseService.channels().some(
+      (c: any) => c.name.toLowerCase() === name.toLowerCase()
+    );
+  }
+
+  /**
+   * Finalizes the transition from "Create" modal to "Add Members" modal.
    */
   private executeProceed(name: string): void {
     this.channelNameError = ''; 
@@ -151,26 +166,33 @@ export class Sidebar {
   }
 
   /**
-   * Resets all variables associated with the channel creation process.
+   * Hard resets all variables related to the channel creation flow.
    */
   private resetCreationState(): void {
     this.isCreateChannelOpen = false;
     this.isAddPeopleOpen = false;
+    this.addPeopleOption = 'all';
+    this.selectedMembers = [];
+    this.resetFormFields();
+  }
+
+  /**
+   * Clears the input fields for channel name and description.
+   */
+  resetFormFields(): void {
     this.channelName = '';
     this.channelDescription = '';
     this.tempChannelName = '';
     this.tempChannelDescription = '';
-    this.channelNameError = ''; 
-    this.addPeopleOption = 'all';
+    this.channelNameError = '';
     this.memberSearch = '';
     this.filteredMembers = [];
-    this.selectedMembers = [];
   }
 
-  // --- MEMBER SEARCH ---
+  // --- MEMBER SEARCH LOGIC ---
 
   /**
-   * Filters the user list based on search input for adding members to a channel.
+   * Triggers the member search filter based on user input.
    */
   filterMembers(): void {
     const search = this.memberSearch.toLowerCase().trim();
@@ -178,22 +200,19 @@ export class Sidebar {
   }
 
   /**
-   * Retrieves users matching the search term who are not already selected or deleted.
-   * @param {string} search - The search term.
-   * @returns {any[]} List of matching user objects.
+   * Finds users matching the search term, excluding deleted or already selected users.
    */
   private getMatchingMembers(search: string): any[] {
     const selected = this.selectedMembers.map((u) => u.uid);
     return this.firebaseService.getAllUsers().filter((u: any) => {
-      return `${u.firstName} ${u.lastName}`.toLowerCase().includes(search)
-        && u.firstName !== 'Gelöschter' 
-        && !selected.includes(u.uid);
+      const nameMatch = `${u.firstName} ${u.lastName}`.toLowerCase().includes(search);
+      const isValidUser = u.firstName !== 'Gelöschter' && !selected.includes(u.uid);
+      return nameMatch && isValidUser;
     });
   }
 
   /**
-   * Adds a user to the temporary selection list for channel creation.
-   * @param {any} user - User to be selected.
+   * Adds a user to the selected members list and clears the search.
    */
   selectMember(user: any): void {
     this.selectedMembers.push(user);
@@ -202,71 +221,81 @@ export class Sidebar {
   }
 
   /**
-   * Removes a user from the temporary selection list.
-   * @param {any} user - User to be removed.
+   * Removes a user from the selected members list.
    */
   removeMember(user: any): void {
     this.selectedMembers = this.selectedMembers.filter((u) => u.uid !== user.uid);
   }
 
+  // --- CHANNEL CREATION (REFACTORED) ---
+
   /**
-   * Orchestrates the creation of a new channel and handles initial member assignment.
+   * Orchestrates the creation of a new channel (Entry Point).
    */
-  async createChannel(): Promise<void> {
-    if (!this.isAddPeopleOpen || this.isCreating || !this.tempChannelName?.trim()) return;
+  async createChannel() {
+    const currentUser = this.firebaseService.currentUser();
+    if (this.isCreating || !currentUser) return;
+
     this.isCreating = true;
+    const memberIds = this.getChannelMembers(currentUser.uid);
+    const newChannel = this.buildNewChannel(currentUser, memberIds);
+
+    await this.saveChannelToFirebase(newChannel);
+  }
+
+  /**
+   * Determines which members will be added to the new channel based on user choice.
+   */
+  private getChannelMembers(creatorId: string): string[] {
+    if (this.addPeopleOption === 'all') {
+      const allUsers = this.firebaseService.getAllUsers();
+      return allUsers.filter(u => u.firstName !== 'Gelöschter').map(u => u.uid);
+    }
+    
+    const selectedIds = this.selectedMembers.map(m => m.uid);
+    return [...new Set([creatorId, ...selectedIds])];
+  }
+
+  /**
+   * Constructs the Channel object ready for database insertion.
+   */
+  private buildNewChannel(user: any, members: string[]): Channel {
+    return new Channel({
+      name: this.tempChannelName,
+      description: this.tempChannelDescription || '',
+      creatorId: user.uid,
+      creatorName: `${user.firstName} ${user.lastName}`,
+      members: members,
+      createdAt: Date.now()
+    });
+  }
+
+  /**
+   * Executes the database save and manages success/error states via NgZone.
+   */
+  private async saveChannelToFirebase(channel: Channel): Promise<void> {
     try {
-      const newId = await this.firebaseService.addChannel(
-        new Channel({ name: this.tempChannelName, description: this.tempChannelDescription })
-      );
-      if (newId) await this.handleNewChannelMembers(newId);
+      const newId = await this.firebaseService.addChannel(channel);
+      this.handleCreationSuccess(newId);
+    } catch (err) {
+      console.error("Fehler beim Erstellen:", err);
+      this.zone.run(() => { this.isCreating = false; });
+    }
+  }
+
+  /**
+   * Updates the UI state inside the Angular Zone after successful channel creation.
+   */
+  private handleCreationSuccess(newId: string | null): void {
+    this.zone.run(() => {
+      if (newId) this.firebaseService.setSelectedChannel(newId);
       this.resetCreationState();
-    } catch (e) {
-      console.error('Error creating channel:', e);
-    } finally {
       this.isCreating = false;
-    }
+    });
   }
 
   /**
-   * Decides which members to add to the newly created channel based on user choice.
-   * @param {string} newId - The ID of the newly created channel.
-   */
-  private async handleNewChannelMembers(newId: string): Promise<void> {
-    if (this.addPeopleOption === 'specific' && this.selectedMembers.length) {
-      await this.addSpecificMembers(newId);
-    } else if (this.addPeopleOption === 'all') {
-      await this.addAllMembers(newId);
-    }
-    this.firebaseService.setSelectedChannel(newId);
-  }
-
-  /**
-   * Adds specifically selected users to the Firestore channel document.
-   * @param {string} newId - Channel identifier.
-   */
-  private async addSpecificMembers(newId: string): Promise<void> {
-    for (const user of this.selectedMembers) {
-      await this.firebaseService.addMemberToChannel(newId, user.uid);
-    }
-  }
-
-  /**
-   * Adds all existing users (excluding deleted accounts) to the Firestore channel document.
-   * @param {string} newId - Channel identifier.
-   */
-  private async addAllMembers(newId: string): Promise<void> {
-    for (const user of this.firebaseService.getAllUsers()) {
-      if ((user as any).firstName !== 'Gelöschter') {
-        await this.firebaseService.addMemberToChannel(newId, (user as any).uid);
-      }
-    }
-  }
-
-  /**
-   * Checks if a DM conversation with a specific user is currently active.
-   * @param {any} user - The user to check against.
-   * @returns {boolean}
+   * Checks if the currently active view is a DM with the provided user.
    */
   isDmActive(user: any): boolean {
     const active = this.chat.activeConversation();
@@ -275,9 +304,7 @@ export class Sidebar {
   }
 
   /**
-   * Generates a unique, sorted DM chat ID based on current and target user UIDs.
-   * @param {any} user - Target user.
-   * @returns {string} The generated chat ID.
+   * Generates a deterministic ID for a DM conversation based on user UIDs.
    */
   private buildDmChatId(user: any): string {
     const currentUid = this.firebaseService.currentUser()?.uid || '';

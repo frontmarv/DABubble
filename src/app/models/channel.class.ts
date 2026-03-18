@@ -3,20 +3,28 @@ export class Channel {
     name: string;
     description: string;
     members: string[];
-    messages: Map<string, string>;
+    creatorId: string;    
+    creatorName: string;  
+    createdAt: number;   
 
     constructor(obj?: any) {
-        this.id = obj ? obj.id : '';
-        this.name = obj ? obj.name : '';
-        this.description = obj ? obj.description : '';
-        this.members = obj ? obj.members : [];
-        this.messages = obj ? obj.messages : new Map<string, string>();
+        this.id = obj?.id || '';
+        this.name = obj?.name || '';
+        this.description = obj?.description || '';
+        this.members = obj?.members || [];
+        this.creatorId = obj?.creatorId || '';
+        this.creatorName = obj?.creatorName || '';
+        this.createdAt = obj?.createdAt || Date.now();
     }
 
     public toJSON() {
         return {
             name: this.name,
-            description: this.description
+            description: this.description,
+            members: this.members,
+            creatorId: this.creatorId,
+            creatorName: this.creatorName,
+            createdAt: this.createdAt
         };
     }
 }
