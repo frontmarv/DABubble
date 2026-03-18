@@ -28,11 +28,11 @@ export class NewPassword {
 
 
   constructor() {
-    // this.resetCodeFromEmail = this.route.snapshot.queryParams['oobCode'];
-    // if (!this.resetCodeFromEmail) {
-    //   alert('Ungültiger Link!');
-    //   this.router.navigate(['/pw-reset']);
-    // }
+    this.resetCodeFromEmail = this.route.snapshot.queryParams['oobCode'];
+    if (!this.resetCodeFromEmail) {
+      alert('Ungültiger Link!');
+      this.router.navigate(['/pw-reset']);
+    }
   }
 
   validatePw1() {
