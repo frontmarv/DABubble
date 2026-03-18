@@ -25,6 +25,16 @@ export class ProfileView implements OnChanges {
   fullName = '';
   errorMessage = '';
   isInputValid = true;
+  selectedAvatar = '';
+
+  readonly availableAvatars: string[] = [
+    '/shared/profile-pics/profile-pic1.svg',
+    '/shared/profile-pics/profile-pic2.svg',
+    '/shared/profile-pics/profile-pic3.svg',
+    '/shared/profile-pics/profile-pic4.svg',
+    '/shared/profile-pics/profile-pic5.svg',
+    '/shared/profile-pics/profile-pic6.svg',
+  ];
 
   /**
    * Detects input changes to reset the view when a new user is provided.
@@ -37,7 +47,7 @@ export class ProfileView implements OnChanges {
   }
 
   /**
-   * Closes the profile view, shuts down any active threads, 
+   * Closes the profile view, shuts down any active threads,
    * and opens a direct chat with the current profile user.
    */
   async onMessageUser(): Promise<void> {
@@ -56,14 +66,31 @@ export class ProfileView implements OnChanges {
   }
 
   /**
-   * Activates the editing mode and prepares the full name input.
+   * Activates the editing mode, setzt den aktuellen Avatar als Vorauswahl.
    */
   editProfile(): void {
     this.isEditing = true;
     if (this.user && !this.fullName.trim()) {
       this.fullName = this.buildFullName(this.user);
     }
+    this.selectedAvatar = this.getAvatarUrl(this.user?.avatar);
     this.validateFullName(this.fullName);
+  }
+
+  /**
+   * Setzt den ausgewählten Avatar im Edit-Modus.
+   * @param avatar - Der Pfad des gewählten Avatars.
+   */
+  selectAvatar(avatar: string): void {
+    this.selectedAvatar = avatar;
+  }
+
+  /**
+   * Prüft ob ein Avatar gerade ausgewählt ist (für CSS-Klasse im Template).
+   * @param avatar - Der zu prüfende Avatar-Pfad.
+   */
+  isAvatarSelected(avatar: string): boolean {
+    return this.selectedAvatar === avatar;
   }
 
   /**
@@ -76,10 +103,11 @@ export class ProfileView implements OnChanges {
   }
 
   /**
-   * Synchronizes the input field with the current user data.
+   * Synchronizes the input field and avatar with the current user data.
    */
   private resetProfileView(): void {
     this.fullName = this.user ? this.buildFullName(this.user) : '';
+    this.selectedAvatar = this.getAvatarUrl(this.user?.avatar);
     this.validateFullName(this.fullName);
   }
 
@@ -95,13 +123,16 @@ export class ProfileView implements OnChanges {
   }
 
   /**
-   * Extracts data and triggers the Firebase update service.
+   * Speichert Name UND Avatar gemeinsam in einem einzigen Firestore-Update.
    */
   private async updateUserInDb(): Promise<void> {
     const currentUser = this.firebaseService.currentUser();
     if (currentUser?.uid) {
       const nameData = this.splitFullName(this.fullName);
-      await this.firebaseService.updateSingleUser(currentUser.uid, nameData);
+      await this.firebaseService.updateSingleUser(currentUser.uid, {
+        ...nameData,
+        avatar: this.selectedAvatar,
+      });
     }
   }
 
@@ -125,14 +156,12 @@ export class ProfileView implements OnChanges {
     } else if (length > 30) {
       this.errorMessage = 'Name darf maximal 30 Zeichen haben';
     } else {
-      this.errorMessage = ''; 
+      this.errorMessage = '';
     }
   }
 
   /**
    * Concatenates first and last name into a single string.
-   * @param user - The user object containing name properties.
-   * @returns Trimmed full name string.
    */
   private buildFullName(user: User): string {
     const first = user.firstName ?? '';
@@ -142,8 +171,6 @@ export class ProfileView implements OnChanges {
 
   /**
    * Splits a full name string into first and last name components.
-   * @param fullName - The full name to be split.
-   * @returns Object containing firstName and lastName strings.
    */
   private splitFullName(fullName: string): { firstName: string; lastName: string } {
     const parts = (fullName ?? '').trim().split(/\s+/).filter(Boolean);
@@ -156,8 +183,6 @@ export class ProfileView implements OnChanges {
 
   /**
    * Resolves the correct path for the user's avatar image.
-   * @param avatar - The stored avatar path or URL.
-   * @returns A valid URL or local path to the profile picture.
    */
   getAvatarUrl(avatar?: string | null): string {
     if (!avatar) return '/shared/profile-pics/profile-pic1.svg';
@@ -168,8 +193,6 @@ export class ProfileView implements OnChanges {
 
   /**
    * Removes redundant folder paths from the avatar string.
-   * @param path - The raw path string.
-   * @returns Cleaned filename or path.
    */
   private sanitizeAvatarPath(path: string): string {
     return path

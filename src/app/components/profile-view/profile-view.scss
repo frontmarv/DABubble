@@ -26,16 +26,16 @@
     animation: expandMenu 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     @media (max-width: 1240px) {
-        position: relative; 
-        top: auto;         
-        right: auto;       
-        margin: 0 20px;    
-        border-radius: 30px; 
-        transform-origin: center; 
+        position: relative;
+        top: auto;
+        right: auto;
+        margin: 0 20px;
+        border-radius: 30px;
+        transform-origin: center;
     }
 
     @media (max-width: 480px) {
-        padding: 30px 20px; 
+        padding: 30px 20px;
     }
 }
 
@@ -60,8 +60,8 @@
     margin: 0 auto;
 
     img {
-        width: 200px;
-        height: 200px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         object-fit: cover;
         background-color: var(--color-background);
@@ -74,6 +74,11 @@
         height: 25px;
         border-width: 3px;
     }
+}
+
+ng-container:not(.isEditing) .profile-avatar img {
+    width: 200px;
+    height: 200px;
 }
 
 .profile-name-section {
@@ -132,10 +137,47 @@
     }
 }
 
+.avatar-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &__label {
+        font-size: 16px;
+        color: var(--color-black);
+        margin: 0;
+    }
+}
+
+.avatar-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.avatar-option {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    object-fit: cover;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+
+    &:hover {
+        transform: scale(1.1);
+        border-color: var(--color-purple2);
+    }
+
+    &--selected {
+        border-color: var(--color-purple2);
+        transform: scale(1.1);
+    }
+}
+
 .edit-form {
     display: flex;
     flex-direction: column;
-    // gap: 15px;
 
     .input-label {
         display: flex;
