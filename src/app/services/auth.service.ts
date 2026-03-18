@@ -1,13 +1,13 @@
-import { Injectable, inject } from '@angular/core';
-import { 
-  Auth, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signInWithPopup, 
-  GoogleAuthProvider, 
-  signOut, 
-  onAuthStateChanged, 
-  User as FirebaseUser 
+import { Injectable, inject, signal } from '@angular/core';
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+  onAuthStateChanged,
+  User as FirebaseUser
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { FirebaseService } from './firebase.service';
@@ -25,10 +25,7 @@ export class AuthService {
   private auth = inject(Auth);
   private router = inject(Router);
   private firebaseService = inject(FirebaseService);
-
-  /** Holds the current Firebase User object or null if not authenticated. */
   currentFirebaseUser: FirebaseUser | null = null;
-  /** Reflects the current authentication status. */
   isAuthenticated = false;
 
   /**
@@ -68,7 +65,7 @@ export class AuthService {
       const { user } = await createUserWithEmailAndPassword(this.auth, email, pass);
       const cleanAvatar = avatar?.trim() || 'unkown-user.svg';
       const newUser = new User({ uid: user.uid, firstName, lastName, email, avatar: cleanAvatar, status });
-      
+
       await this.firebaseService.addUser(newUser, user.uid);
       await this.addTargetUserToWelcomeChannel(user.uid);
       return { success: true };
@@ -123,7 +120,7 @@ export class AuthService {
    */
   private async addTargetUserToWelcomeChannel(uid: string): Promise<void> {
     const channels = this.firebaseService.channels();
-    const welcomeChannel = channels.find(c => 
+    const welcomeChannel = channels.find(c =>
       c.name.toLowerCase() === 'willkommen' || c.name.toLowerCase() === 'allgemein'
     );
     if (welcomeChannel) {
@@ -173,11 +170,11 @@ export class AuthService {
   private async createNewGoogleUser(fbUser: FirebaseUser): Promise<void> {
     const { firstName, lastName } = this.extractGoogleNames(fbUser.displayName);
     const photo = fbUser.photoURL || fbUser.providerData?.[0]?.photoURL || 'unkown-user.svg';
-    const newGoogleUser = new User({ 
-      uid: fbUser.uid, firstName, lastName, email: fbUser.email || '', 
-      avatar: photo, status: 'online' 
+    const newGoogleUser = new User({
+      uid: fbUser.uid, firstName, lastName, email: fbUser.email || '',
+      avatar: photo, status: 'online'
     });
-    
+
     await this.firebaseService.addUser(newGoogleUser, fbUser.uid);
     await this.addTargetUserToWelcomeChannel(fbUser.uid);
   }
@@ -188,9 +185,9 @@ export class AuthService {
    */
   private extractGoogleNames(displayName: string | null): { firstName: string; lastName: string } {
     const nameParts = (displayName || 'Google User').trim().split(/\s+/);
-    return { 
-      firstName: nameParts[0] || 'Google', 
-      lastName: nameParts.slice(1).join(' ') || '' 
+    return {
+      firstName: nameParts[0] || 'Google',
+      lastName: nameParts.slice(1).join(' ') || ''
     };
   }
 
@@ -199,9 +196,9 @@ export class AuthService {
    * @param email - Target email address.
    */
   sendResetEmail(email: string) {
-    return sendPasswordResetEmail(this.auth, email, { 
-      url: 'https://dabubble-2491.developerakademie.net/new-pw', 
-      handleCodeInApp: true 
+    return sendPasswordResetEmail(this.auth, email, {
+      url: 'https://dabubble.joshuaauerbach.de/new-pw',
+      handleCodeInApp: true
     });
   }
 

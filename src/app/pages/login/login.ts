@@ -24,9 +24,9 @@ export class Login implements OnInit {
 
   showSignup: boolean = false;
   showSuccessMessage: boolean = false;
-  errorMessage: string = '';       
-  emailErrorMsg: string = '';      
-  passwordErrorMsg: string = '';   
+  errorMessage: string = '';
+  emailErrorMsg: string = '';
+  passwordErrorMsg: string = '';
   isLoading: boolean = false;
   showIntro: boolean = true;
 
@@ -93,13 +93,13 @@ export class Login implements OnInit {
           this.isLoading = false;
           this.changeDetectorRef.markForCheck();
         }
-      }, 500); 
+      }, 500);
       window.removeEventListener('focus', handleFocus);
     };
     window.addEventListener('focus', handleFocus);
 
     const result = await this.authService.googleLogin();
-    
+
     window.removeEventListener('focus', handleFocus);
     this.handleAuthResult(result, 'Google login failed.');
   }
@@ -114,19 +114,24 @@ export class Login implements OnInit {
   private validateInputs(): boolean {
     this.emailErrorMsg = '';
     this.passwordErrorMsg = '';
-    this.errorMessage = ''; // Globalen Fehler sicherheitshalber auch leeren
-    
+    this.errorMessage = '';
     let isValid = true;
-
-    if (!this.loginEmail) {
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!this.loginEmail || this.loginEmail.trim() === '') {
       this.emailErrorMsg = 'Bitte E-Mail eingeben.';
       isValid = false;
-    }
-    if (!this.loginPassword) {
-      this.passwordErrorMsg = 'Bitte Passwort eingeben.';
+    } else if (!emailRegex.test(this.loginEmail)) {
+      this.emailErrorMsg = 'Bitte eine gültige E-Mail-Adresse eingeben.';
       isValid = false;
     }
-    
+    if (!this.loginPassword || this.loginPassword.trim() === '') {
+      this.passwordErrorMsg = 'Bitte Passwort eingeben.';
+      isValid = false;
+    } else if (this.loginPassword.length <= 6) {
+      this.passwordErrorMsg = 'Das Passwort muss länger als 6 Zeichen sein.';
+      isValid = false;
+    }
+
     return isValid;
   }
 
@@ -160,7 +165,7 @@ export class Login implements OnInit {
    */
   private handleAuthResult(result: any, defaultError: string): void {
     this.isLoading = false;
-    
+
     if (result.success) {
       this.firebaseService.setSelectedChannel('');
       this.chatService.activeConversation.set(null);
@@ -177,9 +182,9 @@ export class Login implements OnInit {
   /**
    * Toggles the visibility of the signup component and clears errors.
    */
-  toggleSignup(): void { 
-    this.showSignup = !this.showSignup; 
-    this.errorMessage = ''; 
+  toggleSignup(): void {
+    this.showSignup = !this.showSignup;
+    this.errorMessage = '';
     this.emailErrorMsg = '';
     this.passwordErrorMsg = '';
   }
@@ -188,9 +193,9 @@ export class Login implements OnInit {
    * Displays a success message upon successful signup and triggers the 
    * completion of the signup flow after a delay.
    */
-  onSignupSuccess(): void { 
-    this.showSuccessMessage = true; 
-    setTimeout(() => this.completeSignupFlow(), 2500); 
+  onSignupSuccess(): void {
+    this.showSuccessMessage = true;
+    setTimeout(() => this.completeSignupFlow(), 2500);
   }
 
   /**
@@ -199,8 +204,8 @@ export class Login implements OnInit {
    */
   private completeSignupFlow(): void {
     this.showSuccessMessage = false;
-    this.router.navigate(['/main']).then(() => { 
-      this.showSignup = false; 
+    this.router.navigate(['/main']).then(() => {
+      this.showSignup = false;
     });
   }
 }
