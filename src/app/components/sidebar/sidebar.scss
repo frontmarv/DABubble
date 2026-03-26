@@ -192,11 +192,13 @@
     flex-shrink: 0;
   }
 
-  &:hover {
-    color: var(--color-purple1);
-    
-    .icon-mask {
-      background-color: var(--color-purple1);
+  @media (hover: hover) {
+    &:hover {
+      color: var(--color-purple1);
+
+      .icon-mask {
+        background-color: var(--color-purple1);
+      }
     }
   }
 }
