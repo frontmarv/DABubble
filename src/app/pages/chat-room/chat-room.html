@@ -86,7 +86,9 @@
                 (resultSelect)="selectResult($event)" (mobileNavigation)="onMobileNavigation()">
             </app-sidebar>
         </div>
+        @if (!isSidebarOpen || !isMobile()) {
         <app-chat></app-chat>
+        }
         <app-thread-panel></app-thread-panel>
     </div>
 

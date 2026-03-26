@@ -2,17 +2,17 @@ import { inject, Injectable, signal, computed } from '@angular/core';
 import { Chat } from '../models/chat.class';
 import { User } from '../models/user.class';
 import { FirebaseService } from './firebase.service';
-import { 
-  collection, 
-  updateDoc, 
-  doc, 
-  onSnapshot, 
-  orderBy, 
-  query, 
-  serverTimestamp, 
-  writeBatch, 
-  runTransaction, 
-  Unsubscribe 
+import {
+  collection,
+  updateDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  writeBatch,
+  runTransaction,
+  Unsubscribe
 } from '@angular/fire/firestore';
 import { Message } from '../models/message.class';
 import { editOldMessageService } from './editOldMessage-service';
@@ -47,7 +47,10 @@ export class ChatService {
     if (!conv || conv.mode !== 'dm') return null;
     const currentUid = this.firebaseService.currentUser()?.uid;
     if (!currentUid) return null;
-    const otherUid = conv.id.split('_').find((id: string) => id !== currentUid) ?? null;
+    const participants = conv.id.split('_');
+    const otherUid = participants[0] === currentUid
+      ? participants[1]
+      : participants[0];
     if (!otherUid) return null;
     return this.firebaseService.getAllUsers().find(u => u.uid === otherUid) ?? null;
   });
@@ -126,10 +129,10 @@ export class ChatService {
       : this.basePath();
     const userId = this.firebaseService.currentUser()?.uid;
     if (!path || !userId || !messageId || !emoji) return;
-    
+
     const subCollection = typeOfChat === 'thread' ? 'threads' : 'messages';
     const messageRef = doc(this.firebaseService.firestore, path, subCollection, messageId);
-    
+
     await runTransaction(this.firebaseService.firestore, async (tx) => {
       const snap = await tx.get(messageRef);
       if (!snap.exists()) return;
@@ -215,9 +218,9 @@ export class ChatService {
 
     if (current.includes(userId)) {
       const updated = current.filter((id) => id !== userId);
-      if (updated.length === 0) { 
-        const { [emojiKey]: _, ...rest } = reactions; 
-        return rest; 
+      if (updated.length === 0) {
+        const { [emojiKey]: _, ...rest } = reactions;
+        return rest;
       }
       reactions[emojiKey] = updated;
     } else {
@@ -280,7 +283,7 @@ export class ChatService {
     if (!messageId || !cleanText) return;
     const path = typeOfChat === 'thread' ? this.threadService.completeDBPathOfThread() : this.basePath();
     if (!path) return;
-    
+
     const subCollection = typeOfChat === 'thread' ? 'threads' : 'messages';
     const messageRef = doc(this.firebaseService.firestore, path, subCollection, messageId);
     try {
