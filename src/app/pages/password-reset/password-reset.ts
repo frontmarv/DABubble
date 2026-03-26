@@ -67,7 +67,7 @@ export class PasswordReset {
       this.showSuccessMessage = true;
       this.isEmailValid = false;
       const actionCodeSettings = {
-        url: 'http://localhost:4200/reset-password',
+        url: 'http://dabubble.marvin-lenhart.com/reset-password',
         handleCodeInApp: false
       };
       await sendPasswordResetEmail(this.auth, this.email, actionCodeSettings);

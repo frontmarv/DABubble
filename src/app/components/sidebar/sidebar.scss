@@ -351,6 +351,7 @@
     box-sizing: border-box;
     overflow-y: auto;
     gap: 16px;
+    padding-bottom: 60px
   }
 
   .mobile-search-bar {
@@ -379,7 +380,7 @@
 
   .sidebar__header .icon-btn {
     position: fixed;
-    bottom: 20px;
+    bottom: 60px;
     right: 20px;
     width: 56px;
     height: 56px;
@@ -462,5 +463,6 @@
 @media (max-width: 480px) {
   .sidebar {
     padding: 20px 16px;
+    padding-bottom: 60px
   }
 }
